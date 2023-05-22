@@ -5,22 +5,35 @@
 
 namespace App\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class HelloController.
  */
-class HelloController
+#[Route('/hello')]
+class HelloController extends AbstractController
 {
     /**
-     * @return Response
+     * Index action.
+     *
+     * @param string $name User input
+     *
+     * @return Response HTTP response
      */
-    #[Route('/hello', name: 'hello_index', methods: 'GET')]
-    public function index(): Response
+    #[Route(
+        '/{name}',
+        name: 'hello_index',
+        requirements: ['name' => '[a-zA-Z]+'],
+        defaults: ['name' => 'World'],
+        methods: 'GET'
+    )]
+    public function index(string $name): Response
     {
-        return new Response('Hello World!');
+        return $this->render(
+            'hello/index.html.twig',
+            ['name' => $name]
+        );
     }
-
-
 }
