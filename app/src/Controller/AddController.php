@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-class TestController
+class AddController
 {
 
 }

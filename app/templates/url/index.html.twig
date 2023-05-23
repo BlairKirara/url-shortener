@@ -1,21 +1,21 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Urls list
+{{ 'Urls list' | trans }}
 {% endblock %}
 
 {% block body %}
-    <h1>Urls list</h1>
+    <h1>{{ 'Urls list' | trans }}</h1>
     {% if urls is defined and urls|length %}
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>Id</th>
-                <th>Short Url</th>
-                <th>Long Url</th>
-                <th>Create Time</th>
-                <th>Blocked</th>
-                <th>Blocked Till</th>
+                <th>{{ 'Id' | trans }}</th>
+                <th>{{ 'Short Url' | trans }}</th>
+                <th>{{ 'Long Url' | trans }}</th>
+                <th>{{ 'Create Time' | trans}}</th>
+                <th>{{ 'Blocked' | trans }}</th>
+                <th>Blocked Till{{ 'Blocked Till' | trans }}</th>
                 <th scope="col">
                     Actions
                 </th>
@@ -24,12 +24,12 @@
             <tbody>
             {% for url in urls %}
                 <tr>
-                    <td>{{ url.id | trans }}</td>
-                    <td>{{ url.shortName| trans}}</td>
-                    <td>{{ url.longName| trans }}</td>
-                    <td>{{ url.createTime|date('Y/m/d H:i:s')|trans }}</td>
-                    <td>{{ url.isBlocked| trans }}</td>
-                    <td>{{ url.blockTime|date('Y/m/d H:i:s')|trans }}</td>
+                    <td>{{ url.id }}</td>
+                    <td>{{ url.shortName}}</td>
+                    <td>{{ url.longName}}</td>
+                    <td>{{ url.createTime|date('Y/m/d H:i:s')}}</td>
+                    <td>{{ url.isBlocked ? 'Yes' : 'No' }}</td>
+                    <td>{{ url.blockTime|date('Y/m/d H:i:s')}}</td>
                     <td>&nbsp;</td>
                 </tr>
             {% endfor %}
@@ -37,7 +37,7 @@
         </table>
     {% else %}
         <p>
-            List is empty.
+            {{ 'List is empty.' | trans }}
         </p>
     {% endif %}
 {% endblock  %}
