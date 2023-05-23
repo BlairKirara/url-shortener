@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Urls list
+{% endblock %}
+
+{% block body %}
+    <h1>Urls list</h1>
+    {% if urls is defined and urls|length %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Short Url</th>
+                <th>Long Url</th>
+                <th>Create Time</th>
+                <th>Blocked</th>
+                <th>Blocked Till</th>
+                <th scope="col">
+                    Actions
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for url in urls %}
+                <tr>
+                    <td>{{ url.id | trans }}</td>
+                    <td>{{ url.shortName| trans}}</td>
+                    <td>{{ url.longName| trans }}</td>
+                    <td>{{ url.createTime|date('Y/m/d H:i:s')|trans }}</td>
+                    <td>{{ url.isBlocked| trans }}</td>
+                    <td>{{ url.blockTime|date('Y/m/d H:i:s')|trans }}</td>
+                    <td>&nbsp;</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>
+            List is empty.
+        </p>
+    {% endif %}
+{% endblock  %}
