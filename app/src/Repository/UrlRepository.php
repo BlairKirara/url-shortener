@@ -16,11 +16,19 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UrlRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Url::class);
     }
 
+    /**
+     * @param Url $entity
+     * @param bool $flush
+     * @return void
+     */
     public function save(Url $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
@@ -30,6 +38,11 @@ class UrlRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @param Url $entity
+     * @param bool $flush
+     * @return void
+     */
     public function remove(Url $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
