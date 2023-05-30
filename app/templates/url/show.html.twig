@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    View url
+{% endblock %}
+
+{% block body %}
+    <h1>View url</h1>
+    {% if urls is defined and urls|length %}
+        <dl>
+            <dt>Long Name</dt>
+            <dd>{{ urls.longName }}</dd>
+            <dt>Short Name</dt>
+            <dd>{{ urls.shortName }}</dd>
+            <dt>Short Name</dt>
+            <dd>{{ urls.shortName }}</dd>
+            <dt>Create Time</dt>
+            <dd>{{ urls.createTime |date('Y-m-d H:i:s') }}</dd>
+            <dt>Blocked</dt>
+            <dd>{{ urls.isBlocked ? 'Yes' : 'No' }}</dd>
+            <dt>Blocked Till</dt>
+            <dd>{{ urls.blockTime |date('Y-m-d H:i:s') }}</dd>
+        </dl>
+        <p>
+            <a href="{{ url('url_index') }}" title="{{ 'action.back_to_list'|trans }}">
+                {{ 'action.back_to_list'|trans }}
+            </a>
+        </p>
+    {% else %}
+        <p>
+            {{ 'message.empty_list'|trans }}
+        </p>
+    {% endif %}
+{% endblock %}

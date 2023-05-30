@@ -17,7 +17,7 @@ class UrlFixtures extends AbstractBaseFixtures
      */
     public function loadData(): void
     {
-        for ($i = 0; $i < 10; ++$i) {
+        for ($i = 0; $i < 20; ++$i) {
             $url = new Url();
             $url->setShortName($this->faker->url);
             $url->setLongName($this->faker->url);

@@ -4,7 +4,10 @@ namespace App\Repository;
 
 use App\Entity\Url;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+
+
 
 /**
  * @extends ServiceEntityRepository<Url>
@@ -17,6 +20,18 @@ use Doctrine\Persistence\ManagerRegistry;
 class UrlRepository extends ServiceEntityRepository
 {
     /**
+     * Items per page.
+     *
+     * Use constants to define configuration options that rarely change instead
+     * of specifying them in configuration files.
+     * See https://symfony.com/doc/current/best_practices.html#configuration
+     *
+     * @constant int
+     */
+    public const PAGINATOR_ITEMS_PER_PAGE = 10;
+
+
+    /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
@@ -25,32 +40,55 @@ class UrlRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Url $entity
-     * @param bool $flush
-     * @return void
+     * Query all records.
+     *
+     * @return QueryBuilder Query builder
      */
-    public function save(Url $entity, bool $flush = false): void
+    public function queryAll(): QueryBuilder
     {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return $this->getOrCreateQueryBuilder()
+            ->orderBy('url.id', 'DESC');
     }
 
     /**
-     * @param Url $entity
-     * @param bool $flush
-     * @return void
+     * Get or create new query builder.
+     *
+     * @param QueryBuilder|null $queryBuilder Query builder
+     *
+     * @return QueryBuilder Query builder
      */
-    public function remove(Url $entity, bool $flush = false): void
+    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
+        return $queryBuilder ?? $this->createQueryBuilder('url');
     }
+
+
+    /**
+     * Save record.
+     *
+     * @param Url $url Url entity
+     *
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function save(Url $url): void
+    {
+        $this->_em->persist($url);
+        $this->_em->flush();
+    }
+    /**
+     * Delete entity.
+     *
+     * @param Url $url Url entity
+     */
+    public function delete(Url $url): void
+    {
+        $this->_em->remove($url);
+        $this->_em->flush();
+    }
+
+
+
 
 //    /**
 //     * @return Url[] Returns an array of Url objects
