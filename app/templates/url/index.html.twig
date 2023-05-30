@@ -16,11 +16,11 @@
             <thead>
             <tr>
                 <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'url.id') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.shortName'|trans, 'url.shortName') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.longName'|trans, 'url.longName') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.createTime'|trans, 'url.createTime') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.blockTime'|trans, 'url.blockTime') }}</th>
-                <th>{{ 'label.actions'|trans }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.shortName'|trans, 'url.short_name') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.longName'|trans, 'url.long_name') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.createTime'|trans, 'url.create_time') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.isBlocked'|trans, 'url.is_blocked') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.blockTime'|trans, 'url.block_time') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -29,14 +29,11 @@
                     <td>{{ url.id }}</td>
                     <td>{{ url.shortName }}</td>
                     <td>{{ url.longName }}</td>
-                    <td>{{ url.createTime|date('Y/m/d') }}</td>
+                    <td>{{ url.createTime|format_date('long')}}</td>
                     <td>{{ url.isBlocked ? 'Yes' : 'No' }}</td>
                     <td>{{ url.blockTime|date('Y/m/d') }}</td>
-                    <td>
-                        <a href="{{ url('url_show', {id: url.id}) }}" title="{{ 'action.show'|trans }}">
-                            {{ 'action.show'|trans }}
-                        </a>
-                    </td>
+
+
                 </tr>
             {% endfor %}
             </tbody>
