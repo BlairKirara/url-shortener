@@ -22,4 +22,11 @@ interface UrlServiceInterface
      */
     public function getPaginatedList(int $page): PaginationInterface;
 
+    /**
+     * Save entity.
+     *
+     * @param Url $url Url entity
+     */
+    public function save(Url $url): void;
+
 }

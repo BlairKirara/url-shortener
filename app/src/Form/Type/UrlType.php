@@ -30,10 +30,10 @@ class UrlType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
-            'name',
+            'longName',
             TextType::class,
             [
-                'label' => 'label.name',
+                'label' => 'label.long_name',
                 'required' => true,
                 'attr' => ['max_length' => 64],
             ]);
@@ -59,6 +59,6 @@ class UrlType extends AbstractType
      */
     public function getBlockPrefix(): string
     {
-        return 'url';
+        return 'Url';
     }
 }

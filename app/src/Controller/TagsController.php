@@ -114,4 +114,45 @@ class TagsController extends AbstractController
             ['form' => $form->createView()]
         );
     }
+
+    /**
+     * Edit action.
+     *
+     * @param Request  $request  HTTP request
+     * @param Tags $tags Tags entity
+     *
+     * @return Response HTTP response
+     */
+    #[Route('/{id}/edit', name: 'tags_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
+    public function edit(Request $request, Tags $tags): Response
+    {
+        $form = $this->createForm(
+            TagsType::class,
+            $tags,
+            [
+                'method' => 'PUT',
+                'action' => $this->generateUrl('tags_edit', ['id' => $tags->getId()]),
+            ]
+        );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->tagsService->save($tags);
+
+            $this->addFlash(
+                'success',
+                $this->translator->trans('message.edited_successfully')
+            );
+
+            return $this->redirectToRoute('tags_index');
+        }
+
+        return $this->render(
+            'tags/edit.html.twig',
+            [
+                'form' => $form->createView(),
+                'tags' => $tags,
+            ]
+        );
+    }
 }
