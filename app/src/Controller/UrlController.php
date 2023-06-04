@@ -6,6 +6,7 @@ use App\Entity\Url;
 use App\Repository\UrlRepository;
 use App\Service\UrlServiceInterface;
 use App\Form\Type\UrlType;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +20,13 @@ class UrlController extends AbstractController
      * Url repository.
      */
     private UrlServiceInterface $urlService;
+
+    /**
+     * Translator.
+     *
+     * @var TranslatorInterface
+     */
+    private TranslatorInterface $translator;
 
     /**
      * Constructor.
@@ -89,6 +97,43 @@ class UrlController extends AbstractController
         return $this->render(
             'url/create.html.twig',
             ['form' => $form->createView()]
+        );
+    }
+
+    /**
+     * Delete action.
+     *
+     * @param Request  $request  HTTP request
+     * @param Url $url Url entity
+     *
+     * @return Response HTTP response
+     */
+    #[Route('/{id}/delete', name: 'url_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
+    public function delete(Request $request, Url $url): Response
+    {
+        $form = $this->createForm(UrlType::class, $url, [
+            'method' => 'DELETE',
+            'action' => $this->generateUrl('url_delete', ['id' => $url->getId()]),
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->urlService->delete($url);
+
+            $this->addFlash(
+                'success',
+                $this->translator->trans('message.deleted_successfully')
+            );
+
+            return $this->redirectToRoute('url_index');
+        }
+
+        return $this->render(
+            'url/delete.html.twig',
+            [
+                'form' => $form->createView(),
+                'url' => $url,
+            ]
         );
     }
 }

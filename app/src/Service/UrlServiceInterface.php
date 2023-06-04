@@ -29,4 +29,10 @@ interface UrlServiceInterface
      */
     public function save(Url $url): void;
 
+    /**
+     * Delete url.
+     * @param Url $url
+     */
+    public function delete(Url $url): void;
+
 }

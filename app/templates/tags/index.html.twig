@@ -31,10 +31,14 @@
                 <tr>
                     <td>{{ tags.id }}</td>
                     <td>{{ tags.name }}</td>
-
                     <td>
                         <a href="{{ url('tags_edit', {id: tags.id}) }}" title="{{ 'action.edit'|trans }}">
                             {{ 'action.edit'|trans }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{{ url('tags_delete', {id: tags.id}) }}" title="{{ 'action.delete'|trans }}">
+                            {{ 'action.delete'|trans }}
                         </a>
                     </td>
 
