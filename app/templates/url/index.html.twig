@@ -38,12 +38,17 @@
                     <td>{{ url.createTime|format_date('long')}}</td>
                     <td>{{ url.isBlocked ? 'Yes' : 'No' }}</td>
                     <td>{{ url.blockTime|date('Y/m/d') }}</td>
+                    <td>
+                        <a href="{{ url('url_edit', {id: url.id}) }}" title="{{ 'action.edit'|trans }}">
+                            {{ 'action.edit'|trans }}
+                        </a>
+                    </td>
                 <td>
                     <a href="{{ url('url_delete', {id: url.id}) }}" title="{{ 'action.delete'|trans }}">
                         {{ 'action.delete'|trans }}
                     </a>
                 </td>
-                </tr>
+
             {% endfor %}
             </tbody>
         </table>

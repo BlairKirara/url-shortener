@@ -30,11 +30,16 @@ class UrlController extends AbstractController
 
     /**
      * Constructor.
+     *
+     * @param UrlServiceInterface $urlService Url service
+     * @param TranslatorInterface      $translator  Translator
      */
-    public function __construct(UrlServiceInterface $urlService)
+    public function __construct(UrlServiceInterface $urlService, TranslatorInterface $translator)
     {
         $this->urlService = $urlService;
+        $this->translator = $translator;
     }
+
 
     #[Route(name: 'url_index', methods: 'GET')]
     public function index(Request $request, UrlRepository $urlRepository, PaginatorInterface $paginator): Response
@@ -97,6 +102,47 @@ class UrlController extends AbstractController
         return $this->render(
             'url/create.html.twig',
             ['form' => $form->createView()]
+        );
+    }
+
+    /**
+     * Edit action.
+     *
+     * @param Request  $request  HTTP request
+     * @param Url $url Url entity
+     *
+     * @return Response HTTP response
+     */
+    #[Route('/{id}/edit', name: 'url_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
+    public function edit(Request $request, Url $url): Response
+    {
+        $form = $this->createForm(
+            UrlType::class,
+            $url,
+            [
+                'method' => 'PUT',
+                'action' => $this->generateUrl('url_edit', ['id' => $url->getId()]),
+            ]
+        );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->urlService->save($url);
+
+            $this->addFlash(
+                'success',
+                $this->translator->trans('message.edited_successfully')
+            );
+
+            return $this->redirectToRoute('url_index');
+        }
+
+        return $this->render(
+            'url/edit.html.twig',
+            [
+                'form' => $form->createView(),
+                'url' => $url,
+            ]
         );
     }
 

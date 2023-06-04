@@ -6,18 +6,18 @@
 
 {% block body %}
     <h1>View url</h1>
-    {% if urls is defined and urls|length %}
+    {% if url is defined and url|length %}
         <dl>
             <dt>Long Name</dt>
-            <dd>{{ urls.longName }}</dd>
+            <dd>{{ url.longName }}</dd>
             <dt>Short Name</dt>
-            <dd>{{ urls.shortName }}</dd>
+            <dd>{{ url.shortName }}</dd>
             <dt>Create Time</dt>
-            <dd>{{ urls.createTime |date('Y-m-d H:i:s') }}</dd>
+            <dd>{{ url.createTime |date('Y-m-d H:i:s') }}</dd>
             <dt>Blocked</dt>
-            <dd>{{ urls.isBlocked ? 'Yes' : 'No' }}</dd>
+            <dd>{{ url.isBlocked ? 'Yes' : 'No' }}</dd>
             <dt>Blocked Till</dt>
-            <dd>{{ urls.blockTime |date('Y-m-d H:i:s') }}</dd>
+            <dd>{{ url.blockTime |date('Y-m-d H:i:s') }}</dd>
         </dl>
         <p>
             <a href="{{ url('url_index') }}" title="{{ 'action.back_to_list'|trans }}">
