@@ -43,7 +43,7 @@ class UrlService implements UrlServiceInterface
 
         $isUnique = false;
         while (!$isUnique) {
-            $shortName = 'short.name/';
+            $shortName = 'short.url/';
             for ($i = 0; $i < $length; ++$i) {
                 $shortName .= $char[rand(0, strlen($char) - 1)];
             }
@@ -72,8 +72,11 @@ class UrlService implements UrlServiceInterface
     public function save(Url $url): void
     {
         if (null == $url->getId()) {
+            $url->setCreateTime(new \DateTimeImmutable());
             $url->setShortName($this->shortenUrl());
+            $url->setIsBlocked(false);
         }
+
         $this->urlRepository->save($url);
     }
 
