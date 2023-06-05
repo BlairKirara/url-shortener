@@ -31,12 +31,49 @@ class UrlService implements UrlServiceInterface
     }
 
     /**
+    Generate a unique short URL.
+
+    @return string Short URL
+     */
+    public function shortenUrl(): string
+    {
+        $char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $length = 7;
+        $shortName = '';
+
+        $isUnique = false;
+        while (!$isUnique) {
+            $shortName = 'short.name/';
+            for ($i = 0; $i < $length; ++$i) {
+                $shortName .= $char[rand(0, strlen($char) - 1)];
+            }
+            $isUnique = $this->isShortNameUnique($shortName);
+        }
+
+        return $shortName;
+    }
+
+    /**
+    Check if the generated short URL is unique.
+    @param string $shortName Short URL to check
+    @return bool True if unique, False otherwise
+     */
+    private function isShortNameUnique(string $shortName): bool
+    {
+        return null === $this->urlRepository->findOneBy(['short_name' => $shortName]);
+    }
+    // enduwu
+
+    /**
      * Save entity.
      *
      * @param Url $url Url entity
      */
     public function save(Url $url): void
     {
+        if (null == $url->getId()) {
+            $url->setShortName($this->shortenUrl());
+        }
         $this->urlRepository->save($url);
     }
 
