@@ -31,27 +31,19 @@ class UrlService implements UrlServiceInterface
     }
 
     /**
-    Generate a unique short URL.
-
-    @return string Short URL
+     * Generate short url.
+     *
+     * @return string Short url
      */
     public function shortenUrl(): string
     {
-        $char = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        $length = 7;
-        $shortName = '';
-
-        $isUnique = false;
-        while (!$isUnique) {
-            $shortName = 'short.url/';
-            for ($i = 0; $i < $length; ++$i) {
-                $shortName .= $char[rand(0, strlen($char) - 1)];
-            }
-            $isUnique = $this->isShortNameUnique($shortName);
-        }
+        do {
+            $shortName = substr(md5(uniqid(rand(), true)), 0, 6);
+        } while (null !== $this->urlRepository->findOneBy(['short_name' => $shortName]));
 
         return $shortName;
     }
+
 
     /**
     Check if the generated short URL is unique.
@@ -91,15 +83,15 @@ class UrlService implements UrlServiceInterface
     }
 
     /**
-     * Find by title.
+     * Find one by short name.
      *
-     * @param string $name Url name
+     * @param string $shortName Short name
      *
      * @return Url|null Url entity
      */
-    public function findOneByName(string $name): ?Url
+    public function findOneByShortName(string $shortName): ?Url
     {
-        return $this->urlRepository->findOneByName($name);
+        return $this->urlRepository->findOneBy(['short_name' => $shortName]);
     }
 
     /**

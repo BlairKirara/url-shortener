@@ -23,34 +23,34 @@ class UrlRedirectController extends AbstractController
     }
 
     #[Route(
-        '/{shortUrl}',
+        '/{shortName}',
         name: 'url_redirect_index',
         methods: ['GET'],
     )]
-    public function index(string $shortUrl): Response
+    public function index(string $shortName): Response
     {
-        $url = $this->urlService->findOneByShortUrl($shortUrl);
+        $url = $this->urlService->findOneByShortName($shortName);
 
         if (!$url) {
             throw $this->createNotFoundException($this->translator->trans('message.url_not_found'));
         }
 
-        if ($url->isBlocked() && $url->getBlockExpiration() < new \DateTimeImmutable()) {
+        if ($url->isIsBlocked() && $url->getBlockExpiration() < new \DateTimeImmutable()) {
             $url->setBlocked(false);
             $url->setBlockExpiration(null);
             $this->urlService->save($url);
 
-            return new RedirectResponse($url->getLongUrl());
+            return new RedirectResponse($url->getLongName());
         }
 
-        if ($url->isBlocked() && $url->getBlockExpiration() > new \DateTimeImmutable()) {
+        if ($url->isIsBlocked() && $url->getBlockExpiration() > new \DateTimeImmutable()) {
             $this->addFlash('warning', $this->translator->trans('message.blocked_url'));
 
             return $this->redirectToRoute('url_index');
         }
 
-        if (!$url->isBlocked()) {
-            return new RedirectResponse($url->getLongUrl());
+        if (!$url->isIsBlocked()) {
+            return new RedirectResponse($url->getLongName());
         }
 
         return $this->redirectToRoute('url_index');
