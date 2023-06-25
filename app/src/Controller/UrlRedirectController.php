@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[Route('/r')]
+#[Route('/short')]
 class UrlRedirectController extends AbstractController
 {
     private UrlServiceInterface $urlService;
