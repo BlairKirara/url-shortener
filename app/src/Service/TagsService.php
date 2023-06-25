@@ -13,13 +13,14 @@ use Knp\Component\Pager\PaginatorInterface;
 class TagsService implements TagsServiceInterface
 {
     private TagsRepository $tagsRepository;
+
     private PaginatorInterface $paginator;
 
     public function __construct(TagsRepository $tagsRepository, PaginatorInterface $paginator)
     {
         $this->tagsRepository = $tagsRepository;
         $this->paginator = $paginator;
-    }
+    }// end __construct()
 
     public function getPaginatedList(int $page): PaginationInterface
     {
@@ -28,7 +29,7 @@ class TagsService implements TagsServiceInterface
             $page,
             TagsRepository::PAGINATOR_ITEMS_PER_PAGE
         );
-    }
+    }// end getPaginatedList()
 
     /**
      * Save entity.
@@ -37,9 +38,8 @@ class TagsService implements TagsServiceInterface
      */
     public function save(Tags $tags): void
     {
-
         $this->tagsRepository->save($tags);
-    }
+    }// end save()
 
     /**
      * Delete entity.
@@ -49,7 +49,7 @@ class TagsService implements TagsServiceInterface
     public function delete(Tags $tags): void
     {
         $this->tagsRepository->delete($tags);
-    }
+    }// end delete()
 
     /**
      * Find by title.
@@ -61,7 +61,7 @@ class TagsService implements TagsServiceInterface
     public function findOneByName(string $name): ?Tags
     {
         return $this->tagsRepository->findOneByName($name);
-    }
+    }// end findOneByName()
 
     /**
      * Find by id.
@@ -75,5 +75,17 @@ class TagsService implements TagsServiceInterface
     public function findOneById(int $id): ?Tags
     {
         return $this->tagsRepository->findOneById($id);
-    }
-}
+    }// end findOneById()
+
+    /**
+     * Find by title.
+     *
+     * @param string $title Tag title
+     *
+     * @return Tag|null Tag entity
+     */
+    public function findOneByTitle(string $title): ?Tag
+    {
+        return $this->tagRepository->findOneByTitle($title);
+    }// end findOneByTitle()
+}// end class

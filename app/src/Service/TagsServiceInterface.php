@@ -29,4 +29,13 @@ interface TagsServiceInterface
      */
     public function save(Tags $tags): void;
 
+    /**
+     * Find by title.
+     *
+     * @param string $title Tag title
+     *
+     * @return Tag|null Tag entity
+     */
+    public function findOneByTitle(string $title): ?Tag;
+
 }

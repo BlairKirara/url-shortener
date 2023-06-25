@@ -3,15 +3,17 @@
 namespace App\Controller;
 
 use App\Entity\Url;
+use App\Form\Type\UrlType;
 use App\Repository\UrlRepository;
 use App\Service\UrlServiceInterface;
-use App\Form\Type\UrlType;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
+
 
 #[Route('/url')]
 class UrlController extends AbstractController
@@ -23,8 +25,6 @@ class UrlController extends AbstractController
 
     /**
      * Translator.
-     *
-     * @var TranslatorInterface
      */
     private TranslatorInterface $translator;
 
@@ -32,7 +32,7 @@ class UrlController extends AbstractController
      * Constructor.
      *
      * @param UrlServiceInterface $urlService Url service
-     * @param TranslatorInterface      $translator  Translator
+     * @param TranslatorInterface $translator Translator
      */
     public function __construct(UrlServiceInterface $urlService, TranslatorInterface $translator)
     {
@@ -40,7 +40,12 @@ class UrlController extends AbstractController
         $this->translator = $translator;
     }
 
-
+    /**
+     * @param Request $request
+     * @param UrlRepository $urlRepository
+     * @param PaginatorInterface $paginator
+     * @return Response
+     */
     #[Route(name: 'url_index', methods: 'GET')]
     public function index(Request $request, UrlRepository $urlRepository, PaginatorInterface $paginator): Response
     {
@@ -56,6 +61,10 @@ class UrlController extends AbstractController
         );
     }
 
+    /**
+     * @param Url $url
+     * @return Response
+     */
     #[Route(
         '/{id}',
         name: 'url_show',
@@ -108,8 +117,8 @@ class UrlController extends AbstractController
     /**
      * Edit action.
      *
-     * @param Request  $request  HTTP request
-     * @param Url $url Url entity
+     * @param Request $request HTTP request
+     * @param Url     $url     Url entity
      *
      * @return Response HTTP response
      */
@@ -149,8 +158,8 @@ class UrlController extends AbstractController
     /**
      * Delete action.
      *
-     * @param Request  $request  HTTP request
-     * @param Url $url Url entity
+     * @param Request $request HTTP request
+     * @param Url     $url     Url entity
      *
      * @return Response HTTP response
      */
