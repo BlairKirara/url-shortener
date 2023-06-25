@@ -42,12 +42,12 @@ class UrlRepository extends ServiceEntityRepository
     /**
      * Query all records.
      *
-     * @return QueryBuilder Query builder
+     * @return \Doctrine\ORM\QueryBuilder Query builder
      */
     public function queryAll(): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder()
-            ->orderBy('url.id', 'DESC');
+            ->orderBy('url.create_time', 'DESC');
     }
 
     /**

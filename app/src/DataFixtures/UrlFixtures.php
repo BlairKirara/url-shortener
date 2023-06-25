@@ -1,36 +1,54 @@
 <?php
-/**
- * Url fixtures.
- */
 
 namespace App\DataFixtures;
 
+use App\Entity\Tags;
 use App\Entity\Url;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-/**
- * Class UrlFixtures.
- */
-class UrlFixtures extends AbstractBaseFixtures
+class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
 {
-    /**
-     * Load data.
-     */
     public function loadData(): void
     {
-        for ($i = 0; $i < 20; ++$i) {
-            $url = new Url();
-            $url->setShortName($this->faker->url);
-            $url->setLongName($this->faker->url);
-            $url->setCreateTime(
-                \DateTimeImmutable::createFromMutable($this->faker->dateTimeBetween('-100 days', '100 days'))
-            );
-            $url->setIsBlocked($this->faker->boolean);
-            $url->setBlockTime(
-                \DateTimeImmutable::createFromMutable($this->faker->dateTimeBetween('-100 days', '100 days'))
-            );
-            $this->manager->persist($url);
+        if (null === $this->manager || null === $this->faker) {
+            return;
         }
 
+        $this->createMany(60, 'urls', function () {
+            $url = new Url();
+            $url->setLongName($this->faker->url);
+            $url->setShortName($this->faker->regexify('[a-zA-Z0-9]{6}'));
+            $url->setCreateTime(
+                \DateTimeImmutable::createFromMutable(
+                    $this->faker->dateTimeBetween('-100 days', '-1 days')
+                )
+            );
+            $url->setIsBlocked($this->faker->boolean(20));
+
+            if ($url->isIsBlocked()) {
+                $url->setBlockTime(
+                    \DateTimeImmutable::createFromMutable(
+                        $this->faker->dateTimeBetween('-1 days', '+100 days')
+                    )
+                );
+            }
+
+            /** @var array<array-key, Tags> $tags */
+            $tags = $this->getRandomReferences('tags', $this->faker->numberBetween(0, 5));
+            foreach ($tags as $tag) {
+                $url->addTag($tag);
+            }
+
+            return $url;
+        });
+
         $this->manager->flush();
-    }// end loadData()
-}// end class
+    }
+
+    public function getDependencies(): array
+    {
+        return [
+            TagsFixtures::class,
+        ];
+    }
+}
