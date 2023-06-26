@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Url;
+use App\Entity\UrlData;
 use App\Service\UrlServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -50,6 +51,11 @@ class UrlRedirectController extends AbstractController
         }
 
         if (!$url->isIsBlocked()) {
+            $urlData = new UrlData();
+            $urlData>setVisitTime(new \DateTimeImmutable());
+            $urlData->setUrl($url);
+
+            $this->urlDataService->save($urlData);
             return new RedirectResponse($url->getLongName());
         }
 

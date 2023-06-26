@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230625195723 extends AbstractMigration
+final class Version20230626145801 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,16 +20,12 @@ final class Version20230625195723 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE url_data ADD url_id INT NOT NULL');
-        $this->addSql('ALTER TABLE url_data ADD CONSTRAINT FK_B3A73ADB81CFDAE7 FOREIGN KEY (url_id) REFERENCES urls (id)');
-        $this->addSql('CREATE INDEX IDX_B3A73ADB81CFDAE7 ON url_data (url_id)');
+        $this->addSql('CREATE TABLE users (id INT AUTO_INCREMENT NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, UNIQUE INDEX email_idx (email), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE url_data DROP FOREIGN KEY FK_B3A73ADB81CFDAE7');
-        $this->addSql('DROP INDEX IDX_B3A73ADB81CFDAE7 ON url_data');
-        $this->addSql('ALTER TABLE url_data DROP url_id');
+        $this->addSql('DROP TABLE users');
     }
 }

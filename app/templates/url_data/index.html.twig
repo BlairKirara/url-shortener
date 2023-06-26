@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title.url_data_list'|trans }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ 'title.url_data_list'|trans }}</h1>
+
+    {% if pagination is defined and pagination.items|length %}
+
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ knp_pagination_sortable(pagination, 'label.shortName'|trans, 'url.short_name') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.longName'|trans, 'url.long_name') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.visitTime'|trans, 'url_data.visit_time') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for url in pagination.items %}
+            <tr>
+                <td>
+                    <a href="{{ url('url_redirect_index', {'shortName' : url.shortName}) }}" title="{{ url.shortName }}" target="_blank">
+                        {{ absolute_url(url('url_redirect_index', {'shortName' : url.shortName})) }}
+                    </a>
+                </td>
+                <td>{{ url.longName }}</td>
+                <td>{{ url_data.visitTime|format_date('long')}}</td>
+
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
+    {% else %}
+        <p>
+            {% include 'default/_single_alert_message.html.twig' with {
+                type: 'warning',
+                message: 'message.empty_list'|trans
+            } %}
+        </p>
+    {% endif %}
+{% endblock %}
