@@ -1,20 +1,20 @@
 <?php
 /**
- * Tags type.
+ * Tag type.
  */
 
 namespace App\Form\Type;
 
-use App\Entity\Tags;
+use App\Entity\Tag;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class TagsType.
+ * Class TagType.
  */
-class TagsType extends AbstractType
+class TagType extends AbstractType
 {
     /**
      * Builds the form.
@@ -46,7 +46,7 @@ class TagsType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => Tags::class]);
+        $resolver->setDefaults(['data_class' => Tag::class]);
     }
 
     /**

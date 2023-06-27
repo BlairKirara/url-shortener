@@ -1,12 +1,12 @@
 <?php
 /**
- * Tags data transformer.
+ * Tag data transformer.
  */
 
 namespace App\Form\Type;
 
-use App\Entity\Tags;
-use App\Service\TagsServiceInterface;
+use App\Entity\Tag;
+use App\Service\TagServiceInterface;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\DataTransformerInterface;
 
@@ -20,14 +20,14 @@ class TagsDataTransformer implements DataTransformerInterface
     /**
      * Tag service.
      */
-    private TagsServiceInterface $tagsService;
+    private TagServiceInterface $tagsService;
 
     /**
      * Constructor.
      *
-     * @param TagsServiceInterface $tagsService Tag service
+     * @param TagServiceInterface $tagsService Tag service
      */
-    public function __construct(TagsServiceInterface $tagsService)
+    public function __construct(TagServiceInterface $tagsService)
     {
         $this->tagsService = $tagsService;
     }
@@ -35,7 +35,7 @@ class TagsDataTransformer implements DataTransformerInterface
     /**
      * Transform array of tags to string of tag names.
      *
-     * @param Collection<int, Tag> $value Tags entity collection
+     * @param Collection<int, Tag> $value Tag entity collection
      *
      * @return string Result
      */
@@ -71,7 +71,7 @@ class TagsDataTransformer implements DataTransformerInterface
             if ('' !== trim($tagNames)) {
                 $tag = $this->tagsService->findOneByName(strtolower($tagNames));
                 if (null === $tag) {
-                    $tag = new Tags();
+                    $tag = new Tag();
                     $tag->setName($tagNames);
 
                     $this->tagsService->save($tag);

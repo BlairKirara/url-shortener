@@ -1,13 +1,13 @@
 <?php
 /**
- * Tags controller.
+ * Tag controller.
  */
 
 namespace App\Controller;
 
-use App\Entity\Tags;
-use App\Service\TagsServiceInterface;
-use App\Form\Type\TagsType;
+use App\Entity\Tag;
+use App\Service\TagServiceInterface;
+use App\Form\Type\TagType;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Service\UrlServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,15 +16,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class TagsController.
+ * Class TagController.
  */
 #[Route('/tags')]
-class TagsController extends AbstractController
+class TagController extends AbstractController
 {
     /**
-     * Tags service.
+     * Tag service.
      */
-    private TagsServiceInterface $tagsService;
+    private TagServiceInterface $tagService;
 
     /**
      * Translator.
@@ -36,12 +36,12 @@ class TagsController extends AbstractController
 /**
 * Constructor.
 *
-* @param TagsServiceInterface $urlService Tags service
+* @param TagServiceInterface $urlService Tag service
 * @param TranslatorInterface      $translator  Translator
 */
-    public function __construct(TagsServiceInterface $tagsService, TranslatorInterface $translator)
+    public function __construct(TagServiceInterface $tagService, TranslatorInterface $translator)
     {
-        $this->tagsService = $tagsService;
+        $this->tagService = $tagService;
         $this->translator = $translator;
     }
 
@@ -55,7 +55,7 @@ class TagsController extends AbstractController
     #[Route(name: 'tags_index', methods: 'GET')]
     public function index(Request $request): Response
     {
-        $pagination = $this->tagsService->getPaginatedList(
+        $pagination = $this->tagService->getPaginatedList(
             $request->query->getInt('page', 1)
         );
 
@@ -65,7 +65,7 @@ class TagsController extends AbstractController
     /**
      * Show action.
      *
-     * @param Tags $tags Tags
+     * @param Tag $tags Tag
      *
      * @return Response HTTP response
      */
@@ -75,9 +75,9 @@ class TagsController extends AbstractController
         requirements: ['id' => '[1-9]\d*'],
         methods: 'GET'
     )]
-    public function show(Tags $tags): Response
+    public function show(Tag $tag): Response
     {
-        return $this->render('tags/show.html.twig', ['tags' => $tags]);
+        return $this->render('tags/show.html.twig', ['tag' => $tag]);
     }
 
     /**
@@ -94,12 +94,12 @@ class TagsController extends AbstractController
     )]
     public function create(Request $request): Response
     {
-        $tags = new Tags();
-        $form = $this->createForm(TagsType::class, $tags);
+        $tag = new Tag();
+        $form = $this->createForm(TagType::class, $tag);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->tagsService->save($tags);
+            $this->tagService->save($tag);
 
             $this->addFlash(
                 'success',
@@ -119,25 +119,25 @@ class TagsController extends AbstractController
      * Edit action.
      *
      * @param Request  $request  HTTP request
-     * @param Tags $tags Tags entity
+     * @param Tag $tag Tag entity
      *
      * @return Response HTTP response
      */
     #[Route('/{id}/edit', name: 'tags_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
-    public function edit(Request $request, Tags $tags): Response
+    public function edit(Request $request, Tag $tag): Response
     {
         $form = $this->createForm(
-            TagsType::class,
-            $tags,
+            TagType::class,
+            $tag,
             [
                 'method' => 'PUT',
-                'action' => $this->generateUrl('tags_edit', ['id' => $tags->getId()]),
+                'action' => $this->generateUrl('tags_edit', ['id' => $tag->getId()]),
             ]
         );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->tagsService->save($tags);
+            $this->tagService->save($tag);
 
             $this->addFlash(
                 'success',
@@ -151,7 +151,7 @@ class TagsController extends AbstractController
             'tags/edit.html.twig',
             [
                 'form' => $form->createView(),
-                'tags' => $tags,
+                'tag' => $tag,
             ]
         );
     }
@@ -160,21 +160,21 @@ class TagsController extends AbstractController
      * Delete action.
      *
      * @param Request  $request  HTTP request
-     * @param Tags $tags Tags entity
+     * @param Tag $tags Tag entity
      *
      * @return Response HTTP response
      */
     #[Route('/{id}/delete', name: 'tags_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
-    public function delete(Request $request, Tags $tags): Response
+    public function delete(Request $request, Tag $tag): Response
     {
-        $form = $this->createForm(TagsType::class, $tags, [
+        $form = $this->createForm(TagType::class, $tag, [
             'method' => 'DELETE',
-            'action' => $this->generateUrl('tags_delete', ['id' => $tags->getId()]),
+            'action' => $this->generateUrl('tags_delete', ['id' => $tag->getId()]),
         ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->tagsService->delete($tags);
+            $this->tagService->delete($tag);
 
             $this->addFlash(
                 'success',
@@ -188,7 +188,7 @@ class TagsController extends AbstractController
             'tags/delete.html.twig',
             [
                 'form' => $form->createView(),
-                'tags' => $tags,
+                'tag' => $tag,
             ]
         );
     }

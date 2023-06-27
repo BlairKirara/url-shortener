@@ -5,14 +5,14 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Tags;
+use App\Entity\Tag;
 
 /**
  * Class TagFixtures.
  *
  * @psalm-suppress MissingConstructor
  */
-class TagsFixtures extends AbstractBaseFixtures
+class TagFixtures extends AbstractBaseFixtures
 {
     /**
      * Load data.
@@ -26,7 +26,7 @@ class TagsFixtures extends AbstractBaseFixtures
             return;
         }
         $this->createMany(10, 'tags', function () {
-            $tag = new Tags();
+            $tag = new Tag();
             $tag->setName($this->faker->word);
 
             return $tag;

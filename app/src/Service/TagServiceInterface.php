@@ -1,17 +1,17 @@
 <?php
 /**
- * Tags service interface.
+ * Tag service interface.
  */
 
 namespace App\Service;
 
-use App\Entity\Tags;
+use App\Entity\Tag;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 
 /**
- * Interface TagsServiceInterface.
+ * Interface TagServiceInterface.
  */
-interface TagsServiceInterface
+interface TagServiceInterface
 {
     /**
      * Get paginated list.
@@ -25,17 +25,17 @@ interface TagsServiceInterface
     /**
      * Save entity.
      *
-     * @param Tags $tags Tags entity
+     * @param Tag $tags Tag entity
      */
-    public function save(Tags $tags): void;
+    public function save(Tag $tag): void;
 
     /**
      * Find by title.
      *
-     * @param string $title Tags title
+     * @param string $title Tag title
      *
-     * @return Tags|null Tags entity
+     * @return Tag|null Tag entity
      */
-    public function findOneByTitle(string $title): ?Tags;
+    public function findOneByTitle(string $title): ?Tag;
 
 }

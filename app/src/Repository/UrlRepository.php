@@ -104,9 +104,9 @@ class UrlRepository extends ServiceEntityRepository
     private function applyFiltersToList(QueryBuilder $queryBuilder, array $filters = []): QueryBuilder
     {
 
-        if (isset($filters['tags']) && $filters['tags'] instanceof Tags) {
-            $queryBuilder->andWhere('tags IN (:tags)')
-                ->setParameter('tags', $filters['tags']);
+        if (isset($filters['tag']) && $filters['tag'] instanceof Tag) {
+            $queryBuilder->andWhere('tags IN (:tag)')
+                ->setParameter('tag', $filters['tag']);
         }
 
         return $queryBuilder;

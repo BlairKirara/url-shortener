@@ -5,7 +5,7 @@
 
 namespace App\Form\Type;
 
-use App\Entity\Tags;
+use App\Entity\Tag;
 use App\Entity\Url;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,14 +18,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class UrlType extends AbstractType
 {
     /**
-     * Tags data transformer.
+     * Tag data transformer.
      */
     private TagsDataTransformer $tagsDataTransformer;
 
     /**
      * Constructor.
      *
-     * @param TagsDataTransformer $tagsDataTransformer Tags data transformer
+     * @param TagsDataTransformer $tagsDataTransformer Tag data transformer
      */
     public function __construct(TagsDataTransformer $tagsDataTransformer)
     {

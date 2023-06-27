@@ -33,14 +33,13 @@ class Url
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $block_time = null;
 
-    // ...
     /**
      * Tags.
      *
-     * @var ArrayCollection<int, Tags>
+     * @var ArrayCollection<int, Tag>
      */
     #[Assert\Valid]
-    #[ORM\ManyToMany(targetEntity: Tags::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
+    #[ORM\ManyToMany(targetEntity: Tag::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[ORM\JoinTable(name: 'urls_tags')]
     private $tags;
 
@@ -139,27 +138,35 @@ class Url
     }
 
     /**
-     * @return Collection<int, Tags>
+     * Getter for tags.
+     *
+     * @return Collection<int, Tag> Tags collection
      */
     public function getTags(): Collection
     {
         return $this->tags;
     }
 
-    public function addTag(Tags $tag): self
+    /**
+     * Add tag.
+     *
+     * @param Tag $tag Tag entity
+     */
+    public function addTag(Tag $tag): void
     {
         if (!$this->tags->contains($tag)) {
-            $this->tags->add($tag);
+            $this->tags[] = $tag;
         }
-
-        return $this;
     }
 
-    public function removeTag(Tags $tag): self
+    /**
+     * Remove tag.
+     *
+     * @param Tag $tag Tag entity
+     */
+    public function removeTag(Tag $tag): void
     {
         $this->tags->removeElement($tag);
-
-        return $this;
     }
 
     public function getUserId(): ?User

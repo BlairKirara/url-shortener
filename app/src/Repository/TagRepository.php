@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Tags;
+use App\Entity\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -10,14 +10,14 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Tags>
+ * @extends ServiceEntityRepository<Tag>
  *
- * @method Tags|null find($id, $lockMode = null, $lockVersion = null)
- * @method Tags|null findOneBy(array $criteria, array $orderBy = null)
- * @method Tags[]    findAll()
- * @method Tags[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Tag|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Tag|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Tag[]    findAll()
+ * @method Tag[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TagsRepository extends ServiceEntityRepository
+class TagRepository extends ServiceEntityRepository
 {
     /**
      * Items per page.
@@ -37,7 +37,7 @@ class TagsRepository extends ServiceEntityRepository
      */
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Tags::class);
+        parent::__construct($registry, Tag::class);
     }
 
     /**
@@ -49,9 +49,9 @@ class TagsRepository extends ServiceEntityRepository
     {
         return $this->getOrCreateQueryBuilder()
             ->select(
-                'partial tags.{id, name}'
+                'partial tag.{id, name}'
             )
-            ->orderBy('tags.id', 'ASC');
+            ->orderBy('tag.id', 'ASC');
     }
 
 
@@ -64,28 +64,28 @@ class TagsRepository extends ServiceEntityRepository
      */
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {
-        return $queryBuilder ?? $this->createQueryBuilder('tags');
+        return $queryBuilder ?? $this->createQueryBuilder('tag');
     }
 
 
     /**
      * Save entity.
      *
-     * @param Tags $tags Tags entity
+     * @param Tag $tag Tag entity
      */
-    public function save(Tags $tags): void {
-        $this->_em->persist($tags);
+    public function save(Tag $tag): void {
+        $this->_em->persist($tag);
         $this->_em->flush();
     }
 
     /**
      * Delete entity.
      *
-     * @param Tags $tags Tags entity
+     * @param Tag $tags Tag entity
      */
-    public function delete(Tags $tags): void
+    public function delete(Tag $tag): void
     {
-        $this->_em->remove($tags);
+        $this->_em->remove($tag);
         $this->_em->flush();
     }
 }

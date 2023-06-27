@@ -16,13 +16,13 @@ class UrlService implements UrlServiceInterface
     private UrlRepository $urlRepository;
     private PaginatorInterface $paginator;
 
-    private TagsServiceInterface $tagsService;
+    private TagServiceInterface $tagService;
 
-    public function __construct(UrlRepository $urlRepository, PaginatorInterface $paginator, TagsServiceInterface $tagsService)
+    public function __construct(UrlRepository $urlRepository, PaginatorInterface $paginator, TagServiceInterface $tagService)
     {
         $this->urlRepository = $urlRepository;
         $this->paginator = $paginator;
-        $this->tagsService = $tagsService;
+        $this->tagService = $tagService;
     }
 
     public function getPaginatedList(int $page, User|\App\Service\User $user, array $filters = []): PaginationInterface
@@ -123,7 +123,7 @@ class UrlService implements UrlServiceInterface
     {
         $resultFilters = [];
         if (!empty($filters['tag_id'])) {
-            $tag = $this->tagsService->findOneById($filters['tag_id']);
+            $tag = $this->tagService->findOneById($filters['tag_id']);
             if (null !== $tag) {
                 $resultFilters['tag'] = $tag;
             }

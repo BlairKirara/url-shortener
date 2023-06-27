@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Tags;
+use App\Entity\Tag;
 use App\Entity\Url;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -34,7 +34,7 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
                 );
             }
 
-            /** @var array<array-key, Tags> $tags */
+            /** @var array<array-key, Tag> $tags */
             $tags = $this->getRandomReferences('tags', $this->faker->numberBetween(0, 5));
             foreach ($tags as $tag) {
                 $url->addTag($tag);
@@ -53,7 +53,7 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
     public function getDependencies(): array
     {
         return [
-            TagsFixtures::class, UserFixtures::class
+            TagFixtures::class, UserFixtures::class
         ];
     }
 }
