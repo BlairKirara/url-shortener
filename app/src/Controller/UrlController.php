@@ -4,16 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Url;
 use App\Form\Type\UrlType;
-use App\Repository\UrlRepository;
 use App\Service\UrlServiceInterface;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
-
-
 
 #[Route('/url')]
 class UrlController extends AbstractController
@@ -40,31 +36,25 @@ class UrlController extends AbstractController
         $this->translator = $translator;
     }
 
-    /**
-     * @param Request $request
-     * @param UrlRepository $urlRepository
-     * @param PaginatorInterface $paginator
-     * @return Response
-     */
-    #[Route(name: 'url_index', methods: 'GET')]
-    public function index(Request $request, UrlRepository $urlRepository, PaginatorInterface $paginator): Response
+
+    #[Route(
+        name: 'url_index',
+        methods: 'GET'
+    )]
+    public function index(Request $request): Response
     {
-        $pagination = $paginator->paginate(
-            $urlRepository->queryAll(),
+        $filters = $this->getFilters($request);
+        /** @var User $user */
+        $user = $this->getUser();
+        $pagination = $this->urlService->getPaginatedList(
             $request->query->getInt('page', 1),
-            UrlRepository::PAGINATOR_ITEMS_PER_PAGE
+            $user,
+            $filters
         );
 
-        return $this->render(
-            'url/index.html.twig',
-            ['pagination' => $pagination]
-        );
+        return $this->render('url/index.html.twig', ['pagination' => $pagination]);
     }
 
-    /**
-     * @param Url $url
-     * @return Response
-     */
     #[Route(
         '/{id}',
         name: 'url_show',
@@ -74,6 +64,8 @@ class UrlController extends AbstractController
     public function show(Url $url): Response
     {
         return $this->render(
+
+
             'url/show.html.twig',
             ['url' => $url]
         );
@@ -86,15 +78,18 @@ class UrlController extends AbstractController
      *
      * @return Response HTTP response
      */
-    #[Route(
-        '/create',
-        name: 'url_create',
-        methods: 'GET|POST',
-    )]
+    #[Route('/create', name: 'url_create', methods: 'GET|POST')]
     public function create(Request $request): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
         $url = new Url();
-        $form = $this->createForm(UrlType::class, $url);
+        $url->setUser($user);
+        $form = $this->createForm(
+            UrlType::class,
+            $url,
+            ['action' => $this->generateUrl('url_create')]
+        );
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -190,5 +185,14 @@ class UrlController extends AbstractController
                 'url' => $url,
             ]
         );
+    }
+
+
+    private function getFilters(Request $request): array
+    {
+        $filters = [];
+        $filters['tag_id'] = $request->query->getInt('filters_tag_id');
+
+        return $filters;
     }
 }

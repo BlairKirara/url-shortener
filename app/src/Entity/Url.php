@@ -6,6 +6,7 @@ use App\Repository\UrlRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UrlRepository::class)]
@@ -42,6 +43,15 @@ class Url
     #[ORM\ManyToMany(targetEntity: Tags::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[ORM\JoinTable(name: 'urls_tags')]
     private $tags;
+
+
+    #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY')]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Assert\Type(User::class)]
+    private ?User $user;
+
+    #[ORM\ManyToOne]
+    private ?GuestUser $guest_user;
 
     public function __construct()
     {
@@ -148,6 +158,42 @@ class Url
     public function removeTag(Tags $tag): self
     {
         $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    public function getUserId(): ?User
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(?User $user_id): self
+    {
+        $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getGuestUser(): ?GuestUser
+    {
+        return $this->guest_user;
+    }
+
+    public function setGuestUser(?GuestUser $guest_user): self
+    {
+        $this->guest_user = $guest_user;
 
         return $this;
     }

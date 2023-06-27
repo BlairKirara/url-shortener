@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Tags;
 use App\Entity\Url;
+use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
@@ -39,6 +40,10 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
                 $url->addTag($tag);
             }
 
+            /** @var User $user */
+            $user = $this->getRandomReference('users');
+            $url->setUser($user);
+
             return $url;
         });
 
@@ -48,7 +53,7 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
     public function getDependencies(): array
     {
         return [
-            TagsFixtures::class,
+            TagsFixtures::class, UserFixtures::class
         ];
     }
 }

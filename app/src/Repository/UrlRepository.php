@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Url;
+use App\Entity\User;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -39,15 +41,17 @@ class UrlRepository extends ServiceEntityRepository
         parent::__construct($registry, Url::class);
     }
 
-    /**
-     * Query all records.
-     *
-     * @return \Doctrine\ORM\QueryBuilder Query builder
-     */
-    public function queryAll(): QueryBuilder
+    public function queryAll(array $filters): QueryBuilder
     {
-        return $this->getOrCreateQueryBuilder()
+        $queryBuilder = $this->getOrCreateQueryBuilder()
+            ->select(
+                'partial url.{id, short_name, long_name, create_time, is_blocked, block_time}',
+                'partial tags.{id, name}'
+            )
+            ->leftJoin('url.tags', 'tags')
             ->orderBy('url.create_time', 'DESC');
+
+        return $this->applyFiltersToList($queryBuilder, $filters);
     }
 
     /**
@@ -87,4 +91,24 @@ class UrlRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
+    public function queryByAuthor(UserInterface $user, array $filters = []): QueryBuilder
+    {
+        $queryBuilder = $this->queryAll($filters);
+
+        $queryBuilder->andWhere('url.user = :user')
+            ->setParameter('user', $user);
+
+        return $queryBuilder;
+    }
+
+    private function applyFiltersToList(QueryBuilder $queryBuilder, array $filters = []): QueryBuilder
+    {
+
+        if (isset($filters['tags']) && $filters['tags'] instanceof Tags) {
+            $queryBuilder->andWhere('tags IN (:tags)')
+                ->setParameter('tags', $filters['tags']);
+        }
+
+        return $queryBuilder;
+    }
 }

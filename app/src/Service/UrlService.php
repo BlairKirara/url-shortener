@@ -6,6 +6,7 @@
 namespace App\Service;
 
 use App\Entity\Url;
+use App\Entity\User;
 use App\Repository\UrlRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -15,35 +16,45 @@ class UrlService implements UrlServiceInterface
     private UrlRepository $urlRepository;
     private PaginatorInterface $paginator;
 
-    public function __construct(UrlRepository $urlRepository, PaginatorInterface $paginator)
+    private TagsServiceInterface $tagsService;
+
+    public function __construct(UrlRepository $urlRepository, PaginatorInterface $paginator, TagsServiceInterface $tagsService)
     {
         $this->urlRepository = $urlRepository;
         $this->paginator = $paginator;
+        $this->tagsService = $tagsService;
     }
 
-    public function getPaginatedList(int $page): PaginationInterface
+    public function getPaginatedList(int $page, User|\App\Service\User $user, array $filters = []): PaginationInterface
     {
+        $filters = $this->prepareFilters($filters);
+
         return $this->paginator->paginate(
-            $this->urlRepository->queryAll(),
+            $this->urlRepository->queryByAuthor($user, $filters),
             $page,
             UrlRepository::PAGINATOR_ITEMS_PER_PAGE
         );
     }
 
     /**
-     * Generate short url.
+     * Generate short URL.
      *
-     * @return string Short url
+     * @param int $length Length of the short URL
+     *
+     * @return string Short URL
      */
-    public function shortenUrl(): string
+    public function shortenUrl(int $length = 6): string
     {
-        do {
-            $shortName = substr(md5(uniqid(rand(), true)), 0, 6);
-        } while (null !== $this->urlRepository->findOneBy(['short_name' => $shortName]));
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $shortUrl = '';
 
-        return $shortName;
+        for ($i = 0; $i < $length; ++$i) {
+            $randomIndex = random_int(0, strlen($characters) - 1);
+            $shortUrl .= $characters[$randomIndex];
+        }
+
+        return $shortUrl;
     }
-
 
     /**
     Check if the generated short URL is unique.
@@ -106,5 +117,18 @@ class UrlService implements UrlServiceInterface
     public function findOneById(int $id): ?Url
     {
         return $this->urlRepository->findOneById($id);
+    }
+
+    private function prepareFilters(array $filters): array
+    {
+        $resultFilters = [];
+        if (!empty($filters['tag_id'])) {
+            $tag = $this->tagsService->findOneById($filters['tag_id']);
+            if (null !== $tag) {
+                $resultFilters['tag'] = $tag;
+            }
+        }
+
+        return $resultFilters;
     }
 }

@@ -46,27 +46,35 @@
                     <td>
                         {% if url.tags is defined and url.tags|length %}
                             {% for tag in url.tags %}
-                                {{ tag.name }}
+                                <a href="{{ url('url_index', {'filters.tag_id' : tag.id}) }}" title="{{ tag.name }}">
+                                    {{ tag.name }}
+                                </a>
                             {% endfor %}
                         {% else %}
                             &nbsp;
                         {% endif %}
                     </td>
+                    {% if is_granted('VIEW', url) %}
+                        <td>
+                        <a class="btn btn-outline-primary" href="{{ url('url_show', {id: url.id}) }}" title="{{ 'action.show'|trans }}">
+                            {{ 'action.show'|trans }}
+                        </a>
+                        </td>
+                    {% endif %}
                     <td>
-                        <a href="{{ url('url_edit', {id: url.id}) }}" title="{{ 'action.edit'|trans }}">
+                    {% if is_granted('EDIT', url) %}
+                        <a class="btn btn-outline-success" href="{{ url('url_edit', {id: url.id}) }}" title="{{ 'action.edit'|trans }}">
                             {{ 'action.edit'|trans }}
                         </a>
                     </td>
-                    <td>
-                        <a href="{{ url('url_delete', {id: url.id}) }}" title="{{ 'action.delete'|trans }}">
+                    {% endif %}
+                    {% if is_granted('DELETE', url) %}
+                        <td>
+                        <a class="btn btn-outline-danger" href="{{ url('url_delete', {id: url.id}) }}" title="{{ 'action.delete'|trans }}">
                             {{ 'action.delete'|trans }}
                         </a>
-                    </td>
-                    <td>
-                        <a href="{{ url('url_show', {id: url.id}) }}" title="{{ 'action.show'|trans }}">
-                            {{ 'action.show'|trans }}
-                        </a>
-                    </td>
+                        </td>
+                    {% endif %}
 
             {% endfor %}
             </tbody>

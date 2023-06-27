@@ -80,12 +80,13 @@ class TagsService implements TagsServiceInterface
     /**
      * Find by title.
      *
-     * @param string $title Tag title
+     * @param string $title Tags title
      *
-     * @return Tag|null Tag entity
+     * @return Tags|null Tag entity
      */
-    public function findOneByTitle(string $title): ?Tag
+    public function findOneByTitle(string $title): ?Tags
     {
-        return $this->tagRepository->findOneByTitle($title);
+        return $this->tagsRepository->findOneByTitle($title);
     }// end findOneByTitle()
+
 }// end class
