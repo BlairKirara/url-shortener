@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Url;
 use App\Entity\UrlData;
+use App\Service\UrlDataServiceInterface;
 use App\Service\UrlServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -15,11 +16,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class UrlRedirectController extends AbstractController
 {
     private UrlServiceInterface $urlService;
+
+    private UrlDataServiceInterface $urlDataService;
     private TranslatorInterface $translator;
 
-    public function __construct(UrlServiceInterface $urlService, TranslatorInterface $translator)
+    public function __construct(UrlServiceInterface $urlService, UrlDataServiceInterface $urlDataService, TranslatorInterface $translator)
     {
         $this->urlService = $urlService;
+        $this->urlDataService = $urlDataService;
         $this->translator = $translator;
     }
 
@@ -32,33 +36,16 @@ class UrlRedirectController extends AbstractController
     {
         $url = $this->urlService->findOneByShortName($shortName);
 
-        if (!$url) {
-            throw $this->createNotFoundException($this->translator->trans('message.url_not_found'));
-        }
 
-        if ($url->isIsBlocked() && $url->getBlockExpiration() < new \DateTimeImmutable()) {
-            $url->setBlocked(false);
-            $url->setBlockExpiration(null);
-            $this->urlService->save($url);
 
-            return new RedirectResponse($url->getLongName());
-        }
-
-        if ($url->isIsBlocked() && $url->getBlockExpiration() > new \DateTimeImmutable()) {
-            $this->addFlash('warning', $this->translator->trans('message.blocked_url'));
-
-            return $this->redirectToRoute('url_index');
-        }
-
-        if (!$url->isIsBlocked()) {
             $urlData = new UrlData();
-            $urlData>setVisitTime(new \DateTimeImmutable());
+            $urlData->setVisitTime(new \DateTimeImmutable());
             $urlData->setUrl($url);
 
             $this->urlDataService->save($urlData);
             return new RedirectResponse($url->getLongName());
-        }
 
-        return $this->redirectToRoute('url_index');
+
+
     }
 }

@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title.url_data_details'|trans({'%id%': url_data.id|default('')}) }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ 'url_data.url_data_details'|trans({'%id%': url_data.id|default('')}) }}</h1>
+    {% if url_data is defined and url_data|length %}
+        <dl class="dl-horizontal">
+            <dt>{{ 'label.id'|trans }}</dt>
+            <dd>{{ url_data.id }}</dd>
+            <dt>{{ 'label.url_id'|trans }}</dt>
+            <dd>{{ url_data.urlId }}</dd>
+            <dt>{{ 'label.visit_time'|trans }}</dt>
+            <dd>{{ url_data.visitTime|date('Y/m/d') }}</dd>
+        </dl>
+        <p>
+            <a href="{{ url('url_data_index') }}" title="{{ 'action.back_to_list'|trans }}">
+                {{ 'action.back_to_list'|trans }}
+            </a>
+        </p>
+    {% else %}
+        <p>
+            {{ 'message.record_not_found'|trans }}
+        </p>
+    {% endif %}
+{% endblock %}
