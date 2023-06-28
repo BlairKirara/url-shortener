@@ -10,6 +10,7 @@ use App\Form\Type\UrlType;
 use App\Service\GuestUserServiceInterface;
 use App\Service\UrlDataServiceInterface;
 use App\Service\UrlServiceInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -45,6 +46,8 @@ class UrlController extends AbstractController
      */
     private TranslatorInterface $translator;
 
+    private EntityManagerInterface $entityManager;
+
     /**
      * Constructor.
      *
@@ -53,11 +56,12 @@ class UrlController extends AbstractController
      * @param TranslatorInterface $translator
      * @param GuestUserServiceInterface $guestUserService
      */
-    public function __construct(UrlServiceInterface $urlService, UrlDataServiceInterface $urlDataService, TranslatorInterface $translator, GuestUserServiceInterface $guestUserService)
+    public function __construct(UrlServiceInterface $urlService, EntityManagerInterface $entityManager, UrlDataServiceInterface $urlDataService, TranslatorInterface $translator, GuestUserServiceInterface $guestUserService)
     {
         $this->urlService = $urlService;
         $this->urlDataService = $urlDataService;
         $this->translator = $translator;
+        $this->entityManager = $entityManager;
         $this->guestUserService = $guestUserService;
     }// end __construct()
 
@@ -175,7 +179,7 @@ class UrlController extends AbstractController
                 $email = $form->get('email')->getData();
                 $guestUser = new GuestUser();
                 $guestUser->setEmail($email);
-                $this->guestUserService->save($guestUser);
+                $this->entityManager->persist($guestUser); // Explicitly persist the GuestUser entity
                 $url->setGuestUser($guestUser);
             }
 
