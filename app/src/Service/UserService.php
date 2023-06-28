@@ -1,7 +1,4 @@
 <?php
-/**
- * User service.
- */
 
 namespace App\Service;
 

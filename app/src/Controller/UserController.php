@@ -17,36 +17,20 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-/**
- * Class UserController.
- */
+
 #[Route('/user')]
 class UserController extends AbstractController
 {
-    /**
-     * User service.
-     */
+
     private userServiceInterface $userService;
 
-    /**
-     * Translator.
-     */
+
     private TranslatorInterface $translator;
 
-    /**
-     * Password hasher.
-     */
+
     private UserPasswordHasherInterface $passwordHasher;
 
-    /**
-     * Constructor.
-     *
-     * @param UserServiceInterface        $userService    User service
-     * @param TranslatorInterface         $translator     Translator
-     * @param UserPasswordHasherInterface $passwordHasher Password hasher
-     *
-     * @return void
-     */
+
     public function __construct(UserServiceInterface $userService, TranslatorInterface $translator, UserPasswordHasherInterface $passwordHasher)
     {
         $this->userService = $userService;
@@ -54,13 +38,7 @@ class UserController extends AbstractController
         $this->passwordHasher = $passwordHasher;
     }
 
-    /**
-     * Index action.
-     *
-     * @param Request $request HTTP request
-     *
-     * @return Response HTTP response
-     */
+
     #[Route(name: 'user_index', methods: 'GET')]
     #[IsGranted('ROLE_ADMIN')]
     public function index(Request $request): Response
@@ -73,13 +51,7 @@ class UserController extends AbstractController
         );
     }
 
-    /**
-     * Show action.
-     *
-     * @param User $user User entity
-     *
-     * @return Response HTTP response
-     */
+
     #[Route('/{id}', name: 'user_show', requirements: ['id' => '[1-9]\d*'], methods: ['GET'])]
     #[IsGranted('VIEW', subject: 'user')]
     public function show(User $user): Response
@@ -90,14 +62,6 @@ class UserController extends AbstractController
         );
     }
 
-    /**
-     * Edit action.
-     *
-     * @param Request $request HTTP request
-     * @param User    $user    User entity
-     *
-     * @return Response HTTP response
-     */
     #[Route('/{id}/edit/password', name: 'user_edit', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
     #[IsGranted('EDIT_USER_DATA', subject: 'user')]
     public function edit(Request $request, User $user): Response
@@ -122,14 +86,7 @@ class UserController extends AbstractController
         );
     }
 
-    /**
-     * Edit email action.
-     *
-     * @param Request $request HTTP request
-     * @param User    $user    User entity
-     *
-     * @return Response HTTP response
-     */
+
     #[Route('/{id}/edit/email', name: 'user_edit_email', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
     #[IsGranted('EDIT_USER_DATA', subject: 'user')]
     public function editEmail(Request $request, User $user): Response

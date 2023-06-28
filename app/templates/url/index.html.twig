@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ 'title.url_list'|trans }}
+    {{ 'title.list'|trans }}
 {% endblock %}
 
 {% block body %}
-    <h1>{{ 'title.url_list'|trans }}</h1>
+    <h1>{{ 'title.list'|trans }}</h1>
     <p>
         <a href="{{ url('url_create') }}" class="btn btn-primary">
             {{ 'action.create'|trans }}
@@ -47,7 +47,7 @@
                     <td>
                         {% if url.tags is defined and url.tags|length %}
                             {% for tag in url.tags %}
-                                <a href="{{ url('url_list', {'filters.tag_id' : tag.id}) }}" title="{{ tag.name }}">
+                                <a href="{{ url('list', {'filters.tag_id' : tag.id}) }}" title="{{ tag.name }}">
                                     {{ tag.name }}
                                 </a>
                             {% endfor %}
@@ -76,6 +76,19 @@
                             </a>
                         </td>
                     {% endif %}
+                    <td>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {% if url is defined and url.isBlocked %}
+                                <a class="btn btn-outline-warning" href="{{ url('url_unblock', {id: url.id}) }}" title="{{ 'action.unblock'|trans }}">
+                                    {{ 'action.unblock'|trans }}
+                                </a>
+                            {% else %}
+                                <a class="btn btn-outline-warning" href="{{ url('url_block', {id: url.id}) }}" title="{{ 'action.block'|trans }}">
+                                    {{ 'action.block'|trans }}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

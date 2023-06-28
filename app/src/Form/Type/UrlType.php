@@ -1,7 +1,4 @@
 <?php
-/**
- * Url type.
- */
 
 namespace App\Form\Type;
 
@@ -23,45 +20,21 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * Class UrlType.
- */
+
 class UrlType extends AbstractType
 {
-    /**
-     * Tags data transformer.
-     */
+
     private TagsDataTransformer $tagsDataTransformer;
 
-    /**
-     * Security.
-     */
+
     private Security $security;
 
-    /**
-     * Guest user service.
-     */
     private GuestUserService $guestUserService;
 
-    /**
-     * Translator.
-     */
     private TranslatorInterface $translator;
 
-    /**
-     * Request stack.
-     */
     private RequestStack $requestStack;
 
-    /**
-     * Constructor.
-     *
-     * @param TagsDataTransformer $tagsDataTransformer Tags data transformer
-     * @param Security            $security            Security
-     * @param GuestUserService    $guestUserService    Guest user service
-     * @param TranslatorInterface $translator          Translator
-     * @param RequestStack        $requestStack        Request stack
-     */
     public function __construct(TagsDataTransformer $tagsDataTransformer, Security $security, GuestUserService $guestUserService, TranslatorInterface $translator, RequestStack $requestStack)
     {
         $this->tagsDataTransformer = $tagsDataTransformer;
@@ -71,17 +44,6 @@ class UrlType extends AbstractType
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * Builds the form.
-     *
-     * This method is called for each type in the hierarchy starting from the
-     * top most type. Type extensions can further modify the form.
-     *
-     * @param FormBuilderInterface $builder The form builder
-     * @param array<string, mixed> $options Form options
-     *
-     * @see FormTypeExtensionInterface::buildForm()
-     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->security->getUser()) {
@@ -136,11 +98,6 @@ class UrlType extends AbstractType
         );
     }
 
-    /**
-     * Configures the options for this type.
-     *
-     * @param OptionsResolver $resolver The resolver for the options
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -148,14 +105,6 @@ class UrlType extends AbstractType
         ]);
     }
 
-    /**
-     * Returns the prefix of the template block name for this type.
-     *
-     * The block prefix defaults to the underscored short class name with
-     * the "Type" suffix removed (e.g. "UserProfileType" => "user_profile").
-     *
-     * @return string The prefix of the template block name
-     */
     public function getBlockPrefix(): string
     {
         return 'Url';

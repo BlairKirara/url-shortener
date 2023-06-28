@@ -1,13 +1,11 @@
 <?php
-/*
- * Url redirect controller.
- */
+
 
 namespace App\Controller;
 
 use App\Entity\UrlData;
 use App\Service\UrlServiceInterface;
-use App\Service\UrlDataService;
+use App\Service\UrlDataServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,10 +23,10 @@ class UrlRedirectController extends AbstractController
     private TranslatorInterface $translator;
 
 
-    private UrlDataService $urlDataService;
+    private UrlDataServiceInterface $urlDataService;
 
 
-    public function __construct(UrlServiceInterface $urlService, TranslatorInterface $translator, UrlDataService $urlDataService)
+    public function __construct(UrlServiceInterface $urlService, TranslatorInterface $translator, UrlDataServiceInterface $urlDataService)
     {
         $this->urlService = $urlService;
         $this->translator = $translator;

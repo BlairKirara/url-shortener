@@ -1,7 +1,4 @@
 <?php
-/**
- * Guest User service.
- */
 
 namespace App\Service;
 

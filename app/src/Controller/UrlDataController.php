@@ -1,7 +1,4 @@
 <?php
-/*
- * Url visited controller.
- */
 
 namespace App\Controller;
 
@@ -11,10 +8,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * Class UrlDataController.
- */
-#[Route('/popular')]
+
+#[Route('/visits')]
 class UrlDataController extends AbstractController
 {
 
@@ -26,20 +21,14 @@ class UrlDataController extends AbstractController
         $this->urlDataService = $urlDataService;
     }
 
-    /**
-     * Most visited action.
-     *
-     * @param Request $request HTTP request
-     *
-     * @return Response HTTP response
-     */
-    #[Route(name: 'popular_index', methods: 'GET')]
-    public function mostVisited(Request $request): Response
+
+    #[Route(name: 'visits_index', methods: 'GET')]
+    public function visitsCount(Request $request): Response
     {
         $pagination = $this->urlDataService->countAllVisitsForUrl(
             $request->query->getInt('page', 1)
         );
 
-        return $this->render('url_visited/most_visited.html.twig', ['pagination' => $pagination]);
+        return $this->render('url_data/url_visits.html.twig', ['pagination' => $pagination]);
     }
 }

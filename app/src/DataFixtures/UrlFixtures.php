@@ -1,7 +1,4 @@
 <?php
-/**
- * Url fixtures.
- */
 
 namespace App\DataFixtures;
 
@@ -11,17 +8,10 @@ use App\Entity\Url;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-/**
- * Class UrlFixtures.
- */
+
 class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
 {
-    /**
-     * Load data.
-     *
-     * @psalm-suppress PossiblyNullReference
-     * @psalm-suppress UnusedClosureParam
-     */
+
     public function loadData(): void
     {
         if (null === $this->manager || null === $this->faker) {
@@ -66,14 +56,6 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
         $this->manager->flush();
     }
 
-    /**
-     * This method must return an array of fixtures classes
-     * on which the implementing class depends on.
-     *
-     * @return string[] of dependencies
-     *
-     * @psalm-return array{0: TagFixtures::class, 1: UserFixtures::class, 2: GuestUserFixtures::class}
-     */
     public function getDependencies(): array
     {
         return [

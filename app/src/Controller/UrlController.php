@@ -1,7 +1,4 @@
 <?php
-/**
- * Url controller.
- */
 
 namespace App\Controller;
 
@@ -70,16 +67,10 @@ class UrlController extends AbstractController
         return $this->render('url/index.html.twig', ['pagination' => $pagination]);
     }
 
-    /**
-     * URL List action.
-     *
-     * @param Request $request HTTP Request
-     *
-     * @return Response HTTP response
-     */
+
     #[Route(
         '/list',
-        name: 'url_list',
+        name: 'list',
         methods: 'GET'
     )]
     public function list(Request $request): Response
@@ -90,7 +81,7 @@ class UrlController extends AbstractController
             $filters
         );
 
-        return $this->render('url/url_list.html.twig', ['pagination' => $pagination]);
+        return $this->render('url/list.html.twig', ['pagination' => $pagination]);
     }
 
 
@@ -134,7 +125,7 @@ class UrlController extends AbstractController
 
             $this->addFlash('success', $this->translator->trans('message.created_successfully'));
 
-            return $this->redirectToRoute('url_list');
+            return $this->redirectToRoute('list');
         }
 
         return $this->render(
@@ -202,7 +193,7 @@ class UrlController extends AbstractController
             $this->urlService->save($url);
             $this->addFlash('success', $this->translator->trans('message.blocked_successfully'));
 
-            return $this->redirectToRoute('url_list');
+            return $this->redirectToRoute('list');
         }
 
         return $this->render(
@@ -225,7 +216,7 @@ class UrlController extends AbstractController
             $this->urlService->save($url);
             $this->addFlash('success', $this->translator->trans('message.unblocked_successfully'));
 
-            return $this->redirectToRoute('url_list');
+            return $this->redirectToRoute('list');
         }
 
         $form = $this->createForm(
@@ -246,7 +237,7 @@ class UrlController extends AbstractController
             $this->urlService->save($url);
             $this->addFlash('success', $this->translator->trans('message.unblocked_successfully'));
 
-            return $this->redirectToRoute('url_list');
+            return $this->redirectToRoute('list');
         }
 
         return $this->render(

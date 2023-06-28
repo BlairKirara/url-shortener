@@ -1,23 +1,13 @@
 <?php
-/**
- * Guest User fixtures.
- */
 
 namespace App\DataFixtures;
 
 use App\Entity\GuestUser;
 
-/**
- * Class GuestUserFixtures.
- */
+
 class GuestUserFixtures extends AbstractBaseFixtures
 {
-    /**
-     * Load data.
-     *
-     * @psalm-suppress PossiblyNullReference
-     * @psalm-suppress UnusedClosureParam
-     */
+
     public function loadData(): void
     {
         if (null === $this->manager || null === $this->faker) {

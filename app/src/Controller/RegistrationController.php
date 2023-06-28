@@ -1,7 +1,4 @@
 <?php
-/**
- * Registration controller.
- */
 
 namespace App\Controller;
 

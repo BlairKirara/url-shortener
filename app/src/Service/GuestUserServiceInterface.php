@@ -4,9 +4,7 @@ namespace App\Service;
 
 use App\Entity\GuestUser;
 
-/**
- * Interface GuestUserServiceInterface.
- */
+
 interface GuestUserServiceInterface
 {
 

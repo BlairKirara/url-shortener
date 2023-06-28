@@ -1,7 +1,4 @@
 <?php
-/*
- * User email type.
- */
 
 namespace App\Form\Type;
 
@@ -13,20 +10,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-/**
- * Class UserEmailType.
- */
+
 class UserEmailType extends AbstractType
 {
-    /**
-     * Builds the form.
-     *
-     * This method is called for each type in the hierarchy starting from the
-     * top most type. Type extensions can further modify the form.
-     *
-     * @param FormBuilderInterface<mixed> $builder The form builder
-     * @param array<string, mixed>        $options The options
-     */
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
@@ -44,11 +31,7 @@ class UserEmailType extends AbstractType
         );
     }
 
-    /**
-     * Configures the options for this type.
-     *
-     * @param OptionsResolver<mixed> $resolver The resolver for the options
-     */
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class' => User::class]);

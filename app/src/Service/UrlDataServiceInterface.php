@@ -4,9 +4,7 @@ namespace App\Service;
 use App\Entity\UrlData;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 
-/**
- * Interface UrlDataServiceInterface.
- */
+
 interface UrlDataServiceInterface
 {
 

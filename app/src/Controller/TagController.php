@@ -1,7 +1,4 @@
 <?php
-/**
- * Tag controller.
- */
 
 namespace App\Controller;
 
@@ -20,14 +17,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/tag')]
 class TagController extends AbstractController
 {
-    /**
-     * Tag service.
-     */
+
     private TagServiceInterface $tagService;
 
-    /**
-     * Translator.
-     */
+
     private TranslatorInterface $translator;
 
 

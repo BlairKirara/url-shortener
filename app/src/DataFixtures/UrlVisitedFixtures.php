@@ -1,24 +1,14 @@
 <?php
-/**
- * Url Visited fixtures.
- */
 
 namespace App\DataFixtures;
 
 use App\Entity\UrlData;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-/**
- * Class UrlVisitedFixtures.
- */
+
 class UrlVisitedFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
 {
-    /**
-     * Load data.
-     *
-     * @psalm-suppress PossiblyNullReference
-     * @psalm-suppress UnusedClosureParam
-     */
+
     public function loadData(): void
     {
         if (null === $this->manager || null === $this->faker) {
@@ -38,11 +28,6 @@ class UrlVisitedFixtures extends AbstractBaseFixtures implements DependentFixtur
         $this->manager->flush();
     }
 
-    /**
-     * Get dependencies.
-     *
-     * @return array<int, string>
-     */
     public function getDependencies(): array
     {
         return [
