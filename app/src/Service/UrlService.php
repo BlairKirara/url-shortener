@@ -99,7 +99,7 @@ class UrlService implements UrlServiceInterface
 
     public function findOneByShortName(string $shortName): ?Url
     {
-        return $this->urlRepository->findOneBy(['shortName' => $shortName]);
+        return $this->urlRepository->findOneByShortName(['shortName' => $shortName]);
     }
 
 

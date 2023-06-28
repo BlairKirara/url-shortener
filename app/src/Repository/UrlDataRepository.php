@@ -21,23 +21,25 @@ class UrlDataRepository extends ServiceEntityRepository
 
     public function countVisits(): array
     {
-        $queryBuilder = $this->getOrCreateQueryBuilder()
-            ->select('count(urlData.id) as visits, url.longName, url.shortName, MAX(urlData.visitTime) as latestVisitTime')
-            ->leftJoin('urlData.url', 'url')
-            ->groupBy('urlData.url', 'url.longName', 'url.shortName')
-            ->orderBy('visits', 'DESC');
+        $queryBuilder = $this->getOrCreateQueryBuilder();
+        $queryBuilder->select('count(urlData.id) as visits, url.shortName, url.longName');
+        $queryBuilder->leftJoin('urlData.url', 'url');
+        $queryBuilder->groupBy('urlData.url', 'url.longName', 'url.shortName');
+        $queryBuilder->orderBy('visits', 'DESC');
 
         return $queryBuilder->getQuery()->getResult();
     }
 
     public function deleteUrlVisits(int $id): void
     {
-        $this->createQueryBuilder('urlData')
+        $queryBuilder = $this->createQueryBuilder('urlData');
+        $queryBuilder
             ->delete()
             ->where('urlData.url = :id')
-            ->setParameter('id', $id)
-            ->getQuery()
-            ->execute();
+            ->setParameter('id', $id);
+
+        $query = $queryBuilder->getQuery();
+        $query->execute();
     }
 
 

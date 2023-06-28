@@ -86,7 +86,7 @@ class UrlType extends AbstractType
                 $email = $event->getForm()->get('email')->getData();
                 $count = $this->guestUserService->countEmailUse($email);
                 if ($count >= 10) {
-                    $event->getForm()->addError(new FormError($this->translator->trans('message.email_limit_exceeded')));
+                    $event->getForm()->addError(new FormError($this->translator->trans('message.daily_limit')));
                 }
             });
         }

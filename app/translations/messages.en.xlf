@@ -2,7 +2,286 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" datatype="plaintext" original="file.ext">
     <body>
-
+      <trans-unit id="1">
+        <source>message.registered</source>
+        <target>Registered successfully.</target>
+      </trans-unit>
+      <trans-unit id="2">
+        <source>message.created</source>
+        <target>Created successfully.</target>
+      </trans-unit>
+      <trans-unit id="3">
+        <source>message.deleted</source>
+        <target>Deleted successfully.</target>
+      </trans-unit>
+      <trans-unit id="4">
+        <source>message.updated</source>
+        <target>Updated successfully.</target>
+      </trans-unit>
+      <trans-unit id="5">
+        <source>message.url_does_not_exist</source>
+        <target>The URL does not exist.</target>
+      </trans-unit>
+      <trans-unit id="6">
+        <source>message.blocked_url</source>
+        <target>The URL is blocked.</target>
+      </trans-unit>
+      <trans-unit id="7">
+        <source>message.blocked</source>
+        <target>Blocked successfully.</target>
+      </trans-unit>
+      <trans-unit id="8">
+        <source>message.unblocked</source>
+        <target>Unblocked successfully.</target>
+      </trans-unit>
+      <trans-unit id="9">
+        <source>message.email_limit</source>
+        <target>Email limit exceeded.</target>
+      </trans-unit>
+      <trans-unit id="10">
+        <source>title.user_register</source>
+        <target>User Registration</target>
+      </trans-unit>
+      <trans-unit id="11">
+        <source>action_register</source>
+        <target>Register</target>
+      </trans-unit>
+      <trans-unit id="12">
+        <source>title.list</source>
+        <target>List</target>
+      </trans-unit>
+      <trans-unit id="13">
+        <source>action.create</source>
+        <target>Create</target>
+      </trans-unit>
+      <trans-unit id="14">
+        <source>label.id</source>
+        <target>ID</target>
+      </trans-unit>
+      <trans-unit id="15">
+        <source>label.shortName</source>
+        <target>Short URL</target>
+      </trans-unit>
+      <trans-unit id="16">
+        <source>label.longName</source>
+        <target>Long Url</target>
+      </trans-unit>
+      <trans-unit id="17">
+        <source>label.createTime</source>
+        <target>Create Time</target>
+      </trans-unit>
+      <trans-unit id="18">
+        <source>label.isBlocked</source>
+        <target>Blocked</target>
+      </trans-unit>
+      <trans-unit id="19">
+        <source>label.blockTime</source>
+        <target>Blocked Till</target>
+      </trans-unit>
+      <trans-unit id="20">
+        <source>label.tag</source>
+        <target>Tag</target>
+      </trans-unit>
+      <trans-unit id="21">
+        <source>action.show</source>
+        <target>Show</target>
+      </trans-unit>
+      <trans-unit id="22">
+        <source>action.edit</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="23">
+        <source>action.delete</source>
+        <target>Delete</target>
+      </trans-unit>
+      <trans-unit id="24">
+        <source>action.unblock</source>
+        <target>Unblock</target>
+      </trans-unit>
+      <trans-unit id="25">
+        <source>action.block</source>
+        <target>Block</target>
+      </trans-unit>
+      <trans-unit id="26">
+        <source>message.empty_list</source>
+        <target>The list is empty.</target>
+      </trans-unit>
+      <trans-unit id="27">
+        <source>title.url_edit</source>
+        <target>Edit URL</target>
+      </trans-unit>
+      <trans-unit id="28">
+        <source>action.back_to_list</source>
+        <target>Back to List</target>
+      </trans-unit>
+      <trans-unit id="29">
+        <source>title.visits</source>
+        <target>Visits</target>
+      </trans-unit>
+      <trans-unit id="30">
+        <source>label.short_name</source>
+        <target>Short Name</target>
+      </trans-unit>
+      <trans-unit id="31">
+        <source>label.url</source>
+        <target>URL</target>
+      </trans-unit>
+      <trans-unit id="32">
+        <source>label.count</source>
+        <target>Count</target>
+      </trans-unit>
+      <trans-unit id="33">
+        <source>title.url_unblock</source>
+        <target>Unblock URL</target>
+      </trans-unit>
+      <trans-unit id="34">
+        <source>label.actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="35">
+        <source>title.url_delete</source>
+        <target>Delete URL</target>
+      </trans-unit>
+      <trans-unit id="36">
+        <source>title.url_block</source>
+        <target>Block URL</target>
+      </trans-unit>
+      <trans-unit id="37">
+        <source>title.url_create</source>
+        <target>Create URL</target>
+      </trans-unit>
+      <trans-unit id="38">
+        <source>action.save</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="39">
+        <source>message.form_error</source>
+        <target>An error occurred while submitting the form.</target>
+      </trans-unit>
+      <trans-unit id="40">
+        <source>title.user_urls</source>
+        <target>Your URLs</target>
+      </trans-unit>
+      <trans-unit id="41">
+        <source>title.url_visits</source>
+        <target>URL Visits</target>
+      </trans-unit>
+      <trans-unit id="42">
+        <source>title.user_list</source>
+        <target>User List</target>
+      </trans-unit>
+      <trans-unit id="43">
+        <source>title.tag_list</source>
+        <target>Tag List</target>
+      </trans-unit>
+      <trans-unit id="44">
+        <source>action.logout</source>
+        <target>Logout</target>
+      </trans-unit>
+      <trans-unit id="45">
+        <source>action.login</source>
+        <target>Login</target>
+      </trans-unit>
+      <trans-unit id="46">
+        <source>action.register</source>
+        <target>Register</target>
+      </trans-unit>
+      <trans-unit id="47">
+        <source>title.tag_edit</source>
+        <target>Edit Tag</target>
+      </trans-unit>
+      <trans-unit id="48">
+        <source>label.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="49">
+        <source>message.record_not_found</source>
+        <target>Record not found.</target>
+      </trans-unit>
+      <trans-unit id="50">
+        <source>title.url_list</source>
+        <target>URL List</target>
+      </trans-unit>
+      <trans-unit id="51">
+        <source>title.tag_delete</source>
+        <target>Delete Tag</target>
+      </trans-unit>
+      <trans-unit id="52">
+        <source>title.tag_create</source>
+        <target>Create Tag</target>
+      </trans-unit>
+      <trans-unit id="53">
+        <source>title.user_email_edit</source>
+        <target>Edit User Email</target>
+      </trans-unit>
+      <trans-unit id="54">
+        <source>title.password.edit</source>
+        <target>Edit Password</target>
+      </trans-unit>
+      <trans-unit id="55">
+        <source>title.profile</source>
+        <target>Profile</target>
+      </trans-unit>
+      <trans-unit id="56">
+        <source>user.id</source>
+        <target>User ID</target>
+      </trans-unit>
+      <trans-unit id="57">
+        <source>user.email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="58">
+        <source>label.edit</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="59">
+        <source>label.user_id</source>
+        <target>User ID</target>
+      </trans-unit>
+      <trans-unit id="60">
+        <source>label.user_email</source>
+        <target>User Email</target>
+      </trans-unit>
+      <trans-unit id="61">
+        <source>title.home</source>
+        <target>Home</target>
+      </trans-unit>
+      <trans-unit id="62">
+        <source>message.daily_limit</source>
+        <target>You reached your daily limit!</target>
+      </trans-unit>
+      <trans-unit id="63">
+        <source>title.url_show</source>
+        <target>Show url.</target>
+      </trans-unit>
+      <trans-unit id="64">
+        <source>title.tag_show</source>
+        <target>Show tag.</target>
+      </trans-unit>
+      <trans-unit id="65">
+        <source>label.long_name</source>
+        <target>Long URL</target>
+      </trans-unit>
+      <trans-unit id="66">
+        <source>label.tags</source>
+        <target>Tags</target>
+      </trans-unit>
+      <trans-unit id="67">
+        <source>label.email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="68">
+        <source>label.password</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="69">
+        <source>label.repeat_password</source>
+        <target>Repeat password</target>
+      </trans-unit>
+      <trans-unit id="70">
+        <source>title.login_message</source>
+        <target>Please sign in</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
