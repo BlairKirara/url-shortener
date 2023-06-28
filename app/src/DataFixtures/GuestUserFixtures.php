@@ -13,7 +13,7 @@ class GuestUserFixtures extends AbstractBaseFixtures
         if (null === $this->manager || null === $this->faker) {
             return;
         }
-        $this->createMany(10, 'guestUsers', function () {
+        $this->createMany(15, 'guestUsers', function () {
             $guestUser = new GuestUser();
             $guestUser->setEmail($this->faker->email);
 

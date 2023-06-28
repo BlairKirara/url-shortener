@@ -4,6 +4,7 @@
 namespace App\Repository;
 
 use App\Entity\GuestUser;
+use App\Entity\Url;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -26,11 +27,11 @@ class GuestUserRepository extends ServiceEntityRepository
     }
 
 
-    public function countEmailsUsedInLast24Hours(string $email): int
+    public function countEmailUse(string $email): int
     {
         $queryBuilder = $this->getOrCreateQueryBuilder()
             ->select('count(guestUser.id)')
-            ->leftJoin('App\Entity\Url', 'url', 'WITH', 'url.guestUser = guestUser')
+            ->leftJoin(Url::class, 'url', 'WITH', 'url.guestUser = guestUser') 
             ->where('guestUser.email = :email')
             ->andWhere('url.createTime > :time')
             ->setParameter('email', $email)

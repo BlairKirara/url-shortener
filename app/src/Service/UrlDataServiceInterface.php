@@ -11,8 +11,8 @@ interface UrlDataServiceInterface
     public function save(UrlData $urlData): void;
 
 
-    public function countAllVisitsForUrl(int $page): PaginationInterface;
+    public function countVisits(int $page): PaginationInterface;
 
 
-    public function deleteAllVisitsForUrl(int $id): void;
+    public function deleteUrlVisits(int $id): void;
 }

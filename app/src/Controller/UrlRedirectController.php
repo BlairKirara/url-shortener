@@ -44,26 +44,9 @@ class UrlRedirectController extends AbstractController
         $url = $this->urlService->findOneByShortName($shortName);
 
         if (!$url) {
-            throw $this->createNotFoundException($this->translator->trans('message.url_not_found'));
+            $this->addFlash('warning', $this->translator->trans('message.url_does_not_exist'));
         }
-
-        if ($url->isIsBlocked() && $url->getBlockExpiration() < new \DateTimeImmutable()) {
-            $url->setIsBlocked(false);
-            $url->setBlockExpiration(null);
-            $this->urlService->save($url);
-
-            return new RedirectResponse($url->getLongName());
-        }
-        if ($url->isIsBlocked() && $url->getBlockExpiration() > new \DateTimeImmutable()) {
-            $this->addFlash('warning', $this->translator->trans('message.blocked_url'));
-
-            if ($this->isGranted('ROLE_ADMIN')) {
-                return new RedirectResponse($url->getLongName());
-            }
-
-            return $this->redirectToRoute('url_list');
-        }
-        if (!$url->isIsBlocked()) {
+        else if (!$url->isIsBlocked()) {
             $urlData = new UrlData();
             $urlData->setVisitTime(new \DateTimeImmutable());
             $urlData->setUrl($url);
@@ -71,8 +54,13 @@ class UrlRedirectController extends AbstractController
             $this->urlDataService->save($urlData);
 
             return new RedirectResponse($url->getLongName());
+        } else if ($url->isIsBlocked() && $url->getBlockTime() > new \DateTimeImmutable()) {
+            $this->addFlash('warning', $this->translator->trans('message.blocked_url'));
+
+            return $this->redirectToRoute('list');
         }
 
-        return $this->redirectToRoute('url_list');
+        return $this->redirectToRoute('list');
     }
+
 }

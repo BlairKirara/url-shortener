@@ -41,13 +41,10 @@ class UserVoter extends Voter
             return false;
         }
 
-        switch ($attribute) {
-            case self::VIEW:
-            case self::EDIT_USER_DATA:
-                return $this->canAccess($subject, $user);
-            default:
-                return false;
-        }
+        return match ($attribute) {
+            self::VIEW, self::EDIT_USER_DATA => $this->canAccess($subject, $user),
+            default => false,
+        };
     }
 
 

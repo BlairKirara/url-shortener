@@ -14,7 +14,7 @@ class UrlVisitedFixtures extends AbstractBaseFixtures implements DependentFixtur
         if (null === $this->manager || null === $this->faker) {
             return;
         }
-        $this->createMany(50, 'urlVisited', function () {
+        $this->createMany(70, 'urlVisited', function () {
             $urlVisited = new UrlData();
             $urlVisited->setUrl($this->getRandomReference('urls'));
             $urlVisited->setVisitTime(

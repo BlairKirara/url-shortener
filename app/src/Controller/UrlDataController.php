@@ -16,16 +16,22 @@ class UrlDataController extends AbstractController
     private UrlDataServiceInterface $urlDataService;
 
 
+    /**
+     * @param UrlDataServiceInterface $urlDataService
+     */
     public function __construct(UrlDataServiceInterface $urlDataService)
     {
         $this->urlDataService = $urlDataService;
     }
 
-
+    /**
+     * @param Request $request
+     * @return Response
+     */
     #[Route(name: 'visits_index', methods: 'GET')]
     public function visitsCount(Request $request): Response
     {
-        $pagination = $this->urlDataService->countAllVisitsForUrl(
+        $pagination = $this->urlDataService->countVisits(
             $request->query->getInt('page', 1)
         );
 

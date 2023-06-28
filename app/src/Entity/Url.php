@@ -54,13 +54,13 @@ class Url
 
 
     #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(name: 'user_id', nullable: true)]
     #[Assert\Type(User::class)]
     private ?User $users;
 
 
     #[ORM\ManyToOne(targetEntity: GuestUser::class, fetch: 'EXTRA_LAZY')]
-    #[ORM\JoinColumn(name: 'guest_users_id', nullable: true)]
+    #[ORM\JoinColumn(name: 'guest_user_id', nullable: true)]
     private ?GuestUser $guestUser = null;
 
 

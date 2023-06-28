@@ -13,7 +13,7 @@ interface UrlServiceInterface
     public function getPaginatedList(int $page, User $users): PaginationInterface;
 
 
-    public function getPaginatedListForEveryUser(int $page, array $filters = []): PaginationInterface;
+    public function getPaginatedListForAll(int $page, array $filters = []): PaginationInterface;
 
 
     public function save(Url $url): void;

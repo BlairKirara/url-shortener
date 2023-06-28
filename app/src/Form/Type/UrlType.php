@@ -12,7 +12,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\Constraints\Email;
@@ -33,46 +32,18 @@ class UrlType extends AbstractType
 
     private TranslatorInterface $translator;
 
-    private RequestStack $requestStack;
 
-    public function __construct(TagsDataTransformer $tagsDataTransformer, Security $security, GuestUserService $guestUserService, TranslatorInterface $translator, RequestStack $requestStack)
+    public function __construct(TagsDataTransformer $tagsDataTransformer, Security $security, GuestUserService $guestUserService, TranslatorInterface $translator)
     {
         $this->tagsDataTransformer = $tagsDataTransformer;
         $this->security = $security;
         $this->guestUserService = $guestUserService;
         $this->translator = $translator;
-        $this->requestStack = $requestStack;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        if (!$this->security->getUser()) {
-            $builder->add(
-                'email',
-                EmailType::class,
-                [
-                    'label' => 'label.email',
-                    'required' => true,
-                    'mapped' => false,
-                    'attr' => ['max_length' => 191],
-                    'constraints' => [
-                        new NotBlank(),
-                        new Length(['min' => 3, 'max' => 191]),
-                        new Email(),
-                    ],
-                ]
-            );
-            $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-                $email = $event->getForm()->get('email')->getData();
-                $request = $this->requestStack->getSession();
-                $request->set('email', $email);
 
-                $count = $this->guestUserService->countEmailsUsedInLast24Hours($email);
-                if ($count >= 10) {
-                    $event->getForm()->addError(new FormError($this->translator->trans('message.email_limit_exceeded')));
-                }
-            });
-        }
 
         $builder->add(
             'longName',
@@ -89,15 +60,43 @@ class UrlType extends AbstractType
             [
                 'label' => 'label.tags',
                 'required' => false,
-                'attr' => ['max_length' => 64],
+                'attr' => ['max_length' => 70],
             ]
         );
 
         $builder->get('tags')->addModelTransformer(
             $this->tagsDataTransformer
         );
+
+        if (!$this->security->getUser()) {
+            $builder->add(
+                'email',
+                EmailType::class,
+                [
+                    'label' => 'label.email',
+                    'required' => true,
+                    'mapped' => false,
+                    'attr' => ['max_length' => 191],
+                    'constraints' => [
+                        new Email(),
+                    ],
+                ]
+            );
+            $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+                $email = $event->getForm()->get('email')->getData();
+                $count = $this->guestUserService->countEmailUse($email);
+                if ($count >= 10) {
+                    $event->getForm()->addError(new FormError($this->translator->trans('message.email_limit_exceeded')));
+                }
+            });
+        }
     }
 
+
+    /**
+     * @param OptionsResolver $resolver
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -105,6 +104,9 @@ class UrlType extends AbstractType
         ]);
     }
 
+    /**
+     * @return string
+     */
     public function getBlockPrefix(): string
     {
         return 'Url';

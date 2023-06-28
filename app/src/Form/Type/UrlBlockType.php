@@ -12,27 +12,36 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 class UrlBlockType extends AbstractType
 {
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('blockTime', DateTimeType::class, [
             'input' => 'datetime_immutable',
             'label' => 'label.block_time',
             'widget' => 'choice',
-            'required' => true,
-            'attr' => [
-                'class' => 'form-control',
-            ],
-            'years' => range(date('Y'), date('Y') + 10),
+
+            'years' => range(date('Y'), date('Y') + 5),
             'data' => new \DateTimeImmutable(),
         ]);
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class' => Url::class]);
     }
 
 
+    /**
+     * @return string
+     */
     public function getBlockPrefix(): string
     {
         return 'BlockUrl';

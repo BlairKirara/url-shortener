@@ -13,11 +13,11 @@
             <dt>Short Name</dt>
             <dd>{{ url.shortName }}</dd>
             <dt>Create Time</dt>
-            <dd>{{ url.createTime |date('Y-m-d H:i:s') }}</dd>
+            <dd>{{ url.createTime |format_date('long') }}</dd>
             <dt>Blocked</dt>
             <dd>{{ url.isBlocked ? 'Yes' : 'No' }}</dd>
             <dt>Blocked Till</dt>
-            <dd>{{ url.blockTime |date('Y-m-d H:i:s') }}</dd>
+            <dd>{{ url.blockTime |format_date('long') }}</dd>
         </dl>
         <p>
             <a href="{{ url('list') }}" title="{{ 'action.back_to_list'|trans }}">

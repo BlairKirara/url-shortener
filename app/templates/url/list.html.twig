@@ -42,7 +42,7 @@
                     <td>{{ url.longName }}</td>
                     <td>{{ url.createTime|format_date('long')}}</td>
                     <td>{{ url.isBlocked ? 'Yes' : 'No' }}</td>
-                    <td>{{ url.blockTime|date('Y/m/d') }}</td>
+                    <td>{{ url.blockTime|format_date('long') }}</td>
                     <td>
                         {% if url.tags is defined and url.tags|length %}
                             {% for tag in url.tags %}

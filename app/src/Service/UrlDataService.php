@@ -30,18 +30,18 @@ class UrlDataService implements UrlDataServiceInterface
     }
 
 
-    public function countAllVisitsForUrl(int $page): PaginationInterface
+    public function countVisits(int $page): PaginationInterface
     {
         return $this->paginator->paginate(
-            $this->urlDataRepository->countAllVisitsForUrl(),
+            $this->urlDataRepository->countVisits(),
             $page,
             UrlDataRepository::PAGINATOR_ITEMS_PER_PAGE
         );
     }
 
 
-    public function deleteAllVisitsForUrl(int $id): void
+    public function deleteUrlVisits(int $id): void
     {
-        $this->urlDataRepository->deleteAllVisitsForUrl($id);
+        $this->urlDataRepository->deleteUrlVisits($id);
     }
 }

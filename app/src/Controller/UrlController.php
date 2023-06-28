@@ -2,52 +2,41 @@
 
 namespace App\Controller;
 
-use App\Entity\GuestUser;
 use App\Entity\Url;
 use App\Entity\User;
+use App\Entity\GuestUser;
 use App\Form\Type\UrlBlockType;
 use App\Form\Type\UrlType;
 use App\Service\GuestUserServiceInterface;
-use App\Service\UrlServiceInterface;
 use App\Service\UrlDataServiceInterface;
+use App\Service\UrlServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-
 #[Route('/url')]
 class UrlController extends AbstractController
 {
-
     private UrlServiceInterface $urlService;
 
-
-    private TranslatorInterface $translator;
-
-
-    private UrlDataServiceInterface $urlVisitedService;
-
-
-    private RequestStack $requestStack;
+    private UrlDataServiceInterface $urlDataService;
 
 
     private GuestUserServiceInterface $guestUserService;
 
+    private TranslatorInterface $translator;
 
-    public function __construct(UrlServiceInterface $urlService, TranslatorInterface $translator, UrlDataServiceInterface $urlVisitedService, RequestStack $requestStack, GuestUserServiceInterface $guestUserService)
+    public function __construct(UrlServiceInterface $urlService, UrlDataServiceInterface $urlDataService, TranslatorInterface $translator, GuestUserServiceInterface $guestUserService)
     {
         $this->urlService = $urlService;
+        $this->urlDataService = $urlDataService;
         $this->translator = $translator;
-        $this->urlVisitedService = $urlVisitedService;
-        $this->requestStack = $requestStack;
         $this->guestUserService = $guestUserService;
-    }
-
+    }// end __construct()
 
     #[Route(
         name: 'url_index',
@@ -56,7 +45,9 @@ class UrlController extends AbstractController
     public function index(Request $request): Response
     {
         $filters = $this->getFilters($request);
-        /** @var User $user */
+        /*
+            @var User $user
+        */
         $user = $this->getUser();
         $pagination = $this->urlService->getPaginatedList(
             $request->query->getInt('page', 1),
@@ -65,8 +56,7 @@ class UrlController extends AbstractController
         );
 
         return $this->render('url/index.html.twig', ['pagination' => $pagination]);
-    }
-
+    }// end index()
 
     #[Route(
         '/list',
@@ -76,25 +66,19 @@ class UrlController extends AbstractController
     public function list(Request $request): Response
     {
         $filters = $this->getFilters($request);
-        $pagination = $this->urlService->getPaginatedListForEveryUser(
+        $pagination = $this->urlService->getPaginatedListForAll(
             $request->query->getInt('page', 1),
             $filters
         );
 
         return $this->render('url/list.html.twig', ['pagination' => $pagination]);
-    }
-
+    }// end list()
 
     #[Route('/{id}', name: 'url_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
     public function show(Url $url): Response
     {
-        if ($url->isIsBlocked()) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        }
-
         return $this->render('url/show.html.twig', ['url' => $url]);
-    }
-
+    }// end show()
 
     #[Route(
         '/create',
@@ -103,7 +87,9 @@ class UrlController extends AbstractController
     )]
     public function create(Request $request): Response
     {
-        /** @var User $user */
+        /*
+            @var User $user
+        */
         $user = $this->getUser();
         $url = new Url();
         $url->setUsers($user);
@@ -115,10 +101,11 @@ class UrlController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if (!$this->getUser()) {
-                $email = $this->requestStack->getSession()->get('email');
+                $email = $form->get('email')->getData();
                 $guestUser = new GuestUser();
                 $guestUser->setEmail($email);
                 $this->guestUserService->save($guestUser);
+                $url->setGuestUser($guestUser);
             }
 
             $this->urlService->save($url);
@@ -132,8 +119,44 @@ class UrlController extends AbstractController
             'url/create.html.twig',
             ['form' => $form->createView()]
         );
-    }
+    }// end create()
 
+    #[Route('/{id}/delete', name: 'url_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
+    #[IsGranted('DELETE', subject: 'url')]
+    public function delete(Request $request, Url $url): Response
+    {
+        $form = $this->createForm(
+            FormType::class,
+            $url,
+            [
+                'method' => 'DELETE',
+                'action' => $this->generateUrl(
+                    'url_delete',
+                    ['id' => $url->getId()]
+                ),
+            ]
+        );
+        $form->handleRequest($request);
+        if ($request->isMethod('DELETE') && !$form->isSubmitted()) {
+            $form->submit($request->request->get($form->getName()));
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->urlDataService->deleteUrlVisits($url->getId());
+            $this->urlService->delete($url);
+            $this->addFlash('success', $this->translator->trans('message.deleted_successfully'));
+
+            return $this->redirectToRoute('url_index');
+        }
+
+        return $this->render(
+            'url/delete.html.twig',
+            [
+                'form' => $form->createView(),
+                'url' => $url,
+            ]
+        );
+    }// end delete()
 
     #[Route('/{id}/edit', name: 'url_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
     #[IsGranted('EDIT', subject: 'url')]
@@ -169,8 +192,7 @@ class UrlController extends AbstractController
                 'url' => $url,
             ]
         );
-    }
-
+    }// end edit()
 
     #[Route('/{id}/block', name: 'url_block', requirements: ['id' => '[1-9]\d*'], methods: 'GET|POST')]
     #[IsGranted('ROLE_ADMIN')]
@@ -203,8 +225,7 @@ class UrlController extends AbstractController
                 'url' => $url,
             ]
         );
-    }
-
+    }// end block()
 
     #[Route('/{id}/unblock', name: 'url_unblock', requirements: ['id' => '[1-9]\d*'], methods: 'GET|POST')]
     #[IsGranted('ROLE_ADMIN')]
@@ -232,8 +253,8 @@ class UrlController extends AbstractController
         );
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $url->setIsBlocked(false);
             $url->setBlockTime(null);
+            $url->setIsBlocked(false);
             $this->urlService->save($url);
             $this->addFlash('success', $this->translator->trans('message.unblocked_successfully'));
 
@@ -247,45 +268,7 @@ class UrlController extends AbstractController
                 'url' => $url,
             ]
         );
-    }
-
-
-    #[Route('/{id}/delete', name: 'url_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
-    #[IsGranted('DELETE', subject: 'url')]
-    public function delete(Request $request, Url $url): Response
-    {
-        $form = $this->createForm(
-            FormType::class,
-            $url,
-            [
-                'method' => 'DELETE',
-                'action' => $this->generateUrl(
-                    'url_delete',
-                    ['id' => $url->getId()]
-                ),
-            ]
-        );
-        $form->handleRequest($request);
-        if ($request->isMethod('DELETE') && !$form->isSubmitted()) {
-            $form->submit($request->request->get($form->getName()));
-        }
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->urlVisitedService->deleteAllVisitsForUrl($url->getId());
-            $this->urlService->delete($url);
-            $this->addFlash('success', $this->translator->trans('message.deleted_successfully'));
-
-            return $this->redirectToRoute('url_index');
-        }
-
-        return $this->render(
-            'url/delete.html.twig',
-            [
-                'form' => $form->createView(),
-                'url' => $url,
-            ]
-        );
-    }
-
+    }// end unblock()
 
     private function getFilters(Request $request): array
     {
@@ -293,5 +276,5 @@ class UrlController extends AbstractController
         $filters['tag_id'] = $request->query->getInt('filters_tag_id');
 
         return $filters;
-    }
-}
+    }// end getFilters()
+}// end class

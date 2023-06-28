@@ -30,8 +30,8 @@ class GuestUserService implements GuestUserServiceInterface
     }
 
 
-    public function countEmailsUsedInLast24Hours(string $email): int
+    public function countEmailUse(string $email): int
     {
-        return $this->guestUserRepository->countEmailsUsedInLast24Hours($email);
+        return $this->guestUserRepository->countEmailUse($email);
     }
 }

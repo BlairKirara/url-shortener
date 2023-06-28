@@ -9,7 +9,6 @@ use App\Repository\UrlRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 
@@ -31,17 +30,14 @@ class UrlService implements UrlServiceInterface
     private GuestUserRepository $guestUserRepository;
 
 
-    private RequestStack $requestStack;
 
-
-    public function __construct(PaginatorInterface $paginator, TagServiceInterface $tagService, UrlRepository $urlRepository, Security $security, GuestUserRepository $guestUserRepository, RequestStack $requestStack)
+    public function __construct(PaginatorInterface $paginator, TagServiceInterface $tagService, UrlRepository $urlRepository, Security $security, GuestUserRepository $guestUserRepository)
     {
         $this->paginator = $paginator;
         $this->tagService = $tagService;
         $this->urlRepository = $urlRepository;
         $this->security = $security;
         $this->guestUserRepository = $guestUserRepository;
-        $this->requestStack = $requestStack;
     }
 
 
@@ -57,23 +53,17 @@ class UrlService implements UrlServiceInterface
     }
 
 
-    public function getPaginatedListForEveryUser(int $page, array $filters = []): PaginationInterface
+    public function getPaginatedListForAll(int $page, array $filters = []): PaginationInterface
     {
         $filters = $this->prepareFilters($filters);
 
-        if ($this->security->isGranted('ROLE_ADMIN')) {
             return $this->paginator->paginate(
                 $this->urlRepository->queryAll($filters),
                 $page,
-                UrlRepository::PAGINATOR_ITEMS_PER_PAGE
-            );
-        }
+                UrlRepository::PAGINATOR_ITEMS_PER_PAGE);
 
-        return $this->paginator->paginate(
-            $this->urlRepository->queryNotBlocked($filters),
-            $page,
-            UrlRepository::PAGINATOR_ITEMS_PER_PAGE
-        );
+
+
     }
 
     public function shortenUrl(int $length = 6): string
@@ -93,12 +83,7 @@ class UrlService implements UrlServiceInterface
     public function save(Url $url): void
     {
         if (null === $url->getId()) {
-            if (!$this->security->isGranted('ROLE_USER')) {
-                $email = $this->requestStack->getCurrentRequest()->getSession()->get('email');
-                $user = $this->guestUserRepository->findOneBy(['email' => $email]);
-                $url->setGuestUser($user);
-                $this->requestStack->getCurrentRequest()->getSession()->remove('email');
-            }
+
             $url->setShortName($this->shortenUrl());
             $url->setIsBlocked(false);
         }

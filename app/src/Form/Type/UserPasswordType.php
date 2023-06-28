@@ -23,10 +23,6 @@ class UserPasswordType extends AbstractType
             [
                 'type' => PasswordType::class,
                 'required' => true,
-                'constraints' => [
-                    new Length(['min' => 6, 'max' => 191]),
-                    new NotBlank(),
-                ],
                 'first_options' => ['label' => 'label.password'],
                 'second_options' => ['label' => 'label.repeat_password'],
             ],

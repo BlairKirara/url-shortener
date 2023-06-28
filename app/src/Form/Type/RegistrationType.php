@@ -14,6 +14,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class RegistrationType extends AbstractType
 {
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
@@ -46,6 +51,9 @@ class RegistrationType extends AbstractType
     }
 
 
+    /**
+     * {@inheritdoc}
+     */
     public function getBlockPrefix(): string
     {
         return 'user';

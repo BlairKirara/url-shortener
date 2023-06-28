@@ -14,6 +14,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class UserEmailType extends AbstractType
 {
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
@@ -23,15 +28,15 @@ class UserEmailType extends AbstractType
                 'label' => 'label.email',
                 'required' => true,
                 'attr' => ['max_length' => 191],
-                'constraints' => [
-                    new NotBlank(),
-                    new Length(['min' => 3, 'max' => 191]),
-                ],
             ]
         );
     }
 
 
+    /**
+     * @param OptionsResolver $resolver
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class' => User::class]);

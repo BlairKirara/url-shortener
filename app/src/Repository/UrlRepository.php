@@ -23,7 +23,7 @@ class UrlRepository extends ServiceEntityRepository
 
     public function queryAll(array $filters): QueryBuilder
     {
-        $this->checkBlockExpiration();
+        $this->checkBlockTime();
 
         $queryBuilder = $this->getOrCreateQueryBuilder()
             ->select(
@@ -37,7 +37,7 @@ class UrlRepository extends ServiceEntityRepository
     }
 
 
-    public function checkBlockExpiration(): void
+    public function checkBlockTime(): void
     {
         $queryBuilder = $this->getOrCreateQueryBuilder()
             ->update(Url::class, 'url')
@@ -56,17 +56,6 @@ class UrlRepository extends ServiceEntityRepository
 
         $queryBuilder->andWhere('url.users = :users')
             ->setParameter('users', $user);
-
-        return $queryBuilder;
-    }
-
-
-    public function queryNotBlocked(array $filters = []): QueryBuilder
-    {
-        $queryBuilder = $this->queryAll($filters);
-
-        $queryBuilder->andWhere('url.isBlocked = :isBlocked')
-            ->setParameter('isBlocked', false);
 
         return $queryBuilder;
     }

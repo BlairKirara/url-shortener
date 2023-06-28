@@ -19,27 +19,18 @@ class UrlDataRepository extends ServiceEntityRepository
     }
 
 
-    public function countAllVisitsForUrl(): array
+    public function countVisits(): array
     {
         $queryBuilder = $this->getOrCreateQueryBuilder()
             ->select('count(urlData.id) as visits, url.longName, url.shortName, MAX(urlData.visitTime) as latestVisitTime')
             ->leftJoin('urlData.url', 'url')
             ->groupBy('urlData.url', 'url.longName', 'url.shortName')
-            ->orderBy('visits', 'DESC')
-            ->addOrderBy('latestVisitTime', 'DESC');
+            ->orderBy('visits', 'DESC');
 
         return $queryBuilder->getQuery()->getResult();
     }
 
-
-    public function save(UrlData $urlData): void
-    {
-        $this->_em->persist($urlData);
-        $this->_em->flush();
-    }
-
-
-    public function deleteAllVisitsForUrl(int $id): void
+    public function deleteUrlVisits(int $id): void
     {
         $this->createQueryBuilder('urlData')
             ->delete()
@@ -47,6 +38,13 @@ class UrlDataRepository extends ServiceEntityRepository
             ->setParameter('id', $id)
             ->getQuery()
             ->execute();
+    }
+
+
+    public function save(UrlData $urlData): void
+    {
+        $this->_em->persist($urlData);
+        $this->_em->flush();
     }
 
 

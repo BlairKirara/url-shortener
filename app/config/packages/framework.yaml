@@ -17,8 +17,6 @@ framework:
     php_errors:
         log: true
 
-    messenger:
-        reset_on_message: true
 
 when@test:
     framework:

@@ -11,5 +11,5 @@ interface GuestUserServiceInterface
     public function save(GuestUser $guestUser): void;
 
 
-    public function countEmailsUsedInLast24Hours(string $email): int;
+    public function countEmailUse(string $email): int;
 }

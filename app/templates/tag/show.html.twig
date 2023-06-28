@@ -1,40 +1,28 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ 'title.tag_details'|trans({'%id%': tag.id|default('')}) }}
+    View tag
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card mt-5">
-                    <div class="card-header">
-                        <h1 class="card-title">{{ 'title.tag_details'|trans({'%id%': tag.id|default('')}) }}</h1>
-                    </div>
-                    <div class="card-body">
-                        {% if tag is defined and tag|length %}
-                            <dl class="dl-horizontal">
-                                <dt>{{ 'label.id'|trans }}</dt>
-                                <dd>{{ tag.id }}</dd>
-                                <dt>{{ 'label.name'|trans }}</dt>
-                                <dd>{{ tag.name }}</dd>
-                            </dl>
+    <h1>View tag</h1>
+    {% if tag is defined and tag|length %}
+        <dl>
+            <dt>{{ 'label.id'|trans }}</dt>
+            <dd>{{ tag.id }}</dd>
+            <dt>{{ 'label.name'|trans }}</dt>
+            <dd>{{ tag.name }}</dd>
+        </dl>
 
-                            <p>
-                                <a href="{{ url('tag_index') }}" class="btn btn-primary" title="{{ 'action.back_to_list'|trans }}">
-                                    {{ 'action.back_to_list'|trans }}
-                                </a>
-                            </p>
-                        {% else %}
-                            <p>
-                                {{ 'message.record_not_found'|trans }}
-                            </p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <p>
+            <a href="{{ url('tag_index') }}" title="{{ 'action.back_to_list'|trans }}">
+                {{ 'action.back_to_list'|trans }}
+            </a>
+        </p>
+    {% else %}
+        <p>
+            {{ 'message.record_not_found'|trans }}
+        </p>
+    {% endif %}
 
 {% endblock %}

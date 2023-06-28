@@ -17,7 +17,7 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
         if (null === $this->manager || null === $this->faker) {
             return;
         }
-        $this->createMany(60, 'urls', function () {
+        $this->createMany(90, 'urls', function () {
             $url = new Url();
             $url->setLongName($this->faker->url);
             $url->setShortName($this->faker->regexify('[a-zA-Z0-9]{6}'));
