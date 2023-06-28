@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-sm navbar-light bg-light" aria-label="Third navbar example">
+    <div class="container-fluid">
+        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample03" aria-controls="navbarsExample03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="navbar-collapse collapse justify-content-center" id="navbarsExample03">
+            <ul class="navbar-nav">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ path('url_index') }}">{{ 'title.user_urls'|trans }}</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('url_list') }}">{{ 'title.url_list'|trans }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('popular_index') }}">{{ 'title.popular_urls'|trans }}</a>
+                </li>
+            </ul>
+            <div class="navbar-text">
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <a class="nav-link" href="{{ path('user_show', {'id': app.user.id}) }}">{{ app.user.email }}</a>
+                {% endif %}
+            </div>
+            <ul class="navbar-nav me-5">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('user_index') }}">{{ 'title.user_list'|trans }}</a>
+                    </li>
+
+                {% endif %}
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('tag_index') }}">{{ 'title.tag_list'|trans }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}">{{ 'action.logout'|trans }}</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_login') }}">{{ 'action.login'|trans }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_register') }}">{{ 'action.register'|trans }}</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

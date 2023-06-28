@@ -1,31 +1,40 @@
 <?php
+/*
+ * Url redirect controller.
+ */
 
 namespace App\Controller;
 
-use App\Entity\Url;
 use App\Entity\UrlData;
-use App\Service\UrlDataServiceInterface;
 use App\Service\UrlServiceInterface;
+use App\Service\UrlDataService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+
 #[Route('/short')]
 class UrlRedirectController extends AbstractController
 {
+
     private UrlServiceInterface $urlService;
 
-    private UrlDataServiceInterface $urlDataService;
+
     private TranslatorInterface $translator;
 
-    public function __construct(UrlServiceInterface $urlService, UrlDataServiceInterface $urlDataService, TranslatorInterface $translator)
+
+    private UrlDataService $urlDataService;
+
+
+    public function __construct(UrlServiceInterface $urlService, TranslatorInterface $translator, UrlDataService $urlDataService)
     {
         $this->urlService = $urlService;
-        $this->urlDataService = $urlDataService;
         $this->translator = $translator;
+        $this->urlDataService = $urlDataService;
     }
+
 
     #[Route(
         '/{shortName}',
@@ -36,16 +45,36 @@ class UrlRedirectController extends AbstractController
     {
         $url = $this->urlService->findOneByShortName($shortName);
 
+        if (!$url) {
+            throw $this->createNotFoundException($this->translator->trans('message.url_not_found'));
+        }
 
+        if ($url->isIsBlocked() && $url->getBlockExpiration() < new \DateTimeImmutable()) {
+            $url->setIsBlocked(false);
+            $url->setBlockExpiration(null);
+            $this->urlService->save($url);
 
+            return new RedirectResponse($url->getLongName());
+        }
+        if ($url->isIsBlocked() && $url->getBlockExpiration() > new \DateTimeImmutable()) {
+            $this->addFlash('warning', $this->translator->trans('message.blocked_url'));
+
+            if ($this->isGranted('ROLE_ADMIN')) {
+                return new RedirectResponse($url->getLongName());
+            }
+
+            return $this->redirectToRoute('url_list');
+        }
+        if (!$url->isIsBlocked()) {
             $urlData = new UrlData();
             $urlData->setVisitTime(new \DateTimeImmutable());
             $urlData->setUrl($url);
 
             $this->urlDataService->save($urlData);
+
             return new RedirectResponse($url->getLongName());
+        }
 
-
-
+        return $this->redirectToRoute('url_list');
     }
 }

@@ -1,9 +1,9 @@
 <?php
 /**
- * Tag data transformer.
+ * Tags data transformer.
  */
 
-namespace App\Form\Type;
+namespace App\Form\DataTransformer;
 
 use App\Entity\Tag;
 use App\Service\TagServiceInterface;
@@ -20,22 +20,22 @@ class TagsDataTransformer implements DataTransformerInterface
     /**
      * Tag service.
      */
-    private TagServiceInterface $tagsService;
+    private TagServiceInterface $tagService;
 
     /**
      * Constructor.
      *
-     * @param TagServiceInterface $tagsService Tag service
+     * @param TagServiceInterface $tagService Tag service
      */
-    public function __construct(TagServiceInterface $tagsService)
+    public function __construct(TagServiceInterface $tagService)
     {
-        $this->tagsService = $tagsService;
+        $this->tagService = $tagService;
     }
 
     /**
-     * Transform array of tags to string of tag names.
+     * Transform array of tags to string of tag titles.
      *
-     * @param Collection<int, Tag> $value Tag entity collection
+     * @param Collection<int, Tag> $value Tags entity collection
      *
      * @return string Result
      */
@@ -67,14 +67,14 @@ class TagsDataTransformer implements DataTransformerInterface
 
         $tags = [];
 
-        foreach ($tagNames as $tagNames) {
-            if ('' !== trim($tagNames)) {
-                $tag = $this->tagsService->findOneByName(strtolower($tagNames));
+        foreach ($tagNames as $tagName) {
+            if ('' !== trim($tagName)) {
+                $tag = $this->tagService->findOneByName(strtolower($tagName));
                 if (null === $tag) {
                     $tag = new Tag();
-                    $tag->setName($tagNames);
+                    $tag->setName($tagName);
 
-                    $this->tagsService->save($tag);
+                    $this->tagService->save($tag);
                 }
                 $tags[] = $tag;
             }

@@ -36,7 +36,8 @@ class TagType extends AbstractType
                 'label' => 'label.name',
                 'required' => true,
                 'attr' => ['max_length' => 64],
-            ]);
+            ]
+        );
     }
 
     /**
@@ -46,7 +47,9 @@ class TagType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(['data_class' => Tag::class]);
+        $resolver->setDefaults([
+            'data_class' => Tag::class,
+        ]);
     }
 
     /**
@@ -59,6 +62,6 @@ class TagType extends AbstractType
      */
     public function getBlockPrefix(): string
     {
-        return 'tags';
+        return 'tag';
     }
 }

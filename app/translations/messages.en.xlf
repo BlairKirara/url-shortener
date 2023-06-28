@@ -1,47 +1,367 @@
 <?xml version="1.0"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file source-language="en" datatype="plaintext" original="file.ext">
-        <body>
-            <trans-unit id="label.actions">
-                <source>label.actions</source>
-                <target>Actions</target>
-            </trans-unit>
-            <trans-unit id="label.id">
-                <source>label.id</source>
-                <target>Id</target>
-            </trans-unit>
-            <trans-unit id="label.title">
-                <source>label.title</source>
-                <target>Title</target>
-            </trans-unit>
-            <trans-unit id="label.content">
-                <source>label.content</source>
-                <target>Content</target>
-            </trans-unit>
-            <trans-unit id="label.tags">
-                <source>label.tags</source>
-                <target>Tags</target>
-            </trans-unit>
-            <trans-unit id="message.empty_list">
-                <source>message.empty_list</source>
-                <target>List is empty.</target>
-            </trans-unit>
-            <trans-unit id="message.record_not_found">
-                <source>message.record_not_found</source>
-                <target>Record not found.</target>
-            </trans-unit>
-            <trans-unit id="title.record_list">
-                <source>title.record_list</source>
-                <target>Records list</target>
-            </trans-unit>
-            <trans-unit id="title.record_view">
-                <source>title.record_view</source>
-                <target>Record view #%id%</target>
-            </trans-unit>
-            <trans-unit id="action.back_to_list">
-                <source>action.back_to_list</source>
-                <target>Powrót do listy. </target>
-            </trans-unit>
-        </body>
-    </file>
+  <file source-language="en" datatype="plaintext" original="file.ext">
+    <body>
+      <trans-unit id="title.user_register">
+        <source>title.user_register</source>
+        <target>User registration</target>
+      </trans-unit>
+      <trans-unit id="title.user_email_edit">
+        <source>title.user_email_edit</source>
+        <target>Edit user email</target>
+      </trans-unit>
+      <trans-unit id="title.user_password_edit">
+        <source>title.user_password_edit</source>
+        <target>Edit user password</target>
+      </trans-unit>
+      <trans-unit id="label.actions">
+        <source>label.actions</source>
+        <target>Actions</target>
+      </trans-unit>
+      <trans-unit id="label.id">
+        <source>label.id</source>
+        <target>Id</target>
+      </trans-unit>
+      <trans-unit id="label.title">
+        <source>label.title</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="label.content">
+        <source>label.content</source>
+        <target>Content</target>
+      </trans-unit>
+      <trans-unit id="label.tags">
+        <source>label.tags</source>
+        <target>Tags</target>
+      </trans-unit>
+      <trans-unit id="message.empty_list">
+        <source>message.empty_list</source>
+        <target>List is empty.</target>
+      </trans-unit>
+      <trans-unit id="message.record_not_found">
+        <source>message.record_not_found</source>
+        <target>Record not found.</target>
+      </trans-unit>
+      <trans-unit id="title.record_list">
+        <source>title.record_list</source>
+        <target>Records list</target>
+      </trans-unit>
+      <trans-unit id="title.popular_urls">
+        <source>title.popular_urls</source>
+        <target>Popular URLs</target>
+      </trans-unit>
+      <trans-unit id="title.record_view">
+        <source>title.record_view</source>
+        <target>Record view #%id%</target>
+      </trans-unit>
+      <trans-unit id="message.created_successfully">
+        <source>message.created_successfully</source>
+        <target>Created successfully.</target>
+      </trans-unit>
+      <trans-unit id="message.deleted_successfully">
+        <source>message.deleted_successfully</source>
+        <target>Deleted successfully.</target>
+      </trans-unit>
+      <trans-unit id="message.form_error">
+        <source>message.form_error</source>
+        <target>Form error.</target>
+      </trans-unit>
+      <trans-unit id="action.back_to_list">
+        <source>action.back_to_list</source>
+        <target>Back to list</target>
+      </trans-unit>
+      <trans-unit id="title.user_urls">
+        <source>title.user_urls</source>
+        <target>My URLs</target>
+      </trans-unit>
+      <trans-unit id="title.tag_list">
+        <source>title.tag_list</source>
+        <target>Tag list</target>
+      </trans-unit>
+      <trans-unit id="title.home">
+        <source>title.home</source>
+        <target>Home</target>
+      </trans-unit>
+      <trans-unit id="title.tag_create">
+        <source>title.tag_create</source>
+        <target>Create Tag</target>
+      </trans-unit>
+      <trans-unit id="action.save">
+        <source>action.save</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="title.tag_delete">
+        <source>title.tag_delete</source>
+        <target>Delete Tag</target>
+      </trans-unit>
+      <trans-unit id="action.delete">
+        <source>action.delete</source>
+        <target>Delete</target>
+      </trans-unit>
+      <trans-unit id="title.tag_edit">
+        <source>title.tag_edit</source>
+        <target>Edit Tag</target>
+      </trans-unit>
+      <trans-unit id="action.edit">
+        <source>action.edit</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="action.create">
+        <source>action.create</source>
+        <target>Create</target>
+      </trans-unit>
+      <trans-unit id="label.name">
+        <source>label.name</source>
+        <target>Name</target>
+      </trans-unit>
+      <trans-unit id="action.show">
+        <source>action.show</source>
+        <target>Show</target>
+      </trans-unit>
+      <trans-unit id="title.tag_details">
+        <source>title.tag_details</source>
+        <target>Tag Details</target>
+      </trans-unit>
+      <trans-unit id="title.url_list">
+        <source>title.url_list</source>
+        <target>URL List</target>
+      </trans-unit>
+      <trans-unit id="title.url_create">
+        <source>title.url_create</source>
+        <target>Create URL</target>
+      </trans-unit>
+      <trans-unit id="title.url_delete">
+        <source>title.url_delete</source>
+        <target>Delete URL</target>
+      </trans-unit>
+      <trans-unit id="title.url_edit">
+        <source>title.url_edit</source>
+        <target>Edit URL</target>
+      </trans-unit>
+      <trans-unit id="label.url">
+        <source>label.url</source>
+        <target>URL</target>
+      </trans-unit>
+      <trans-unit id="label.count">
+        <source>label.count</source>
+        <target>Times visited</target>
+      </trans-unit>
+      <trans-unit id="label.long_url">
+        <source>label.long_url</source>
+        <target>Long URL</target>
+      </trans-unit>
+      <trans-unit id="label.short_url">
+        <source>label.short_url</source>
+        <target>Short URL</target>
+      </trans-unit>
+      <trans-unit id="label.create_time">
+        <source>label.create_time</source>
+        <target>Create Time</target>
+      </trans-unit>
+      <trans-unit id="label.is_blocked">
+        <source>label.is_blocked</source>
+        <target>Is Blocked</target>
+      </trans-unit>
+      <trans-unit id="label.block_expiration">
+        <source>label.block_expiration</source>
+        <target>Block Expiration</target>
+      </trans-unit>
+      <trans-unit id="label.tag">
+        <source>label.tag</source>
+        <target>Tag</target>
+      </trans-unit>
+      <trans-unit id="title.url_details">
+        <source>title.url_details</source>
+        <target>URL Details</target>
+      </trans-unit>
+      <trans-unit id="label.created_at">
+        <source>label.created_at</source>
+        <target>Created At</target>
+      </trans-unit>
+      <trans-unit id="title.user_list">
+        <source>title.user_list</source>
+        <target>User List</target>
+      </trans-unit>
+      <trans-unit id="action.logout">
+        <source>action.logout</source>
+        <target>Logout</target>
+      </trans-unit>
+      <trans-unit id="action.login">
+        <source>action.login</source>
+        <target>Login</target>
+      </trans-unit>
+      <trans-unit id="action.register">
+        <source>action.register</source>
+        <target>Register</target>
+      </trans-unit>
+      <trans-unit id="action_register">
+        <source>action_register</source>
+        <target>Register</target>
+      </trans-unit>
+      <trans-unit id="label.urls">
+        <source>label.urls</source>
+        <target>URLs</target>
+      </trans-unit>
+      <trans-unit id="title.password.edit">
+        <source>title.password.edit</source>
+        <target>Edit Password</target>
+      </trans-unit>
+      <trans-unit id="label.user_id">
+        <source>label.user_id</source>
+        <target>User ID</target>
+      </trans-unit>
+      <trans-unit id="label.user_email">
+        <source>label.user_email</source>
+        <target>User Email</target>
+      </trans-unit>
+      <trans-unit id="label.email">
+        <source>label.email</source>
+        <target>Email</target>
+      </trans-unit>
+      <trans-unit id="label.password">
+        <source>label.password</source>
+        <target>Password</target>
+      </trans-unit>
+      <trans-unit id="label.repeat_password">
+        <source>label.repeat_password</source>
+        <target>Repeat password</target>
+      </trans-unit>
+      <trans-unit id="message.url_not_found">
+        <source>message.url_not_found</source>
+        <target>URL not found</target>
+      </trans-unit>
+      <trans-unit id="message.blocked_url">
+        <source>message.blocked_url</source>
+        <target>Blocked URL</target>
+      </trans-unit>
+      <trans-unit id="message.email_limit_exceeded">
+        <source>message.email_limit_exceeded</source>
+        <target>The limit of created addresses in 24 hours for this email has been exceeded</target>
+      </trans-unit>
+      <trans-unit id="title.user_details">
+        <source>title.user_details</source>
+        <target>User Details</target>
+      </trans-unit>
+      <trans-unit id="user.id">
+        <source>user.id</source>
+        <target>User ID</target>
+      </trans-unit>
+      <trans-unit id="user.email">
+        <source>user.email</source>
+        <target>User Email</target>
+      </trans-unit>
+      <trans-unit id="label.edit">
+        <source>label.edit</source>
+        <target>Edit</target>
+      </trans-unit>
+      <trans-unit id="action.edit_email">
+        <source>action.edit_email</source>
+        <target>Edit Email</target>
+      </trans-unit>
+      <trans-unit id="action.edit_password">
+        <source>action.edit_password</source>
+        <target>Edit Password</target>
+      </trans-unit>
+      <trans-unit id="title.url_block">
+        <source>title.url_block</source>
+        <target>Block URL</target>
+      </trans-unit>
+      <trans-unit id="title.url_create_unlogged">
+        <source>title.url_create_unlogged</source>
+        <target>Create URL (Unlogged)</target>
+      </trans-unit>
+      <trans-unit id="title.url_unblock">
+        <source>title.url_unblock</source>
+        <target>Unblock URL</target>
+      </trans-unit>
+      <trans-unit id="action.block">
+        <source>action.block</source>
+        <target>Block</target>
+      </trans-unit>
+      <trans-unit id="action.unblock">
+        <source>action.unblock</source>
+        <target>Unblock</target>
+      </trans-unit>
+      <trans-unit id="message.registered_successfully">
+        <source>message.registered_successfully</source>
+        <target>Registered successfully.</target>
+      </trans-unit>
+      <trans-unit id="message.updated_successfully">
+        <source>message.updated_successfully</source>
+        <target>Updated successfully.</target>
+      </trans-unit>
+      <trans-unit id="message.failed_to_create">
+        <source>message.failed_to_create</source>
+        <target>Failed to create.</target>
+      </trans-unit>
+      <trans-unit id="message.blocked_successfully">
+        <source>message.blocked_successfully</source>
+        <target>Blocked successfully.</target>
+      </trans-unit>
+      <trans-unit id="message.unblocked_successfully">
+        <source>message.unblocked_successfully</source>
+        <target>Unblocked successfully.</target>
+      </trans-unit>
+      <trans-unit id="message.invalid_credentials">
+        <source>message.invalid_credentials</source>
+        <target>Invalid credentials.</target>
+      </trans-unit>
+      <trans-unit id="message.failed_to_update">
+        <source>message.failed_to_update</source>
+        <target>Failed to update.</target>
+      </trans-unit>
+      <trans-unit id="message.failed_to_delete">
+        <source>message.failed_to_delete</source>
+        <target>Failed to delete.</target>
+      </trans-unit>
+      <trans-unit id="message.failed_to_block">
+        <source>message.failed_to_block</source>
+        <target>Failed to block.</target>
+      </trans-unit>
+      <trans-unit id="message.failed_to_unblock">
+        <source>message.failed_to_unblock</source>
+        <target>Failed to unblock.</target>
+      </trans-unit>
+      <trans-unit id="label.sign_in">
+        <source>label.sign_in</source>
+        <target>Sign in</target>
+      </trans-unit>
+      <trans-unit id="label.block_yes">
+        <source>label.block_yes</source>
+        <target>Yes</target>
+      </trans-unit>
+      <trans-unit id="label.block_no">
+        <source>label.block_no</source>
+        <target>No</target>
+      </trans-unit>
+      <trans-unit id="Year">
+        <source>Year</source>
+        <target>Year</target>
+      </trans-unit>
+      <trans-unit id="Month">
+        <source>Month</source>
+        <target>Month</target>
+      </trans-unit>
+      <trans-unit id="Day">
+        <source>Day</source>
+        <target>Day</target>
+      </trans-unit>
+      <trans-unit id="Hour">
+        <source>Hour</source>
+        <target>Hour</target>
+      </trans-unit>
+      <trans-unit id="Minute">
+        <source>Minute</source>
+        <target>Minute</target>
+      </trans-unit>
+      <trans-unit id="label.admin_panel">
+        <source>label.admin_panel</source>
+        <target>Admin Panel</target>
+      </trans-unit>
+      <trans-unit id="message.already_logged_in_as">
+        <source>message.already_logged_in_as</source>
+        <target>Already logged in as</target>
+      </trans-unit>
+    </body>
+  </file>
 </xliff>

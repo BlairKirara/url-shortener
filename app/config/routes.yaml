@@ -4,3 +4,7 @@
 app_homepage:
   path: /
   controller: App\Controller\HomeController::index
+url_redirect:
+  path: '/{short_url}'
+  controller: App\Controller\UrlRedirectController::index
+  methods: [GET]

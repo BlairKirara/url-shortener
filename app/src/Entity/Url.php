@@ -5,39 +5,48 @@ namespace App\Entity;
 use App\Repository\UrlRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: UrlRepository::class)]
 #[ORM\Table(name: 'urls')]
 class Url
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 191)]
-    private ?string $short_name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $long_name = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Url]
+    #[Assert\Length(min: 3, max: 255)]
+    private ?string $longName = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $create_time = null;
 
-    #[ORM\Column]
-    private ?bool $is_blocked = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $shortName = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $block_time = null;
 
-    /**
-     * Tags.
-     *
-     * @var ArrayCollection<int, Tag>
-     */
+    #[ORM\Column(type: 'datetime_immutable')]
+    #[Assert\Type(\DateTimeImmutable::class)]
+    #[Gedmo\Timestampable(on: 'create')]
+    private ?\DateTimeImmutable $createTime = null;
+
+
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isBlocked = null;
+
+
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    #[Assert\Type(\DateTimeImmutable::class)]
+    private ?\DateTimeImmutable $blockTime = null;
+
+
     #[Assert\Valid]
     #[ORM\ManyToMany(targetEntity: Tag::class, fetch: 'EXTRA_LAZY', orphanRemoval: true)]
     #[ORM\JoinTable(name: 'urls_tags')]
@@ -47,111 +56,92 @@ class Url
     #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(nullable: true)]
     #[Assert\Type(User::class)]
-    private ?User $user;
+    private ?User $users;
 
-    #[ORM\ManyToOne]
-    private ?GuestUser $guest_user;
+
+    #[ORM\ManyToOne(targetEntity: GuestUser::class, fetch: 'EXTRA_LAZY')]
+    #[ORM\JoinColumn(name: 'guest_users_id', nullable: true)]
+    private ?GuestUser $guestUser = null;
+
 
     public function __construct()
     {
         $this->tags = new ArrayCollection();
     }
 
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getShortName(): ?string
-    {
-        return $this->short_name;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setShortName(string $short_name): self
-    {
-        $this->short_name = $short_name;
-
-        return $this;
-    }
 
     public function getLongName(): ?string
     {
-        return $this->long_name;
+        return $this->longName;
     }
 
-    /**
-     * @return $this
-     */
-    public function setLongName(string $long_name): self
+
+    public function setLongName(?string $longName): void
     {
-        $this->long_name = $long_name;
-
-        return $this;
+        $this->longName = $longName;
     }
 
-    public function getCreateTime(): ?\DateTimeInterface
+
+    public function getShortName(): ?string
     {
-        return $this->create_time;
+        return $this->shortName;
     }
 
-    /**
-     * @return $this
-     */
-    public function setCreateTime(\DateTimeInterface $create_time): self
+
+    public function setShortName(?string $shortName): void
     {
-        $this->create_time = $create_time;
-
-        return $this;
+        $this->shortName = $shortName;
     }
+
+
+    public function getCreateTime(): ?\DateTimeImmutable
+    {
+        return $this->createTime;
+    }
+
+
+    public function setCreateTime(?\DateTimeImmutable $createTime): void
+    {
+        $this->createTime = $createTime;
+    }
+
 
     public function isIsBlocked(): ?bool
     {
-        return $this->is_blocked;
+        return $this->isBlocked;
     }
 
-    /**
-     * @return $this
-     */
-    public function setIsBlocked(bool $is_blocked): self
+
+    public function setIsBlocked(?bool $isBlocked): void
     {
-        $this->is_blocked = $is_blocked;
-
-        return $this;
+        $this->isBlocked = $isBlocked;
     }
 
-    public function getBlockTime(): ?\DateTimeInterface
+
+    public function getBlockTime(): ?\DateTimeImmutable
     {
-        return $this->block_time;
+        return $this->blockTime;
     }
 
-    /**
-     * @return $this
-     */
-    public function setBlockTime(?\DateTimeInterface $block_time): self
+
+    public function setBlockTime(?\DateTimeImmutable $blockTime): void
     {
-        $this->block_time = $block_time;
-
-        return $this;
+        $this->blockTime = $blockTime;
     }
 
-    /**
-     * Getter for tags.
-     *
-     * @return Collection<int, Tag> Tags collection
-     */
+
     public function getTags(): Collection
     {
         return $this->tags;
     }
 
-    /**
-     * Add tag.
-     *
-     * @param Tag $tag Tag entity
-     */
+
     public function addTag(Tag $tag): void
     {
         if (!$this->tags->contains($tag)) {
@@ -159,49 +149,33 @@ class Url
         }
     }
 
-    /**
-     * Remove tag.
-     *
-     * @param Tag $tag Tag entity
-     */
+
     public function removeTag(Tag $tag): void
     {
         $this->tags->removeElement($tag);
     }
 
-    public function getUserId(): ?User
+
+    public function getUsers(): ?User
     {
-        return $this->user_id;
+        return $this->users;
     }
 
-    public function setUserId(?User $user_id): self
-    {
-        $this->user_id = $user_id;
 
-        return $this;
+    public function setUsers(?User $users): void
+    {
+        $this->users = $users;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
 
     public function getGuestUser(): ?GuestUser
     {
-        return $this->guest_user;
+        return $this->guestUser;
     }
 
-    public function setGuestUser(?GuestUser $guest_user): self
-    {
-        $this->guest_user = $guest_user;
 
-        return $this;
+    public function setGuestUser(?GuestUser $guestUser): void
+    {
+        $this->guestUser = $guestUser;
     }
 }

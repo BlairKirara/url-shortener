@@ -6,19 +6,18 @@
 namespace App\Controller;
 
 use App\Entity\Tag;
-use App\Service\TagServiceInterface;
 use App\Form\Type\TagType;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use App\Service\UrlServiceInterface;
+use App\Service\TagServiceInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * Class TagController.
- */
-#[Route('/tags')]
+
+#[Route('/tag')]
 class TagController extends AbstractController
 {
     /**
@@ -28,68 +27,44 @@ class TagController extends AbstractController
 
     /**
      * Translator.
-     *
-     * @var TranslatorInterface
      */
     private TranslatorInterface $translator;
 
-/**
-* Constructor.
-*
-* @param TagServiceInterface $urlService Tag service
-* @param TranslatorInterface      $translator  Translator
-*/
-    public function __construct(TagServiceInterface $tagService, TranslatorInterface $translator)
+
+    public function __construct(TagServiceInterface $urlService, TranslatorInterface $translator)
     {
-        $this->tagService = $tagService;
+        $this->tagService = $urlService;
         $this->translator = $translator;
     }
 
-    /**
-     * Index action.
-     *
-     * @param Request $request HTTP Request
-     *
-     * @return Response HTTP response
-     */
-    #[Route(name: 'tags_index', methods: 'GET')]
+
+    #[Route(name: 'tag_index', methods: 'GET')]
     public function index(Request $request): Response
     {
         $pagination = $this->tagService->getPaginatedList(
             $request->query->getInt('page', 1)
         );
 
-        return $this->render('tags/index.html.twig', ['pagination' => $pagination]);
+        return $this->render('tag/index.html.twig', ['pagination' => $pagination]);
     }
 
-    /**
-     * Show action.
-     *
-     * @param Tag $tags Tag
-     *
-     * @return Response HTTP response
-     */
+
     #[Route(
         '/{id}',
-        name: 'tags_show',
+        name: 'tag_show',
         requirements: ['id' => '[1-9]\d*'],
         methods: 'GET'
     )]
+    #[IsGranted('ROLE_ADMIN')]
     public function show(Tag $tag): Response
     {
-        return $this->render('tags/show.html.twig', ['tag' => $tag]);
+        return $this->render('tag/show.html.twig', ['tag' => $tag]);
     }
 
-    /**
-     * Create action.
-     *
-     * @param Request $request HTTP request
-     *
-     * @return Response HTTP response
-     */
+
     #[Route(
         '/create',
-        name: 'tags_create',
+        name: 'tag_create',
         methods: 'GET|POST',
     )]
     public function create(Request $request): Response
@@ -97,33 +72,22 @@ class TagController extends AbstractController
         $tag = new Tag();
         $form = $this->createForm(TagType::class, $tag);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $this->tagService->save($tag);
+            $this->addFlash('success', $this->translator->trans('message.created_successfully'));
 
-            $this->addFlash(
-                'success',
-                $this->translator->trans('message.created_successfully')
-            );
-
-            return $this->redirectToRoute('tags_index');
+            return $this->redirectToRoute('tag_index');
         }
 
         return $this->render(
-            'tags/create.html.twig',
+            'tag/create.html.twig',
             ['form' => $form->createView()]
         );
     }
 
-    /**
-     * Edit action.
-     *
-     * @param Request  $request  HTTP request
-     * @param Tag $tag Tag entity
-     *
-     * @return Response HTTP response
-     */
-    #[Route('/{id}/edit', name: 'tags_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
+
+    #[Route('/{id}/edit', name: 'tag_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Tag $tag): Response
     {
         $form = $this->createForm(
@@ -131,7 +95,7 @@ class TagController extends AbstractController
             $tag,
             [
                 'method' => 'PUT',
-                'action' => $this->generateUrl('tags_edit', ['id' => $tag->getId()]),
+                'action' => $this->generateUrl('tag_edit', ['id' => $tag->getId()]),
             ]
         );
         $form->handleRequest($request);
@@ -141,35 +105,29 @@ class TagController extends AbstractController
 
             $this->addFlash(
                 'success',
-                $this->translator->trans('message.edited_successfully')
+                $this->translator->trans('message.updated_successfully')
             );
 
-            return $this->redirectToRoute('tags_index');
+            return $this->redirectToRoute('tag_index');
         }
 
         return $this->render(
-            'tags/edit.html.twig',
+            'tag/edit.html.twig',
             [
                 'form' => $form->createView(),
-                'tag' => $tag,
+                'category' => $tag,
             ]
         );
     }
 
-    /**
-     * Delete action.
-     *
-     * @param Request  $request  HTTP request
-     * @param Tag $tags Tag entity
-     *
-     * @return Response HTTP response
-     */
-    #[Route('/{id}/delete', name: 'tags_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
+
+    #[Route('/{id}/delete', name: 'tag_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Tag $tag): Response
     {
-        $form = $this->createForm(TagType::class, $tag, [
+        $form = $this->createForm(FormType::class, $tag, [
             'method' => 'DELETE',
-            'action' => $this->generateUrl('tags_delete', ['id' => $tag->getId()]),
+            'action' => $this->generateUrl('tag_delete', ['id' => $tag->getId()]),
         ]);
         $form->handleRequest($request);
 
@@ -181,14 +139,14 @@ class TagController extends AbstractController
                 $this->translator->trans('message.deleted_successfully')
             );
 
-            return $this->redirectToRoute('tags_index');
+            return $this->redirectToRoute('tag_index');
         }
 
         return $this->render(
-            'tags/delete.html.twig',
+            'tag/delete.html.twig',
             [
                 'form' => $form->createView(),
-                'tag' => $tag,
+                'category' => $tag,
             ]
         );
     }

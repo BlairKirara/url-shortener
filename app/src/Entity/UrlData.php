@@ -1,93 +1,59 @@
 <?php
 
+
 namespace App\Entity;
 
 use App\Repository\UrlDataRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+
 
 #[ORM\Entity(repositoryClass: UrlDataRepository::class)]
+#[ORM\Table(name: 'url_data')]
 class UrlData
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $visit_time = null;
+    #[ORM\Column(type: 'datetime_immutable')]
+    #[Gedmo\Timestampable(on: 'create')]
+    private ?\DateTimeImmutable $visitTime = null;
 
-    #[ORM\OneToMany(mappedBy: 'urlData', targetEntity: Url::class)]
-    private Collection $url_id;
-
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: Url::class, fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Url $url = null;
 
-    public function __construct()
-    {
-        $this->url_id = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getVisitTime(): ?\DateTimeInterface
+
+    public function getVisitTime(): ?\DateTimeImmutable
     {
-        return $this->visit_time;
+        return $this->visitTime;
     }
 
-    public function setVisitTime(\DateTimeInterface $visit_time): self
-    {
-        $this->visit_time = $visit_time;
 
-        return $this;
+    public function setVisitTime(?\DateTimeImmutable $visitTime): void
+    {
+        $this->visitTime = $visitTime;
     }
 
-    /**
-     * @return Collection<int, Url>
-     */
-    public function getUrlId(): Collection
-    {
-        return $this->url_id;
-    }
-
-    public function addUrlId(Url $urlId): self
-    {
-        if (!$this->url_id->contains($urlId)) {
-            $this->url_id->add($urlId);
-            $urlId->setUrlData($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUrlId(Url $urlId): self
-    {
-        if ($this->url_id->removeElement($urlId)) {
-            // set the owning side to null (unless already changed)
-            if ($urlId->getUrlData() === $this) {
-                $urlId->setUrlData(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getUrl(): ?Url
     {
         return $this->url;
     }
 
-    public function setUrl(?Url $url): self
+
+    public function setUrl(?Url $url): void
     {
         $this->url = $url;
-
-        return $this;
     }
 }

@@ -1,0 +1,10 @@
+{% include 'default/_form.html.twig' with {
+    page_title: 'title.user_register'|trans,
+    attr: {
+        method: 'POST',
+        action: url('app_register')
+    },
+    form: form,
+    submit_label: 'action_register'|trans,
+    back_to_list_path: 'app_login',
+} %}

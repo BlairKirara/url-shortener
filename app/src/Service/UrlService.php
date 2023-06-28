@@ -7,121 +7,124 @@ namespace App\Service;
 
 use App\Entity\Url;
 use App\Entity\User;
+use App\Repository\GuestUserRepository;
 use App\Repository\UrlRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
+
 
 class UrlService implements UrlServiceInterface
 {
-    private UrlRepository $urlRepository;
+
     private PaginatorInterface $paginator;
+
 
     private TagServiceInterface $tagService;
 
-    public function __construct(UrlRepository $urlRepository, PaginatorInterface $paginator, TagServiceInterface $tagService)
+
+    private UrlRepository $urlRepository;
+
+
+    private Security $security;
+
+
+    private GuestUserRepository $guestUserRepository;
+
+
+    private RequestStack $requestStack;
+
+
+    public function __construct(PaginatorInterface $paginator, TagServiceInterface $tagService, UrlRepository $urlRepository, Security $security, GuestUserRepository $guestUserRepository, RequestStack $requestStack)
     {
-        $this->urlRepository = $urlRepository;
         $this->paginator = $paginator;
         $this->tagService = $tagService;
+        $this->urlRepository = $urlRepository;
+        $this->security = $security;
+        $this->guestUserRepository = $guestUserRepository;
+        $this->requestStack = $requestStack;
     }
 
-    public function getPaginatedList(int $page, User|\App\Service\User $user, array $filters = []): PaginationInterface
+
+    public function getPaginatedList(int $page, ?User $users, array $filters = []): PaginationInterface
     {
         $filters = $this->prepareFilters($filters);
 
         return $this->paginator->paginate(
-            $this->urlRepository->queryByAuthor($user, $filters),
+            $this->urlRepository->queryByAuthor($users, $filters),
             $page,
             UrlRepository::PAGINATOR_ITEMS_PER_PAGE
         );
     }
 
-    /**
-     * Generate short URL.
-     *
-     * @param int $length Length of the short URL
-     *
-     * @return string Short URL
-     */
+
+    public function getPaginatedListForEveryUser(int $page, array $filters = []): PaginationInterface
+    {
+        $filters = $this->prepareFilters($filters);
+
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return $this->paginator->paginate(
+                $this->urlRepository->queryAll($filters),
+                $page,
+                UrlRepository::PAGINATOR_ITEMS_PER_PAGE
+            );
+        }
+
+        return $this->paginator->paginate(
+            $this->urlRepository->queryNotBlocked($filters),
+            $page,
+            UrlRepository::PAGINATOR_ITEMS_PER_PAGE
+        );
+    }
+
     public function shortenUrl(int $length = 6): string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $shortUrl = '';
+        $shortName = '';
 
         for ($i = 0; $i < $length; ++$i) {
             $randomIndex = random_int(0, strlen($characters) - 1);
-            $shortUrl .= $characters[$randomIndex];
+            $shortName .= $characters[$randomIndex];
         }
 
-        return $shortUrl;
+        return $shortName;
     }
 
-    /**
-    Check if the generated short URL is unique.
-    @param string $shortName Short URL to check
-    @return bool True if unique, False otherwise
-     */
-    private function isShortNameUnique(string $shortName): bool
-    {
-        return null === $this->urlRepository->findOneBy(['short_name' => $shortName]);
-    }
-    // enduwu
 
-    /**
-     * Save entity.
-     *
-     * @param Url $url Url entity
-     */
     public function save(Url $url): void
     {
-        if (null == $url->getId()) {
-            $url->setCreateTime(new \DateTimeImmutable());
+        if (null === $url->getId()) {
+            if (!$this->security->isGranted('ROLE_USER')) {
+                $email = $this->requestStack->getCurrentRequest()->getSession()->get('email');
+                $user = $this->guestUserRepository->findOneBy(['email' => $email]);
+                $url->setGuestUser($user);
+                $this->requestStack->getCurrentRequest()->getSession()->remove('email');
+            }
             $url->setShortName($this->shortenUrl());
             $url->setIsBlocked(false);
         }
-
         $this->urlRepository->save($url);
     }
 
-    /**
-     * Delete entity.
-     *
-     * @param Url $url Url entity
-     */
+
     public function delete(Url $url): void
     {
         $this->urlRepository->delete($url);
     }
 
-    /**
-     * Find one by short name.
-     *
-     * @param string $shortName Short name
-     *
-     * @return Url|null Url entity
-     */
+
     public function findOneByShortName(string $shortName): ?Url
     {
-        return $this->urlRepository->findOneBy(['short_name' => $shortName]);
+        return $this->urlRepository->findOneBy(['shortName' => $shortName]);
     }
 
-    /**
-     * Find by id.
-     *
-     * @param int $id Url id
-     *
-     * @return Url|null Url entity
-     *
-     * @throws NonUniqueResultException
-     */
-    public function findOneById(int $id): ?Url
-    {
-        return $this->urlRepository->findOneById($id);
-    }
 
     private function prepareFilters(array $filters): array
     {
         $resultFilters = [];
+
         if (!empty($filters['tag_id'])) {
             $tag = $this->tagService->findOneById($filters['tag_id']);
             if (null !== $tag) {

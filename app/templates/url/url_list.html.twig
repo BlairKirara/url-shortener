@@ -1,0 +1,108 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title.url_list'|trans }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ 'title.url_list'|trans }}</h1>
+    <p>
+        <a href="{{ url('url_create') }}" class="btn btn-primary">
+            {{ 'action.create'|trans }}
+        </a>
+    </p>
+
+    {% if pagination is defined and pagination.items|length %}
+
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'url.id') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.shortName'|trans, 'url.short_name') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.longName'|trans, 'url.long_name') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.createTime'|trans, 'url.create_time') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.isBlocked'|trans, 'url.is_blocked') }}</th>
+                <th>{{ knp_pagination_sortable(pagination, 'label.blockTime'|trans, 'url.block_time') }}</th>
+                <th>{{ 'label.tag'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for url in pagination.items %}
+                <tr>
+                    <td>{{ url.id }}</td>
+                    <td>
+                        <a href="{{ url('url_redirect_index', {'shortName' : url.shortName}) }}" title="{{ url.shortName }}" target="_blank">
+                            {{ absolute_url(url('url_redirect_index', {'shortName' : url.shortName})) }}
+                        </a>
+                    </td>
+                    <td>{{ url.longName }}</td>
+                    <td>{{ url.createTime|format_date('long')}}</td>
+                    <td>{{ url.isBlocked ? 'Yes' : 'No' }}</td>
+                    <td>{{ url.blockTime|date('Y/m/d') }}</td>
+                    <td>
+                        {% if url.tags is defined and url.tags|length %}
+                            {% for tag in url.tags %}
+                                <a href="{{ url('url_list', {'filters.tag_id' : tag.id}) }}" title="{{ tag.name }}">
+                                    {{ tag.name }}
+                                </a>
+                            {% endfor %}
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+                    {% if is_granted('VIEW', url) %}
+                        <td>
+                            <a class="btn btn-outline-primary" href="{{ url('url_show', {id: url.id}) }}" title="{{ 'action.show'|trans }}">
+                                {{ 'action.show'|trans }}
+                            </a>
+                        </td>
+                    {% endif %}
+                    {% if is_granted('EDIT', url) %}
+                        <td>
+                            <a class="btn btn-outline-success" href="{{ url('url_edit', {id: url.id}) }}" title="{{ 'action.edit'|trans }}">
+                                {{ 'action.edit'|trans }}
+                            </a>
+                        </td>
+                    {% endif %}
+                    {% if is_granted('DELETE', url) %}
+                        <td>
+                            <a class="btn btn-outline-danger" href="{{ url('url_delete', {id: url.id}) }}" title="{{ 'action.delete'|trans }}">
+                                {{ 'action.delete'|trans }}
+                            </a>
+                        </td>
+                    {% endif %}
+                    <td>
+                        {% if is_granted('ROLE_ADMIN') %}
+                        {% if url is defined and url.isBlocked %}
+                            <a class="btn btn-outline-warning" href="{{ url('url_unblock', {id: url.id}) }}" title="{{ 'action.unblock'|trans }}">
+                                {{ 'action.unblock'|trans }}
+                            </a>
+                        {% else %}
+                            <a class="btn btn-outline-warning" href="{{ url('url_block', {id: url.id}) }}" title="{{ 'action.block'|trans }}">
+                                {{ 'action.block'|trans }}
+                            </a>
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="navigation text-center">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+
+    {% else %}
+        <p>
+            {% include 'default/_single_alert_message.html.twig' with {
+                type: 'warning',
+                message: 'message.empty_list'|trans
+            } %}
+        </p>
+    {% endif %}
+{% endblock %}

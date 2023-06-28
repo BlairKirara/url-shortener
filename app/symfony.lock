@@ -319,7 +319,7 @@
         ]
     },
     "symfony/webapp-pack": {
-        "version": "1.2",
+        "version": "1.1",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -331,6 +331,6 @@
         ]
     },
     "twig/extra-bundle": {
-        "version": "v3.6.0"
+        "version": "v3.5.1"
     }
 }

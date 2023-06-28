@@ -1,25 +1,34 @@
 <?php
+/**
+ * Guest User fixtures.
+ */
 
 namespace App\DataFixtures;
 
 use App\Entity\GuestUser;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
 
-class GuestUserFixtures extends Fixture
+/**
+ * Class GuestUserFixtures.
+ */
+class GuestUserFixtures extends AbstractBaseFixtures
 {
-    public function load(ObjectManager $manager)
+    /**
+     * Load data.
+     *
+     * @psalm-suppress PossiblyNullReference
+     * @psalm-suppress UnusedClosureParam
+     */
+    public function loadData(): void
     {
-        $faker = Factory::create();
-
-        for ($i = 0; $i < 10; $i++) {
-            $guestUser = new GuestUser();
-            $guestUser->setEmail($faker->email);
-
-            $manager->persist($guestUser);
+        if (null === $this->manager || null === $this->faker) {
+            return;
         }
+        $this->createMany(10, 'guestUsers', function () {
+            $guestUser = new GuestUser();
+            $guestUser->setEmail($this->faker->email);
 
-        $manager->flush();
+            return $guestUser;
+        });
+        $this->manager->flush();
     }
 }

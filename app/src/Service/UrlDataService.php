@@ -1,4 +1,7 @@
 <?php
+/**
+ * Url Visited service.
+ */
 
 namespace App\Service;
 
@@ -7,10 +10,15 @@ use App\Repository\UrlDataRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
+
 class UrlDataService implements UrlDataServiceInterface
 {
+
     private UrlDataRepository $urlDataRepository;
+
+
     private PaginatorInterface $paginator;
+
 
     public function __construct(UrlDataRepository $urlDataRepository, PaginatorInterface $paginator)
     {
@@ -18,21 +26,25 @@ class UrlDataService implements UrlDataServiceInterface
         $this->paginator = $paginator;
     }
 
+
     public function save(UrlData $urlData): void
     {
         $this->urlDataRepository->save($urlData);
     }
 
-    public function countUrlData(int $page): PaginationInterface
-    {
-        $visits = $this->urlDataRepository->countUrlData();
-        $itemsPerPage = UrlDataRepository::PAGINATOR_ITEMS_PER_PAGE;
 
-        return $this->paginator->paginate($visits, $page, $itemsPerPage);
+    public function countAllVisitsForUrl(int $page): PaginationInterface
+    {
+        return $this->paginator->paginate(
+            $this->urlDataRepository->countAllVisitsForUrl(),
+            $page,
+            UrlDataRepository::PAGINATOR_ITEMS_PER_PAGE
+        );
     }
 
-    public function deleteUrlData(int $id): void
+
+    public function deleteAllVisitsForUrl(int $id): void
     {
-        $this->urlDataRepository->deleteUrlData($id);
+        $this->urlDataRepository->deleteAllVisitsForUrl($id);
     }
 }
