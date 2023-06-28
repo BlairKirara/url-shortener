@@ -68,7 +68,7 @@ class UserController extends AbstractController
             $password = $this->passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($password);
             $this->userService->save($user);
-            $this->addFlash('success', $this->translator->trans('message.updated_successfully'));
+            $this->addFlash('success', $this->translator->trans('message.updated'));
 
             return $this->redirectToRoute('app_homepage');
         }
@@ -91,7 +91,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->userService->save($user);
-            $this->addFlash('success', $this->translator->trans('message.updated_successfully'));
+            $this->addFlash('success', $this->translator->trans('message.updated'));
 
             return $this->redirectToRoute('app_homepage');
         }

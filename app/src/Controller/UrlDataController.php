@@ -35,6 +35,6 @@ class UrlDataController extends AbstractController
             $request->query->getInt('page', 1)
         );
 
-        return $this->render('url_data/url_visits.html.twig', ['pagination' => $pagination]);
+        return $this->render('url/url_visits.html.twig', ['pagination' => $pagination]);
     }
 }

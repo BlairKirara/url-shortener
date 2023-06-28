@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ 'title.user_details'|trans({'%id%': user.id|default('')}) }}
+    {{ 'title.profile'|trans({'%id%': user.id|default('')}) }}
 {% endblock %}
 
 {% block body %}
     <div>
-        <h1>{{ 'title.user_details'|trans({'%id%': user.id|default('')}) }}</h1>
+        <h1>{{ 'title.profile'|trans({'%id%': user.id|default('')}) }}</h1>
         {% if user is defined and user|length %}
             <dl>
                 <dt>{{ 'user.id'|trans }}</dt>

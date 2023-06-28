@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Url;
+use App\Entity\UrlData;
 use App\Entity\User;
 use App\Entity\GuestUser;
 use App\Form\Type\UrlBlockType;
@@ -13,6 +14,7 @@ use App\Service\UrlServiceInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -81,6 +83,35 @@ class UrlController extends AbstractController
     }// end show()
 
     #[Route(
+        '/short/{shortName}',
+        name: 'app_url_redirecttourl',
+        methods: ['GET'],
+    )]
+    public function redirectToUrl(string $shortName): Response
+    {
+        $url = $this->urlService->findOneByShortName($shortName);
+
+        if (!$url) {
+            $this->addFlash('warning', $this->translator->trans('message.url_does_not_exist'));
+        }
+        else if (!$url->isIsBlocked()) {
+            $urlData = new UrlData();
+            $urlData->setVisitTime(new \DateTimeImmutable());
+            $urlData->setUrl($url);
+
+            $this->urlDataService->save($urlData);
+
+            return new RedirectResponse($url->getLongName());
+        } else if ($url->isIsBlocked() && $url->getBlockTime() > new \DateTimeImmutable()) {
+            $this->addFlash('warning', $this->translator->trans('message.blocked_url'));
+
+            return $this->redirectToRoute('list');
+        }
+
+        return $this->redirectToRoute('list');
+    }
+
+    #[Route(
         '/create',
         name: 'url_create',
         methods: 'GET|POST',
@@ -110,7 +141,7 @@ class UrlController extends AbstractController
 
             $this->urlService->save($url);
 
-            $this->addFlash('success', $this->translator->trans('message.created_successfully'));
+            $this->addFlash('success', $this->translator->trans('message.created'));
 
             return $this->redirectToRoute('list');
         }
@@ -144,7 +175,7 @@ class UrlController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->urlDataService->deleteUrlVisits($url->getId());
             $this->urlService->delete($url);
-            $this->addFlash('success', $this->translator->trans('message.deleted_successfully'));
+            $this->addFlash('success', $this->translator->trans('message.deleted'));
 
             return $this->redirectToRoute('url_index');
         }
@@ -180,7 +211,7 @@ class UrlController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->urlService->save($url);
-            $this->addFlash('success', $this->translator->trans('message.updated_successfully'));
+            $this->addFlash('success', $this->translator->trans('message.updated'));
 
             return $this->redirectToRoute('url_index');
         }
@@ -213,7 +244,7 @@ class UrlController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $url->setIsBlocked(true);
             $this->urlService->save($url);
-            $this->addFlash('success', $this->translator->trans('message.blocked_successfully'));
+            $this->addFlash('success', $this->translator->trans('message.blocked'));
 
             return $this->redirectToRoute('list');
         }
@@ -235,7 +266,7 @@ class UrlController extends AbstractController
             $url->setIsBlocked(false);
             $url->setBlockTime(null);
             $this->urlService->save($url);
-            $this->addFlash('success', $this->translator->trans('message.unblocked_successfully'));
+            $this->addFlash('success', $this->translator->trans('message.unblocked'));
 
             return $this->redirectToRoute('list');
         }
@@ -256,7 +287,7 @@ class UrlController extends AbstractController
             $url->setBlockTime(null);
             $url->setIsBlocked(false);
             $this->urlService->save($url);
-            $this->addFlash('success', $this->translator->trans('message.unblocked_successfully'));
+            $this->addFlash('success', $this->translator->trans('message.unblocked'));
 
             return $this->redirectToRoute('list');
         }
