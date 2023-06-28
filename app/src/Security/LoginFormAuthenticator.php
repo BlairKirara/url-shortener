@@ -30,7 +30,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     /**
      *
      */
-    public const DEFAULT_ROUTE = 'url_index';
+    public const DEFAULT_ROUTE = 'app_homepage';
 
     /**
      * @var UrlGeneratorInterface

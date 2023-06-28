@@ -14,7 +14,7 @@
                 <dt>{{ 'user.email'|trans }}</dt>
                 <dd>{{ user.email }}</dd>
                 <dt>{{ 'label.edit'|trans }}</dt>
-                {% if is_granted('EDIT_USER_DATA', user) %}
+                {% if is_granted('EDIT_USER', user) %}
                     <dd>
                         <a href="{{ url('user_edit_email', {'id': user.id}) }}">
                             Edit Email

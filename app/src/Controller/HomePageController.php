@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class HomeController.
+ * Class HomePageController.
  */
-class HomeController extends AbstractController
+class HomePageController extends AbstractController
 {
     /**
      * @return Response

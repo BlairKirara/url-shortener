@@ -85,7 +85,7 @@ class UserController extends AbstractController
      * @return Response
      */
     #[Route('/{id}/edit/password', name: 'user_edit', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
-    #[IsGranted('EDIT_USER_DATA', subject: 'user')]
+    #[IsGranted('EDIT_USER', subject: 'user')]
     public function edit(Request $request, User $user): Response
     {
         $form = $this->createForm(UserPasswordType::class, $user, ['method' => 'PUT']);
@@ -114,7 +114,7 @@ class UserController extends AbstractController
      * @return Response
      */
     #[Route('/{id}/edit/email', name: 'user_edit_email', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
-    #[IsGranted('EDIT_USER_DATA', subject: 'user')]
+    #[IsGranted('EDIT_USER', subject: 'user')]
     public function editEmail(Request $request, User $user): Response
     {
         $form = $this->createForm(UserEmailType::class, $user, ['method' => 'PUT']);

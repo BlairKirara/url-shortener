@@ -31,7 +31,6 @@ class RegistrationType extends AbstractType
                 'attr' => ['max_length' => 191],
                 'constraints' => [
                     new NotBlank(),
-                    new Length(['min' => 3, 'max' => 191]),
                 ],
             ]
         )

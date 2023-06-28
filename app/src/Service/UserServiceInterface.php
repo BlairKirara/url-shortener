@@ -22,9 +22,5 @@ interface UserServiceInterface
      */
     public function save(User $user): void;
 
-    /**
-     * @param string $email
-     * @return User|null
-     */
-    public function findOneBy(string $email): ?User;
+
 }

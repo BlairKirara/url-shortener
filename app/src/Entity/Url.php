@@ -30,7 +30,6 @@ class Url
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
     #[Assert\Url]
-    #[Assert\Length(min: 3, max: 255)]
     private ?string $longName = null;
 
     /**

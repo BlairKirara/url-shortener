@@ -74,12 +74,5 @@ class UserService implements UserServiceInterface
         $this->userRepository->save($user);
     }
 
-    /**
-     * @param string $email
-     * @return User|null
-     */
-    public function findOneBy(string $email): ?User
-    {
-        return $this->userRepository->findOneBy(['email' => $email]);
-    }
+
 }

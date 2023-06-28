@@ -34,7 +34,7 @@ class UserVoter extends Voter
     /**
      *
      */
-    public const EDIT_USER_DATA = 'EDIT_USER_DATA';
+    public const EDIT_USER = 'EDIT_USER';
     /**
      *
      */
@@ -47,7 +47,7 @@ class UserVoter extends Voter
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::EDIT_USER_DATA, self::VIEW])
+        return in_array($attribute, [self::EDIT_USER, self::VIEW])
             && $subject instanceof User;
     }
 
@@ -65,7 +65,7 @@ class UserVoter extends Voter
         }
 
         return match ($attribute) {
-            self::VIEW, self::EDIT_USER_DATA => $this->canAccess($subject, $user),
+            self::VIEW, self::EDIT_USER => $this->canAccess($subject, $user),
             default => false,
         };
     }

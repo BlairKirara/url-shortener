@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Url;
 use App\Entity\UrlData;
-use App\Entity\User;
 use App\Entity\GuestUser;
 use App\Form\Type\UrlBlockType;
 use App\Form\Type\UrlType;
