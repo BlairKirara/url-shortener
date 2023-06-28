@@ -5,24 +5,32 @@
 {% endblock %}
 
 {% block body %}
-    <h1>View tag</h1>
-    {% if tag is defined and tag|length %}
-        <dl>
-            <dt>{{ 'label.id'|trans }}</dt>
-            <dd>{{ tag.id }}</dd>
-            <dt>{{ 'label.name'|trans }}</dt>
-            <dd>{{ tag.name }}</dd>
-        </dl>
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <div style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; width: 400px; text-align: center;">
+            <h1 style="margin-bottom: 20px;">View tag</h1>
+            {% if tag is defined and tag|length %}
+                <dl style="margin-bottom: 20px;">
+                    <div style="margin-bottom: 10px;">
+                        <dt style="font-weight: bold;">{{ 'label.id'|trans }}</dt>
+                        <dd>{{ tag.id }}</dd>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <dt style="font-weight: bold;">{{ 'label.name'|trans }}</dt>
+                        <dd>{{ tag.name }}</dd>
+                    </div>
+                </dl>
 
-        <p>
-            <a href="{{ url('tag_index') }}" title="{{ 'action.back_to_list'|trans }}">
-                {{ 'action.back_to_list'|trans }}
-            </a>
-        </p>
-    {% else %}
-        <p>
-            {{ 'message.record_not_found'|trans }}
-        </p>
-    {% endif %}
-
+                <p>
+                    <a href="{{ url('tag_index') }}" style="text-decoration: none; padding: 8px 16px; border: 1px solid #ccc; border-radius: 5px; background-color: #f2f2f2;">
+                        {{ 'action.back_to_list'|trans }}
+                    </a>
+                </p>
+            {% else %}
+                <p>
+                    {{ 'message.record_not_found'|trans }}
+                </p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
+

@@ -1,16 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ 'title.list'|trans }}
+    {{ 'title.your_list'|trans }}
 {% endblock %}
 
 {% block body %}
-    <h1>{{ 'title.list'|trans }}</h1>
-    <p>
-        <a href="{{ url('url_create') }}" class="btn btn-primary">
-            {{ 'action.create'|trans }}
-        </a>
-    </p>
+    <h1>{{ 'title.your_list'|trans }}</h1>
 
     {% if pagination is defined and pagination.items|length %}
 

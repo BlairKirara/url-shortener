@@ -294,6 +294,22 @@
         <source>title.tags</source>
         <target>Tags</target>
       </trans-unit>
+      <trans-unit id="74">
+        <source>label.block_time</source>
+        <target>Set block time</target>
+      </trans-unit>
+      <trans-unit id="75">
+        <source>title.your_list</source>
+        <target>Your list</target>
+      </trans-unit>
+      <trans-unit id="76">
+        <source>action.create_url</source>
+        <target>✂ Shorten URL ✂</target>
+      </trans-unit>
+      <trans-unit id="77">
+        <source>action.create_tag</source>
+        <target>🏷️ Create Tag 🏷️</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

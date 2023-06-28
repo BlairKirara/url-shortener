@@ -17,22 +17,23 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('visits_index') }}">{{ 'title.url_visits'|trans }}</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ url('url_create') }}">{{ 'action.create_url'|trans }}</a>
+                </li>
             </ul>
-            <div class="navbar-text">
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <a class="nav-link" href="{{ path('user_show', {'id': app.user.id}) }}">{{ app.user.email }}</a>
-                {% endif %}
-            </div>
+
             <ul class="navbar-nav me-5">
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('user_index') }}">{{ 'title.user_list'|trans }}</a>
                     </li>
-
                 {% endif %}
                 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('tag_index') }}">{{ 'title.tag_list'|trans }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url('tag_create') }}">{{ 'action.create_tag'|trans }}</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_logout') }}">{{ 'action.logout'|trans }}</a>
@@ -44,6 +45,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_register') }}">{{ 'action.register'|trans }}</a>
                     </li>
+                {% endif %}
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <a class="nav-link active" href="{{ path('user_show', {'id': app.user.id}) }}">{{ app.user.email }}</a>
                 {% endif %}
             </ul>
         </div>

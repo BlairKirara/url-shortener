@@ -5,28 +5,42 @@
 {% endblock %}
 
 {% block body %}
-    <h1>View url</h1>
-    {% if url is defined and url|length %}
-        <dl>
-            <dt>Long Name</dt>
-            <dd>{{ url.longName }}</dd>
-            <dt>Short Name</dt>
-            <dd>{{ url.shortName }}</dd>
-            <dt>Create Time</dt>
-            <dd>{{ url.createTime |format_date('long') }}</dd>
-            <dt>Blocked</dt>
-            <dd>{{ url.isBlocked ? 'Yes' : 'No' }}</dd>
-            <dt>Blocked Till</dt>
-            <dd>{{ url.blockTime |format_date('long') }}</dd>
-        </dl>
-        <p>
-            <a href="{{ url('list') }}" title="{{ 'action.back_to_list'|trans }}">
-                {{ 'action.back_to_list'|trans }}
-            </a>
-        </p>
-    {% else %}
-        <p>
-            {{ 'message.empty_list'|trans }}
-        </p>
-    {% endif %}
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+        <div style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; width: 400px; text-align: center;">
+            <h1 style="margin-bottom: 20px;">View URL</h1>
+            {% if url is defined and url|length %}
+                <dl style="margin-bottom: 20px;">
+                    <div style="margin-bottom: 10px;">
+                        <dt style="font-weight: bold;">Long Name</dt>
+                        <dd>{{ url.longName }}</dd>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <dt style="font-weight: bold;">Short Name</dt>
+                        <dd>{{ url.shortName }}</dd>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <dt style="font-weight: bold;">Create Time</dt>
+                        <dd>{{ url.createTime |format_date('long') }}</dd>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <dt style="font-weight: bold;">Blocked</dt>
+                        <dd>{{ url.isBlocked ? 'Yes' : 'No' }}</dd>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <dt style="font-weight: bold;">Blocked Till</dt>
+                        <dd>{{ url.blockTime |format_date('long') }}</dd>
+                    </div>
+                </dl>
+                <p>
+                    <a href="{{ url('list') }}" title="{{ 'action.back_to_list'|trans }}" style="text-decoration: none; padding: 8px 16px; border: 1px solid #ccc; border-radius: 5px; background-color: #f2f2f2;">
+                        {{ 'action.back_to_list'|trans }}
+                    </a>
+                </p>
+            {% else %}
+                <p>
+                    {{ 'message.empty_list'|trans }}
+                </p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
