@@ -282,6 +282,18 @@
                 <source>title.login_message</source>
                 <target>Logowanie</target>
             </trans-unit>
+            <trans-unit id="71">
+                <source>title.is_not_blocked</source>
+                <target>Nie zablokowany</target>
+            </trans-unit>
+            <trans-unit id="72">
+                <source>title.users</source>
+                <target>Użytkownicy</target>
+            </trans-unit>
+            <trans-unit id="73">
+                <source>title.tags</source>
+                <target>Tagi</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

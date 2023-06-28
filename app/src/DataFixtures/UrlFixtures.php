@@ -26,7 +26,7 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
                     $this->faker->dateTimeBetween('-100 days', '-1 days')
                 )
             );
-            $url->setIsBlocked($this->faker->boolean(20));
+            $url->setIsBlocked($this->faker->boolean(15));
             if ($url->isIsBlocked()) {
                 $url->setBlockTime(
                     \DateTimeImmutable::createFromMutable(
@@ -36,12 +36,12 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
             }
 
             /** @var array<array-key, Tag> $tags */
-            $tags = $this->getRandomReferences('tags', $this->faker->numberBetween(0, 5));
+            $tags = $this->getRandomReferences('tags', $this->faker->numberBetween(0, 2));
             foreach ($tags as $tag) {
                 $url->addTag($tag);
             }
 
-            if ($this->faker->boolean(70)) {
+            if ($this->faker->boolean(55)) {
                 /** @var User $users */
                 $users = $this->getRandomReference('users');
                 $url->setUsers($users);

@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ 'title.url_list'|trans }}
+    {{ 'title.tag_list'|trans }}
 {% endblock %}
 
 {% block body %}
-    <h1>{{ 'title.url_list'|trans }}</h1>
+    <h1>{{ 'title.tags'|trans }}</h1>
     <p>
         <a href="{{ url('tag_create') }}" class="btn btn-primary">
             {{ 'action.create'|trans }}
