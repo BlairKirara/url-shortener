@@ -11,13 +11,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Class RegistrationController.
+ */
 class RegistrationController extends AbstractController
 {
-
+    /**
+     * @var TranslatorInterface
+     */
     private TranslatorInterface $translator;
+    /**
+     * @var UserServiceInterface
+     */
     private UserServiceInterface $userService;
 
     /**
+     * Constructor.
+     *
      * @param UserServiceInterface $userService
      * @param TranslatorInterface $translator
      */

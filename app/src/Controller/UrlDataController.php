@@ -8,15 +8,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-
+/**
+ * Class UrlDataController.
+ */
 #[Route('/visits')]
 class UrlDataController extends AbstractController
 {
-
     private UrlDataServiceInterface $urlDataService;
 
-
     /**
+     * Constructor.
+     *
      * @param UrlDataServiceInterface $urlDataService
      */
     public function __construct(UrlDataServiceInterface $urlDataService)

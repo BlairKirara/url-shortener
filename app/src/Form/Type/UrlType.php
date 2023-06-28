@@ -15,24 +15,41 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-
+/**
+ * Class UrlType.
+ */
 class UrlType extends AbstractType
 {
-
+    /**
+     * @var TagsDataTransformer
+     */
     private TagsDataTransformer $tagsDataTransformer;
 
-
+    /**
+     * @var Security
+     */
     private Security $security;
 
+    /**
+     * @var GuestUserService
+     */
     private GuestUserService $guestUserService;
 
+    /**
+     * @var TranslatorInterface
+     */
     private TranslatorInterface $translator;
 
-
+    /**
+     * Constructor.
+     *
+     * @param TagsDataTransformer $tagsDataTransformer
+     * @param Security $security
+     * @param GuestUserService $guestUserService
+     * @param TranslatorInterface $translator
+     */
     public function __construct(TagsDataTransformer $tagsDataTransformer, Security $security, GuestUserService $guestUserService, TranslatorInterface $translator)
     {
         $this->tagsDataTransformer = $tagsDataTransformer;
@@ -41,10 +58,13 @@ class UrlType extends AbstractType
         $this->translator = $translator;
     }
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-
-
         $builder->add(
             'longName',
             TextType::class,
@@ -91,7 +111,6 @@ class UrlType extends AbstractType
             });
         }
     }
-
 
     /**
      * @param OptionsResolver $resolver

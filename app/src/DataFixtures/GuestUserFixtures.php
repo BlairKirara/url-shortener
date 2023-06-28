@@ -4,10 +4,14 @@ namespace App\DataFixtures;
 
 use App\Entity\GuestUser;
 
-
+/**
+ * Class GuestUserFixtures.
+ */
 class GuestUserFixtures extends AbstractBaseFixtures
 {
-
+    /**
+     * @return void
+     */
     public function loadData(): void
     {
         if (null === $this->manager || null === $this->faker) {

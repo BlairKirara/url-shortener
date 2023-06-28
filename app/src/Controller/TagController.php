@@ -13,14 +13,25 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Class TagController.
+ */
 #[Route('/tag')]
 class TagController extends AbstractController
 {
+    /**
+     * @var TagServiceInterface
+     */
     private TagServiceInterface $tagService;
 
+    /**
+     * @var TranslatorInterface
+     */
     private TranslatorInterface $translator;
 
     /**
+     * Constructor.
+     *
      * @param TagServiceInterface $urlService
      * @param TranslatorInterface $translator
      */

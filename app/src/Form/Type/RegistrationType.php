@@ -10,10 +10,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-
+/**
+ * Class RegistrationType.
+ */
 class RegistrationType extends AbstractType
 {
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -49,7 +50,6 @@ class RegistrationType extends AbstractType
                 ],
             );
     }
-
 
     /**
      * {@inheritdoc}

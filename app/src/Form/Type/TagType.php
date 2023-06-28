@@ -8,10 +8,11 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-
+/**
+ * Class TagType.
+ */
 class TagType extends AbstractType
 {
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -30,7 +31,6 @@ class TagType extends AbstractType
         );
     }
 
-
     /**
      * @param OptionsResolver $resolver
      * @return void
@@ -41,7 +41,6 @@ class TagType extends AbstractType
             'data_class' => Tag::class,
         ]);
     }
-
 
     /**
      * @return string

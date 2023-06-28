@@ -6,19 +6,29 @@ use App\Entity\Enum\UserRole;
 use App\Entity\User;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-
+/**
+ * Class UserFixtures.
+ */
 class UserFixtures extends AbstractBaseFixtures
 {
-
+    /**
+     * @var UserPasswordHasherInterface
+     */
     private UserPasswordHasherInterface $passwordHasher;
 
-
+    /**
+     * Constructor.
+     *
+     * @param UserPasswordHasherInterface $passwordHasher
+     */
     public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
         $this->passwordHasher = $passwordHasher;
     }
 
-
+    /**
+     * @return void
+     */
     protected function loadData(): void
     {
         if (null === $this->manager || null === $this->faker) {

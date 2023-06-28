@@ -10,18 +10,13 @@ use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
 
-
 abstract class AbstractBaseFixtures extends Fixture
 {
-
     protected ?Generator $faker = null;
-
 
     protected ?ObjectManager $manager = null;
 
-
     private array $referencesIndex = [];
-
 
     public function load(ObjectManager $manager): void
     {
@@ -31,7 +26,6 @@ abstract class AbstractBaseFixtures extends Fixture
     }
 
     abstract protected function loadData(): void;
-
 
     protected function createMany(int $count, string $groupName, callable $factory): void
     {
@@ -49,7 +43,6 @@ abstract class AbstractBaseFixtures extends Fixture
             $this->addReference(sprintf('%s_%d', $groupName, $i), $entity);
         }
     }
-
 
     protected function getRandomReference(string $groupName): object
     {
@@ -71,7 +64,6 @@ abstract class AbstractBaseFixtures extends Fixture
 
         return $this->getReference($randomReferenceKey);
     }
-
 
     protected function getRandomReferences(string $groupName, int $count): array
     {

@@ -8,10 +8,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Url;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
-
+/**
+ * Class BlockType.
+ */
 class UrlBlockType extends AbstractType
 {
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -37,7 +38,6 @@ class UrlBlockType extends AbstractType
     {
         $resolver->setDefaults(['data_class' => Url::class]);
     }
-
 
     /**
      * @return string

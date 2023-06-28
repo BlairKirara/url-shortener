@@ -8,10 +8,14 @@ use App\Entity\Url;
 use App\Entity\User;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-
+/**
+ * Class UrlFixtures.
+ */
 class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
 {
-
+    /**
+     * @return void
+     */
     public function loadData(): void
     {
         if (null === $this->manager || null === $this->faker) {
@@ -56,6 +60,9 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
         $this->manager->flush();
     }
 
+    /**
+     * @return string[]
+     */
     public function getDependencies(): array
     {
         return [

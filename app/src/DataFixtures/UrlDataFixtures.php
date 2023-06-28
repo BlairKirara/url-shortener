@@ -5,10 +5,14 @@ namespace App\DataFixtures;
 use App\Entity\UrlData;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-
+/**
+ * Class UrlDataFixtures.
+ */
 class UrlDataFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
 {
-
+    /**
+     * @return void
+     */
     public function loadData(): void
     {
         if (null === $this->manager || null === $this->faker) {
@@ -28,6 +32,9 @@ class UrlDataFixtures extends AbstractBaseFixtures implements DependentFixtureIn
         $this->manager->flush();
     }
 
+    /**
+     * @return string[]
+     */
     public function getDependencies(): array
     {
         return [
