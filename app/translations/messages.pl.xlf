@@ -40,7 +40,7 @@
             </trans-unit>
             <trans-unit id="10">
                 <source>title.user_register</source>
-                <target>Rejestracja użytkownika.</target>
+                <target>Rejestracja</target>
             </trans-unit>
             <trans-unit id="11">
                 <source>action_register</source>
