@@ -68,7 +68,7 @@
             </trans-unit>
             <trans-unit id="17">
                 <source>label.createTime</source>
-                <target>Data Utworzenia</target>
+                <target>Utworzony</target>
             </trans-unit>
             <trans-unit id="18">
                 <source>label.isBlocked</source>
@@ -76,7 +76,7 @@
             </trans-unit>
             <trans-unit id="19">
                 <source>label.blockTime</source>
-                <target>Zablokowany do</target>
+                <target>Blokada</target>
             </trans-unit>
             <trans-unit id="20">
                 <source>label.tag</source>
@@ -128,7 +128,7 @@
             </trans-unit>
             <trans-unit id="32">
                 <source>label.count</source>
-                <target>Liczba</target>
+                <target>Liczba wyświetleń</target>
             </trans-unit>
             <trans-unit id="33">
                 <source>title.url_unblock</source>
@@ -148,7 +148,7 @@
             </trans-unit>
             <trans-unit id="37">
                 <source>title.url_create</source>
-                <target>Stwórz URL</target>
+                <target>Dodaj URL</target>
             </trans-unit>
             <trans-unit id="38">
                 <source>action.save</source>
@@ -306,9 +306,17 @@
                 <source>action.create_url</source>
                 <target>✂ Skróć link ✂</target>
             </trans-unit>
-            <trans-unit id="78">
+            <trans-unit id="77">
                 <source>action.create_tag</source>
                 <target>🏷️ Utwórz Tag 🏷️</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>label.email_edit</source>
+                <target>Edytuj Email</target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>label.password_edit</source>
+                <target>Edytuj Hasło</target>
             </trans-unit>
         </body>
     </file>

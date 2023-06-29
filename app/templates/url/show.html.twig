@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block body %}
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <div style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; width: 400px; text-align: center;">
+    <div style="display: flex; justify-content: center; align-items: flex-start; height: 100vh;">
+        <div style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; width: 400px; text-align: center; margin-top: 20px;">
             <h1 style="margin-bottom: 20px;">View URL</h1>
             {% if url is defined and url|length %}
                 <dl style="margin-bottom: 20px;">
@@ -31,11 +31,11 @@
                         <dd>{{ url.blockTime |format_date('long') }}</dd>
                     </div>
                 </dl>
-                <p>
-                    <a href="{{ url('list') }}" title="{{ 'action.back_to_list'|trans }}" style="text-decoration: none; padding: 8px 16px; border: 1px solid #ccc; border-radius: 5px; background-color: #f2f2f2;">
+                <div style="text-align: center;">
+                    <a href="{{ url('list') }}" class="btn btn-primary" title="{{ 'action.back_to_list'|trans }}" style="text-decoration: none; padding: 8px 16px; border-radius: 5px;">
                         {{ 'action.back_to_list'|trans }}
                     </a>
-                </p>
+                </div>
             {% else %}
                 <p>
                     {{ 'message.empty_list'|trans }}
@@ -44,3 +44,4 @@
         </div>
     </div>
 {% endblock %}
+

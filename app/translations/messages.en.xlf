@@ -68,7 +68,7 @@
       </trans-unit>
       <trans-unit id="17">
         <source>label.createTime</source>
-        <target>Create Time</target>
+        <target>Created</target>
       </trans-unit>
       <trans-unit id="18">
         <source>label.isBlocked</source>
@@ -76,7 +76,7 @@
       </trans-unit>
       <trans-unit id="19">
         <source>label.blockTime</source>
-        <target>Blocked Till</target>
+        <target>Blocked</target>
       </trans-unit>
       <trans-unit id="20">
         <source>label.tag</source>
@@ -128,7 +128,7 @@
       </trans-unit>
       <trans-unit id="32">
         <source>label.count</source>
-        <target>Count</target>
+        <target>Visits Count</target>
       </trans-unit>
       <trans-unit id="33">
         <source>title.url_unblock</source>
@@ -148,7 +148,7 @@
       </trans-unit>
       <trans-unit id="37">
         <source>title.url_create</source>
-        <target>Create URL</target>
+        <target>Add URL</target>
       </trans-unit>
       <trans-unit id="38">
         <source>action.save</source>
@@ -309,6 +309,14 @@
       <trans-unit id="77">
         <source>action.create_tag</source>
         <target>🏷️ Create Tag 🏷️</target>
+      </trans-unit>
+      <trans-unit id="78">
+        <source>label.email_edit</source>
+        <target>Edit Email</target>
+      </trans-unit>
+      <trans-unit id="79">
+        <source>label.password_edit</source>
+        <target>Edit Password</target>
       </trans-unit>
     </body>
   </file>

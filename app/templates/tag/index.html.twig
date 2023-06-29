@@ -5,58 +5,59 @@
 {% endblock %}
 
 {% block body %}
-    <h1>{{ 'title.tags'|trans }}</h1>
+    <div class="container my-5">
+        {% if pagination is defined and pagination.items|length %}
 
-    {% if pagination is defined and pagination.items|length %}
-
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'tag.id') }}</th>
-                <th>{{ knp_pagination_sortable(pagination, 'label.name'|trans, 'tag.name') }}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for tag in pagination.items %}
-                <tr>
-                    <td>{{ tag.id }}</td>
-                    <td>{{ tag.name }}</td>
-                    <td>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'tag.id') }}</th>
+                        <th>{{ knp_pagination_sortable(pagination, 'label.name'|trans, 'tag.name') }}</th>
                         {% if is_granted('ROLE_ADMIN') %}
-                        <a class="btn btn-outline-primary" href="{{ url('tag_show', {id: tag.id}) }}" title="{{ 'action.show'|trans }}">
-                            {{ 'action.show'|trans }}
-                        </a>
+                            <th>{{ 'label.actions'|trans }}</th>
                         {% endif %}
-                    </td>
-                    <td>
-                        {% if is_granted('ROLE_ADMIN') %}
-                        <a class="btn btn-outline-success" href="{{ url('tag_edit', {id: tag.id}) }}" title="{{ 'action.edit'|trans }}">
-                            {{ 'action.edit'|trans }}
-                        </a>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if is_granted('ROLE_ADMIN') %}
-                        <a class="btn btn-outline-danger" href="{{ url('tag_delete', {id: tag.id}) }}" title="{{ 'action.delete'|trans }}">
-                            {{ 'action.delete'|trans }}
-                        </a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for tag in pagination.items %}
+                        <tr>
+                            <td>{{ tag.id }}</td>
+                            <td>{{ tag.name }}</td>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <td>
+                                    <a class="btn btn-outline-primary" href="{{ url('tag_show', {id: tag.id}) }}" title="{{ 'action.show'|trans }}">
+                                        {{ 'action.show'|trans }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-outline-success" href="{{ url('tag_edit', {id: tag.id}) }}" title="{{ 'action.edit'|trans }}">
+                                        {{ 'action.edit'|trans }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-outline-danger" href="{{ url('tag_delete', {id: tag.id}) }}" title="{{ 'action.delete'|trans }}">
+                                        {{ 'action.delete'|trans }}
+                                    </a>
+                                </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="navigation text-center">
-            {{ knp_pagination_render(pagination) }}
-        </div>
+            <div class="d-flex justify-content-center mt-4">
+                {{ knp_pagination_render(pagination) }}
+            </div>
 
-    {% else %}
-        <p>
-            {% include 'default/_single_alert_message.html.twig' with {
-                type: 'warning',
-                message: 'message.empty_list'|trans
-            } %}
-        </p>
-    {% endif %}
+        {% else %}
+            <div class="text-center">
+                {% include 'default/_single_alert_message.html.twig' with {
+                    type: 'warning',
+                    message: 'message.empty_list'|trans
+                } %}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

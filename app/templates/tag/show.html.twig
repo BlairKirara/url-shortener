@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block body %}
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-        <div style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; width: 400px; text-align: center;">
+    <div style="display: flex; justify-content: center; align-items: flex-start; height: 100vh;">
+        <div style="border: 1px solid #ccc; padding: 20px; border-radius: 5px; width: 400px; text-align: center; margin-top: 20px;">
             <h1 style="margin-bottom: 20px;">View tag</h1>
             {% if tag is defined and tag|length %}
                 <dl style="margin-bottom: 20px;">
@@ -20,11 +20,11 @@
                     </div>
                 </dl>
 
-                <p>
-                    <a href="{{ url('tag_index') }}" style="text-decoration: none; padding: 8px 16px; border: 1px solid #ccc; border-radius: 5px; background-color: #f2f2f2;">
+                <div style="text-align: center;">
+                    <a href="{{ url('tag_index') }}" class="btn btn-primary" style="text-decoration: none; padding: 8px 16px; border-radius: 5px;">
                         {{ 'action.back_to_list'|trans }}
                     </a>
-                </p>
+                </div>
             {% else %}
                 <p>
                     {{ 'message.record_not_found'|trans }}
