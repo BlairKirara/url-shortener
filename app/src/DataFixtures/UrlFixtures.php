@@ -1,4 +1,7 @@
 <?php
+/**
+ * Url fixtures.
+ */
 
 namespace App\DataFixtures;
 
@@ -10,17 +13,25 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 /**
  * Class UrlFixtures.
+ *
+ * This class is responsible for loading URL fixtures into the database.
+ * It implements the DependentFixtureInterface to define dependencies on other fixtures.
  */
 class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
 {
     /**
-     * @return void
+     * Load URL fixtures into the database.
+     *
+     * This method is called when loading the fixtures and creates multiple URL entities.
      */
     public function loadData(): void
     {
+        // Check if the manager and faker objects are set
         if (null === $this->manager || null === $this->faker) {
             return;
         }
+
+        // Create 90 URL entities
         $this->createMany(90, 'urls', function () {
             $url = new Url();
             $url->setLongName($this->faker->url);
@@ -31,6 +42,7 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
                 )
             );
             $url->setIsBlocked($this->faker->boolean(15));
+
             if ($url->isIsBlocked()) {
                 $url->setBlockTime(
                     \DateTimeImmutable::createFromMutable(
@@ -39,6 +51,7 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
                 );
             }
 
+            // Get random tags and add them to the URL entity
             /** @var array<array-key, Tag> $tags */
             $tags = $this->getRandomReferences('tags', $this->faker->numberBetween(0, 2));
             foreach ($tags as $tag) {
@@ -46,10 +59,12 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
             }
 
             if ($this->faker->boolean(55)) {
+                // Get a random user and set it as the URL's owner
                 /** @var User $users */
                 $users = $this->getRandomReference('users');
                 $url->setUsers($users);
             } else {
+                // Get a random guest user and set it as the URL's owner
                 /** @var GuestUser $guestUsers */
                 $guestUsers = $this->getRandomReference('guestUsers');
                 $url->setGuestUser($guestUsers);
@@ -57,16 +72,25 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
 
             return $url;
         });
+
+        // Flush the changes to the database
         $this->manager->flush();
     }
 
     /**
-     * @return string[]
+     * Get the dependencies for this fixture.
+     *
+     * This method defines the dependencies of this fixture on other fixtures.
+     * In this case, it depends on the TagFixtures, UserFixtures, and GuestUserFixtures classes.
+     *
+     * @return string[] An array of fixture class names that this fixture depends on
      */
     public function getDependencies(): array
     {
         return [
-            TagFixtures::class, UserFixtures::class, GuestUserFixtures::class,
+            TagFixtures::class,
+            UserFixtures::class,
+            GuestUserFixtures::class,
         ];
     }
 }

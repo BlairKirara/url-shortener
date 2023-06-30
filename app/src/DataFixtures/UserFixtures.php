@@ -1,4 +1,7 @@
 <?php
+/**
+ * User fixtures.
+ */
 
 namespace App\DataFixtures;
 
@@ -8,18 +11,17 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * Class UserFixtures.
+ *
+ * This class is responsible for loading user fixtures into the database.
  */
 class UserFixtures extends AbstractBaseFixtures
 {
-    /**
-     * @var UserPasswordHasherInterface
-     */
     private UserPasswordHasherInterface $passwordHasher;
 
     /**
      * Constructor.
      *
-     * @param UserPasswordHasherInterface $passwordHasher
+     * @param UserPasswordHasherInterface $passwordHasher The user password hasher
      */
     public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
@@ -27,14 +29,18 @@ class UserFixtures extends AbstractBaseFixtures
     }
 
     /**
-     * @return void
+     * Load user fixtures into the database.
+     *
+     * This method is called when loading the fixtures and creates multiple user entities.
      */
     protected function loadData(): void
     {
+        // Check if the manager and faker objects are set
         if (null === $this->manager || null === $this->faker) {
             return;
         }
 
+        // Create 10 regular user entities
         $this->createMany(10, 'users', function (int $i) {
             $user = new User();
             $user->setEmail(sprintf('user%d@example.com', $i));
@@ -49,6 +55,7 @@ class UserFixtures extends AbstractBaseFixtures
             return $user;
         });
 
+        // Create 3 admin user entities
         $this->createMany(3, 'admins', function (int $i) {
             $user = new User();
             $user->setEmail(sprintf('admin%d@example.com', $i));
@@ -63,6 +70,7 @@ class UserFixtures extends AbstractBaseFixtures
             return $user;
         });
 
+        // Flush the changes to the database
         $this->manager->flush();
     }
 }
