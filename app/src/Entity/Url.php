@@ -1,4 +1,7 @@
 <?php
+/**
+ * Url.
+ */
 
 namespace App\Entity;
 
@@ -11,50 +14,34 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class Url.
+ *
+ * This class represents a URL entity.
  */
 #[ORM\Entity(repositoryClass: UrlRepository::class)]
 #[ORM\Table(name: 'urls')]
 class Url
 {
-    /**
-     * @var int|null
-     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank]
     #[Assert\Url]
     private ?string $longName = null;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $shortName = null;
 
-    /**
-     * @var \DateTimeImmutable|null
-     */
     #[ORM\Column(type: 'datetime_immutable')]
     #[Assert\Type(\DateTimeImmutable::class)]
     #[Gedmo\Timestampable(on: 'create')]
     private ?\DateTimeImmutable $createTime = null;
 
-    /**
-     * @var bool|null
-     */
     #[ORM\Column(type: 'boolean')]
     private ?bool $isBlocked = null;
 
-    /**
-     * @var \DateTimeImmutable|null
-     */
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     #[Assert\Type(\DateTimeImmutable::class)]
     private ?\DateTimeImmutable $blockTime = null;
@@ -67,23 +54,19 @@ class Url
     #[ORM\JoinTable(name: 'urls_tags')]
     private $tags;
 
-    /**
-     * @var User|null
-     */
     #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(name: 'user_id', nullable: true)]
     #[Assert\Type(User::class)]
     private ?User $users;
 
-    /**
-     * @var GuestUser|null
-     */
     #[ORM\ManyToOne(targetEntity: GuestUser::class, fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(name: 'guest_user_id', nullable: true)]
     private ?GuestUser $guestUser = null;
 
     /**
      * Constructor.
+     *
+     * Initializes the tags collection.
      */
     public function __construct()
     {
@@ -91,7 +74,9 @@ class Url
     }
 
     /**
-     * @return int|null
+     * Get the ID of the URL.
+     *
+     * @return int|null The URL ID
      */
     public function getId(): ?int
     {
@@ -99,7 +84,9 @@ class Url
     }
 
     /**
-     * @return string|null
+     * Get the long name of the URL.
+     *
+     * @return string|null The long name of the URL
      */
     public function getLongName(): ?string
     {
@@ -107,8 +94,9 @@ class Url
     }
 
     /**
-     * @param string|null $longName
-     * @return void
+     * Set the long name of the URL.
+     *
+     * @param string|null $longName The long name of the URL
      */
     public function setLongName(?string $longName): void
     {
@@ -116,7 +104,9 @@ class Url
     }
 
     /**
-     * @return string|null
+     * Get the short name of the URL.
+     *
+     * @return string|null The short name of the URL
      */
     public function getShortName(): ?string
     {
@@ -124,8 +114,9 @@ class Url
     }
 
     /**
-     * @param string|null $shortName
-     * @return void
+     * Set the short name of the URL.
+     *
+     * @param string|null $shortName The short name of the URL
      */
     public function setShortName(?string $shortName): void
     {
@@ -133,7 +124,9 @@ class Url
     }
 
     /**
-     * @return \DateTimeImmutable|null
+     * Get the create time of the URL.
+     *
+     * @return \DateTimeImmutable|null The create time of the URL
      */
     public function getCreateTime(): ?\DateTimeImmutable
     {
@@ -141,8 +134,9 @@ class Url
     }
 
     /**
-     * @param \DateTimeImmutable|null $createTime
-     * @return void
+     * Set the create time of the URL.
+     *
+     * @param \DateTimeImmutable|null $createTime The create time of the URL
      */
     public function setCreateTime(?\DateTimeImmutable $createTime): void
     {
@@ -150,7 +144,9 @@ class Url
     }
 
     /**
-     * @return bool|null
+     * Check if the URL is blocked.
+     *
+     * @return bool|null Whether the URL is blocked
      */
     public function isIsBlocked(): ?bool
     {
@@ -158,8 +154,9 @@ class Url
     }
 
     /**
-     * @param bool|null $isBlocked
-     * @return void
+     * Set whether the URL is blocked.
+     *
+     * @param bool|null $isBlocked Whether the URL is blocked
      */
     public function setIsBlocked(?bool $isBlocked): void
     {
@@ -167,7 +164,9 @@ class Url
     }
 
     /**
-     * @return \DateTimeImmutable|null
+     * Get the block time of the URL.
+     *
+     * @return \DateTimeImmutable|null The block time of the URL
      */
     public function getBlockTime(): ?\DateTimeImmutable
     {
@@ -175,8 +174,9 @@ class Url
     }
 
     /**
-     * @param \DateTimeImmutable|null $blockTime
-     * @return void
+     * Set the block time of the URL.
+     *
+     * @param \DateTimeImmutable|null $blockTime The block time of the URL
      */
     public function setBlockTime(?\DateTimeImmutable $blockTime): void
     {
@@ -184,7 +184,9 @@ class Url
     }
 
     /**
-     * @return Collection
+     * Get the collection of tags associated with the URL.
+     *
+     * @return Collection The collection of tags
      */
     public function getTags(): Collection
     {
@@ -192,8 +194,9 @@ class Url
     }
 
     /**
-     * @param Tag $tag
-     * @return void
+     * Add a tag to the URL.
+     *
+     * @param Tag $tag The tag to add
      */
     public function addTag(Tag $tag): void
     {
@@ -203,8 +206,9 @@ class Url
     }
 
     /**
-     * @param Tag $tag
-     * @return void
+     * Remove a tag from the URL.
+     *
+     * @param Tag $tag The tag to remove
      */
     public function removeTag(Tag $tag): void
     {
@@ -212,7 +216,9 @@ class Url
     }
 
     /**
-     * @return User|null
+     * Get the user associated with the URL.
+     *
+     * @return User|null The user associated with the URL
      */
     public function getUsers(): ?User
     {
@@ -220,8 +226,9 @@ class Url
     }
 
     /**
-     * @param User|null $users
-     * @return void
+     * Set the user associated with the URL.
+     *
+     * @param User|null $users The user associated with the URL
      */
     public function setUsers(?User $users): void
     {
@@ -229,7 +236,9 @@ class Url
     }
 
     /**
-     * @return GuestUser|null
+     * Get the guest user associated with the URL.
+     *
+     * @return GuestUser|null The guest user associated with the URL
      */
     public function getGuestUser(): ?GuestUser
     {
@@ -237,8 +246,9 @@ class Url
     }
 
     /**
-     * @param GuestUser|null $guestUser
-     * @return void
+     * Set the guest user associated with the URL.
+     *
+     * @param GuestUser|null $guestUser The guest user associated with the URL
      */
     public function setGuestUser(?GuestUser $guestUser): void
     {

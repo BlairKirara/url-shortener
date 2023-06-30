@@ -1,4 +1,7 @@
 <?php
+/**
+ * Guest user.
+ */
 
 namespace App\Entity;
 
@@ -8,29 +11,27 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class GuestUser.
+ *
+ * This class represents a guest user entity.
  */
 #[ORM\Entity(repositoryClass: GuestUserRepository::class)]
 #[ORM\Table(name: 'guest_users')]
 class GuestUser
 {
-    /**
-     * @var int|null
-     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(type: 'string', length: 191)]
     #[Assert\NotBlank]
     #[Assert\Email]
     private ?string $email;
 
     /**
-     * @return int|null
+     * Get the ID of the guest user.
+     *
+     * @return int|null The guest user ID
      */
     public function getId(): ?int
     {
@@ -38,7 +39,9 @@ class GuestUser
     }
 
     /**
-     * @return string|null
+     * Get the email of the guest user.
+     *
+     * @return string|null The guest user email
      */
     public function getEmail(): ?string
     {
@@ -46,8 +49,9 @@ class GuestUser
     }
 
     /**
-     * @param string $email
-     * @return void
+     * Set the email of the guest user.
+     *
+     * @param string $email The guest user email
      */
     public function setEmail(string $email): void
     {

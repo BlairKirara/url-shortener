@@ -1,4 +1,7 @@
 <?php
+/**
+ * Tag.
+ */
 
 namespace App\Entity;
 
@@ -9,30 +12,28 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class Tag.
+ *
+ * This class represents a tag entity.
  */
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\Table(name: 'tags')]
 #[UniqueEntity(fields: ['name'])]
 class Tag
 {
-    /**
-     * @var int|null
-     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(type: 'string', length: 70)]
     #[Assert\Type('string')]
     #[Assert\NotBlank]
     private ?string $name;
 
     /**
-     * @return int|null
+     * Get the ID of the tag.
+     *
+     * @return int|null The tag ID
      */
     public function getId(): ?int
     {
@@ -40,7 +41,9 @@ class Tag
     }
 
     /**
-     * @return string|null
+     * Get the name of the tag.
+     *
+     * @return string|null The tag name
      */
     public function getName(): ?string
     {
@@ -48,8 +51,9 @@ class Tag
     }
 
     /**
-     * @param string|null $name
-     * @return void
+     * Set the name of the tag.
+     *
+     * @param string|null $name The tag name
      */
     public function setName(?string $name): void
     {

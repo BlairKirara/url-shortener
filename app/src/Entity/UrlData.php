@@ -1,4 +1,7 @@
 <?php
+/**
+ * Url data.
+ */
 
 namespace App\Entity;
 
@@ -8,35 +11,30 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Class UrlData.
+ *
+ * This class represents the data associated with a URL visit.
  */
 #[ORM\Entity(repositoryClass: UrlDataRepository::class)]
 #[ORM\Table(name: 'url_data')]
 class UrlData
 {
-    /**
-     * @var int|null
-     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @var \DateTimeImmutable|null
-     */
     #[ORM\Column(type: 'datetime_immutable')]
     #[Gedmo\Timestampable(on: 'create')]
     private ?\DateTimeImmutable $visitTime = null;
 
-    /**
-     * @var Url|null
-     */
     #[ORM\ManyToOne(targetEntity: Url::class, fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Url $url = null;
 
     /**
-     * @return int|null
+     * Get the ID of the URL data.
+     *
+     * @return int|null The URL data ID
      */
     public function getId(): ?int
     {
@@ -44,7 +42,9 @@ class UrlData
     }
 
     /**
-     * @return \DateTimeImmutable|null
+     * Get the visit time of the URL data.
+     *
+     * @return \DateTimeImmutable|null The visit time of the URL data
      */
     public function getVisitTime(): ?\DateTimeImmutable
     {
@@ -52,8 +52,9 @@ class UrlData
     }
 
     /**
-     * @param \DateTimeImmutable|null $visitTime
-     * @return void
+     * Set the visit time of the URL data.
+     *
+     * @param \DateTimeImmutable|null $visitTime The visit time of the URL data
      */
     public function setVisitTime(?\DateTimeImmutable $visitTime): void
     {
@@ -61,7 +62,9 @@ class UrlData
     }
 
     /**
-     * @return Url|null
+     * Get the URL associated with the URL data.
+     *
+     * @return Url|null The URL associated with the URL data
      */
     public function getUrl(): ?Url
     {
@@ -69,8 +72,9 @@ class UrlData
     }
 
     /**
-     * @param Url|null $url
-     * @return void
+     * Set the URL associated with the URL data.
+     *
+     * @param Url|null $url The URL associated with the URL data
      */
     public function setUrl(?Url $url): void
     {
