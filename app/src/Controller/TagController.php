@@ -1,4 +1,7 @@
 <?php
+/**
+ * Tag controller.
+ */
 
 namespace App\Controller;
 
@@ -19,21 +22,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/tag')]
 class TagController extends AbstractController
 {
-    /**
-     * @var TagServiceInterface
-     */
     private TagServiceInterface $tagService;
 
-    /**
-     * @var TranslatorInterface
-     */
     private TranslatorInterface $translator;
 
     /**
      * Constructor.
-     *
-     * @param TagServiceInterface $urlService
-     * @param TranslatorInterface $translator
      */
     public function __construct(TagServiceInterface $urlService, TranslatorInterface $translator)
     {
@@ -42,8 +36,11 @@ class TagController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @return Response
+     * Displays the list of tags.
+     *
+     * @param Request $request HTTP request
+     *
+     * @return Response The HTTP response
      */
     #[Route(name: 'tag_index', methods: 'GET')]
     public function index(Request $request): Response
@@ -56,8 +53,11 @@ class TagController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @return Response
+     * Creates a new tag.
+     *
+     * @param Request $request HTTP request
+     *
+     * @return Response The HTTP response
      */
     #[Route(
         '/create',
@@ -69,6 +69,7 @@ class TagController extends AbstractController
         $tag = new Tag();
         $form = $this->createForm(TagType::class, $tag);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->tagService->save($tag);
             $this->addFlash('success', $this->translator->trans('message.created'));
@@ -83,9 +84,12 @@ class TagController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Tag $tag
-     * @return Response
+     * Deletes a tag.
+     *
+     * @param Request $request HTTP request
+     * @param Tag     $tag     Tag entity
+     *
+     * @return Response The HTTP response
      */
     #[Route('/{id}/delete', name: 'tag_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
     #[IsGranted('ROLE_ADMIN')]
@@ -118,8 +122,11 @@ class TagController extends AbstractController
     }
 
     /**
-     * @param Tag $tag
-     * @return Response
+     * Shows details of a tag.
+     *
+     * @param Tag $tag Tag entity
+     *
+     * @return Response The HTTP response
      */
     #[Route(
         '/{id}',
@@ -134,9 +141,12 @@ class TagController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param Tag $tag
-     * @return Response
+     * Edits a tag.
+     *
+     * @param Request $request HTTP request
+     * @param Tag     $tag     Tag entity
+     *
+     * @return Response The HTTP response
      */
     #[Route('/{id}/edit', name: 'tag_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
     #[IsGranted('ROLE_ADMIN')]

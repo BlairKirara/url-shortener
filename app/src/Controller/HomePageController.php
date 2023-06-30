@@ -1,6 +1,6 @@
 <?php
 /**
- * Home Controller.
+ * Home Page controller.
  */
 
 namespace App\Controller;
@@ -15,7 +15,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomePageController extends AbstractController
 {
     /**
-     * @return Response
+     * Renders the homepage.
+     *
+     * @return Response The HTTP response
      */
     #[Route(path: '/', name: 'app_homepage')]
     public function index(): Response

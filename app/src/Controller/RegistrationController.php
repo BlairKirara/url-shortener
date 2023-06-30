@@ -1,4 +1,7 @@
 <?php
+/**
+ * Registration controller.
+ */
 
 namespace App\Controller;
 
@@ -17,10 +20,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RegistrationController extends AbstractController
 {
     /**
+     * Translator.
+     *
      * @var TranslatorInterface
      */
     private TranslatorInterface $translator;
+
     /**
+     * User Service.
+     *
      * @var UserServiceInterface
      */
     private UserServiceInterface $userService;
@@ -28,18 +36,21 @@ class RegistrationController extends AbstractController
     /**
      * Constructor.
      *
-     * @param UserServiceInterface $userService
-     * @param TranslatorInterface $translator
+     * @param UserServiceInterface $userService User service
+     * @param TranslatorInterface  $translator   Translator
      */
     public function __construct(UserServiceInterface $userService, TranslatorInterface $translator)
     {
         $this->translator = $translator;
         $this->userService = $userService;
-    }// end __construct()
+    }
 
     /**
-     * @param Request $request
-     * @return Response
+     * Register action.
+     *
+     * @param Request $request HTTP request
+     *
+     * @return Response HTTP response
      */
     #[Route(
         path: '/register',
@@ -67,5 +78,5 @@ class RegistrationController extends AbstractController
             'registration/index.html.twig',
             ['form' => $form->createView()]
         );
-    }// end register()
-}// end class
+    }
+}
