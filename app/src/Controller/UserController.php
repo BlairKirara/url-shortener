@@ -1,4 +1,7 @@
 <?php
+/**
+ * User controller.
+ */
 
 namespace App\Controller;
 
@@ -20,27 +23,16 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[Route('/user')]
 class UserController extends AbstractController
 {
-    /**
-     * @var UserServiceInterface
-     */
-    private userServiceInterface $userService;
-
-    /**
-     * @var TranslatorInterface
-     */
+    private UserServiceInterface $userService;
     private TranslatorInterface $translator;
-
-    /**
-     * @var UserPasswordHasherInterface
-     */
     private UserPasswordHasherInterface $passwordHasher;
 
     /**
      * Constructor.
      *
-     * @param UserServiceInterface $userService
-     * @param TranslatorInterface $translator
-     * @param UserPasswordHasherInterface $passwordHasher
+     * @param UserServiceInterface           $userService    The user service.
+     * @param TranslatorInterface            $translator     The translator.
+     * @param UserPasswordHasherInterface    $passwordHasher The password hasher.
      */
     public function __construct(UserServiceInterface $userService, TranslatorInterface $translator, UserPasswordHasherInterface $passwordHasher)
     {
@@ -50,11 +42,15 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @return Response
+     * User index page.
+     *
+     * @param Request $request The request object.
+     *
+     * @return Response The response object.
+     *
+     * @Route(name="user_index", methods="GET")
+     * @IsGranted("ROLE_ADMIN")
      */
-    #[Route(name: 'user_index', methods: 'GET')]
-    #[IsGranted('ROLE_ADMIN')]
     public function index(Request $request): Response
     {
         $pagination = $this->userService->getPaginatedList($request->query->getInt('page', 1));
@@ -66,11 +62,15 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param User $user
-     * @return Response
+     * Show user details.
+     *
+     * @param User $user The user entity.
+     *
+     * @return Response The response object.
+     *
+     * @Route("/{id}", name="user_show", requirements={"id"="[1-9]\d*"}, methods={"GET"})
+     * @IsGranted("VIEW", subject="user")
      */
-    #[Route('/{id}', name: 'user_show', requirements: ['id' => '[1-9]\d*'], methods: ['GET'])]
-    #[IsGranted('VIEW', subject: 'user')]
     public function show(User $user): Response
     {
         return $this->render(
@@ -80,12 +80,16 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param User $user
-     * @return Response
+     * Edit user password.
+     *
+     * @param Request $request The request object.
+     * @param User    $user    The user entity.
+     *
+     * @return Response The response object.
+     *
+     * @Route("/{id}/edit/password", name="user_edit", requirements={"id"="[1-9]\d*"}, methods={"GET", "PUT"})
+     * @IsGranted("EDIT_USER", subject="user")
      */
-    #[Route('/{id}/edit/password', name: 'user_edit', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
-    #[IsGranted('EDIT_USER', subject: 'user')]
     public function edit(Request $request, User $user): Response
     {
         $form = $this->createForm(UserPasswordType::class, $user, ['method' => 'PUT']);
@@ -109,12 +113,16 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param User $user
-     * @return Response
+     * Edit user email.
+     *
+     * @param Request $request The request object.
+     * @param User    $user    The user entity.
+     *
+     * @return Response The response object.
+     *
+     * @Route("/{id}/edit/email", name="user_edit_email", requirements={"id"="[1-9]\d*"}, methods={"GET", "PUT"})
+     * @IsGranted("EDIT_USER", subject="user")
      */
-    #[Route('/{id}/edit/email', name: 'user_edit_email', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
-    #[IsGranted('EDIT_USER', subject: 'user')]
     public function editEmail(Request $request, User $user): Response
     {
         $form = $this->createForm(UserEmailType::class, $user, ['method' => 'PUT']);
