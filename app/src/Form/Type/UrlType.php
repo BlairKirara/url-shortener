@@ -35,10 +35,10 @@ class UrlType extends AbstractType
     /**
      * Constructor.
      *
-     * @param TagsDataTransformer    $tagsDataTransformer The tags data transformer
-     * @param Security               $security            The security component
-     * @param GuestUserService       $guestUserService    The guest user service
-     * @param TranslatorInterface    $translator          The translator component
+     * @param TagsDataTransformer $tagsDataTransformer The tags data transformer
+     * @param Security            $security            The security component
+     * @param GuestUserService    $guestUserService    The guest user service
+     * @param TranslatorInterface $translator          The translator component
      */
     public function __construct(TagsDataTransformer $tagsDataTransformer, Security $security, GuestUserService $guestUserService, TranslatorInterface $translator)
     {

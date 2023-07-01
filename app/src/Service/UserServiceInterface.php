@@ -10,17 +10,7 @@ use Knp\Component\Pager\Pagination\PaginationInterface;
  */
 interface UserServiceInterface
 {
-    /**
-     * @param int $page
-     * @return PaginationInterface
-     */
     public function getPaginatedList(int $page): PaginationInterface;
 
-    /**
-     * @param User $user
-     * @return void
-     */
     public function save(User $user): void;
-
-
 }

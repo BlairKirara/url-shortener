@@ -32,9 +32,9 @@ class UrlDataController extends AbstractController
     /**
      * Displays the visits count for URLs.
      *
-     * @param Request $request The HTTP request object.
+     * @param Request $request the HTTP request object
      *
-     * @return Response The response object.
+     * @return Response the response object
      */
     #[Route(name: 'visits_index', methods: 'GET')]
     public function visitsCount(Request $request): Response

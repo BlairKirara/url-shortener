@@ -1,4 +1,7 @@
 <?php
+/**
+ * Login form authenticator.
+ */
 
 namespace App\Security;
 
@@ -17,30 +20,22 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 /**
  * Class LoginFormAuthenticator.
+ *
+ * This class handles the authentication process for login forms.
  */
 class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    /**
-     *
-     */
-    public const LOGIN_ROUTE = 'app_login';
+    public const LOGIN_ROUTE = 'app_login'; // The login route name
+    public const DEFAULT_ROUTE = 'app_homepage'; // The default route name after successful login
 
-    /**
-     *
-     */
-    public const DEFAULT_ROUTE = 'app_homepage';
-
-    /**
-     * @var UrlGeneratorInterface
-     */
     private UrlGeneratorInterface $urlGenerator;
 
     /**
      * Constructor.
      *
-     * @param UrlGeneratorInterface $urlGenerator
+     * @param UrlGeneratorInterface $urlGenerator The URL generator service
      */
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
@@ -48,8 +43,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     }
 
     /**
-     * @param Request $request
-     * @return bool
+     * Checks if the authenticator supports the current request.
+     *
+     * @param Request $request The request object
+     *
+     * @return bool True if the authenticator supports the request, false otherwise
      */
     public function supports(Request $request): bool
     {
@@ -58,8 +56,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     }
 
     /**
-     * @param Request $request
-     * @return Passport
+     * Performs the authentication.
+     *
+     * @param Request $request The request object
+     *
+     * @return Passport The authentication passport
      */
     public function authenticate(Request $request): Passport
     {
@@ -77,10 +78,13 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     }
 
     /**
-     * @param Request $request
-     * @param TokenInterface $token
-     * @param string $firewallName
-     * @return Response|null
+     * Handles successful authentication.
+     *
+     * @param Request        $request      The request object
+     * @param TokenInterface $token        The authentication token
+     * @param string         $firewallName The firewall name
+     *
+     * @return Response|null The response object or null if no response is generated
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
@@ -92,8 +96,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     }
 
     /**
-     * @param Request $request
-     * @return string
+     * Retrieves the login URL.
+     *
+     * @param Request $request The request object
+     *
+     * @return string The login URL
      */
     protected function getLoginUrl(Request $request): string
     {

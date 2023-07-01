@@ -30,9 +30,9 @@ class UserController extends AbstractController
     /**
      * Constructor.
      *
-     * @param UserServiceInterface           $userService    The user service.
-     * @param TranslatorInterface            $translator     The translator.
-     * @param UserPasswordHasherInterface    $passwordHasher The password hasher.
+     * @param UserServiceInterface        $userService    the user service
+     * @param TranslatorInterface         $translator     the translator
+     * @param UserPasswordHasherInterface $passwordHasher the password hasher
      */
     public function __construct(UserServiceInterface $userService, TranslatorInterface $translator, UserPasswordHasherInterface $passwordHasher)
     {
@@ -44,11 +44,12 @@ class UserController extends AbstractController
     /**
      * User index page.
      *
-     * @param Request $request The request object.
+     * @param Request $request the request object
      *
-     * @return Response The response object.
+     * @return Response the response object
      *
      * @Route(name="user_index", methods="GET")
+     *
      * @IsGranted("ROLE_ADMIN")
      */
     public function index(Request $request): Response
@@ -64,11 +65,12 @@ class UserController extends AbstractController
     /**
      * Show user details.
      *
-     * @param User $user The user entity.
+     * @param User $user the user entity
      *
-     * @return Response The response object.
+     * @return Response the response object
      *
      * @Route("/{id}", name="user_show", requirements={"id"="[1-9]\d*"}, methods={"GET"})
+     *
      * @IsGranted("VIEW", subject="user")
      */
     public function show(User $user): Response
@@ -82,12 +84,13 @@ class UserController extends AbstractController
     /**
      * Edit user password.
      *
-     * @param Request $request The request object.
-     * @param User    $user    The user entity.
+     * @param Request $request the request object
+     * @param User    $user    the user entity
      *
-     * @return Response The response object.
+     * @return Response the response object
      *
      * @Route("/{id}/edit/password", name="user_edit", requirements={"id"="[1-9]\d*"}, methods={"GET", "PUT"})
+     *
      * @IsGranted("EDIT_USER", subject="user")
      */
     public function edit(Request $request, User $user): Response
@@ -115,12 +118,13 @@ class UserController extends AbstractController
     /**
      * Edit user email.
      *
-     * @param Request $request The request object.
-     * @param User    $user    The user entity.
+     * @param Request $request the request object
+     * @param User    $user    the user entity
      *
-     * @return Response The response object.
+     * @return Response the response object
      *
      * @Route("/{id}/edit/email", name="user_edit_email", requirements={"id"="[1-9]\d*"}, methods={"GET", "PUT"})
+     *
      * @IsGranted("EDIT_USER", subject="user")
      */
     public function editEmail(Request $request, User $user): Response

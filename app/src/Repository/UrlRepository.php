@@ -1,4 +1,7 @@
 <?php
+/**
+ * Url repository.
+ */
 
 namespace App\Repository;
 
@@ -11,18 +14,17 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class UrlRepository.
+ *
+ * This repository is responsible for managing Url entities.
  */
 class UrlRepository extends ServiceEntityRepository
 {
-    /**
-     *
-     */
     public const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
      * Constructor.
      *
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $registry The manager registry
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -30,8 +32,11 @@ class UrlRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array $filters
-     * @return QueryBuilder
+     * Retrieves a QueryBuilder instance with applied filters.
+     *
+     * @param array $filters The filters to apply
+     *
+     * @return QueryBuilder The QueryBuilder instance
      */
     public function queryAll(array $filters): QueryBuilder
     {
@@ -49,7 +54,7 @@ class UrlRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return void
+     * Checks and removes the block status of URLs.
      */
     public function checkBlockTime(): void
     {
@@ -64,9 +69,12 @@ class UrlRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param UserInterface|null $user
-     * @param array $filters
-     * @return QueryBuilder
+     * Retrieves a QueryBuilder instance filtered by author and other filters.
+     *
+     * @param UserInterface|null $user    The author of the URLs
+     * @param array              $filters The additional filters to apply
+     *
+     * @return QueryBuilder The QueryBuilder instance
      */
     public function queryByAuthor(?UserInterface $user, array $filters = []): QueryBuilder
     {
@@ -79,8 +87,9 @@ class UrlRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Url $url
-     * @return void
+     * Saves a Url entity.
+     *
+     * @param Url $url The Url entity to save
      */
     public function save(Url $url): void
     {
@@ -89,8 +98,9 @@ class UrlRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Url $url
-     * @return void
+     * Deletes a Url entity.
+     *
+     * @param Url $url The Url entity to delete
      */
     public function delete(Url $url): void
     {
@@ -99,9 +109,12 @@ class UrlRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param array $filters
-     * @return QueryBuilder
+     * Applies additional filters to the QueryBuilder.
+     *
+     * @param QueryBuilder $queryBuilder The QueryBuilder instance
+     * @param array        $filters      The filters to apply
+     *
+     * @return QueryBuilder The modified QueryBuilder instance
      */
     private function applyFiltersToList(QueryBuilder $queryBuilder, array $filters = []): QueryBuilder
     {
@@ -114,8 +127,11 @@ class UrlRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param QueryBuilder|null $queryBuilder
-     * @return QueryBuilder
+     * Returns a QueryBuilder instance or creates a new one.
+     *
+     * @param QueryBuilder|null $queryBuilder The optional QueryBuilder instance
+     *
+     * @return QueryBuilder The QueryBuilder instance
      */
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {

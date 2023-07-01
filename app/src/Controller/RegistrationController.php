@@ -21,15 +21,11 @@ class RegistrationController extends AbstractController
 {
     /**
      * Translator.
-     *
-     * @var TranslatorInterface
      */
     private TranslatorInterface $translator;
 
     /**
      * User Service.
-     *
-     * @var UserServiceInterface
      */
     private UserServiceInterface $userService;
 
@@ -37,7 +33,7 @@ class RegistrationController extends AbstractController
      * Constructor.
      *
      * @param UserServiceInterface $userService User service
-     * @param TranslatorInterface  $translator   Translator
+     * @param TranslatorInterface  $translator  Translator
      */
     public function __construct(UserServiceInterface $userService, TranslatorInterface $translator)
     {

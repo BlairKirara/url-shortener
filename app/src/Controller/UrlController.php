@@ -26,35 +26,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/url')]
 class UrlController extends AbstractController
 {
-    /**
-     * @var UrlServiceInterface
-     */
     private UrlServiceInterface $urlService;
 
-    /**
-     * @var UrlDataServiceInterface
-     */
     private UrlDataServiceInterface $urlDataService;
 
-    /**
-     * @var GuestUserServiceInterface
-     */
     private GuestUserServiceInterface $guestUserService;
 
-    /**
-     * @var TranslatorInterface
-     */
     private TranslatorInterface $translator;
 
     private EntityManagerInterface $entityManager;
 
     /**
      * Constructor.
-     *
-     * @param UrlServiceInterface $urlService
-     * @param UrlDataServiceInterface $urlDataService
-     * @param TranslatorInterface $translator
-     * @param GuestUserServiceInterface $guestUserService
      */
     public function __construct(UrlServiceInterface $urlService, EntityManagerInterface $entityManager, UrlDataServiceInterface $urlDataService, TranslatorInterface $translator, GuestUserServiceInterface $guestUserService)
     {
@@ -65,10 +48,6 @@ class UrlController extends AbstractController
         $this->guestUserService = $guestUserService;
     }// end __construct()
 
-    /**
-     * @param Request $request
-     * @return Response
-     */
     #[Route(
         name: 'url_index',
         methods: 'GET'
@@ -89,10 +68,6 @@ class UrlController extends AbstractController
         return $this->render('url/index.html.twig', ['pagination' => $pagination]);
     }// end index()
 
-    /**
-     * @param Request $request
-     * @return Response
-     */
     #[Route(
         '/list',
         name: 'list',
@@ -109,20 +84,12 @@ class UrlController extends AbstractController
         return $this->render('url/list.html.twig', ['pagination' => $pagination]);
     }// end list()
 
-    /**
-     * @param Url $url
-     * @return Response
-     */
     #[Route('/{id}', name: 'url_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
     public function show(Url $url): Response
     {
         return $this->render('url/show.html.twig', ['url' => $url]);
     }// end show()
 
-    /**
-     * @param string $shortName
-     * @return Response
-     */
     #[Route(
         '/short/{shortName}',
         name: 'app_url_redirecttourl',
@@ -151,10 +118,6 @@ class UrlController extends AbstractController
         return $this->redirectToRoute('list');
     }
 
-    /**
-     * @param Request $request
-     * @return Response
-     */
     #[Route(
         '/create',
         name: 'url_create',
@@ -196,11 +159,6 @@ class UrlController extends AbstractController
         );
     }// end create()
 
-    /**
-     * @param Request $request
-     * @param Url $url
-     * @return Response
-     */
     #[Route('/{id}/delete', name: 'url_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
     #[IsGranted('DELETE', subject: 'url')]
     public function delete(Request $request, Url $url): Response
@@ -238,11 +196,6 @@ class UrlController extends AbstractController
         );
     }// end delete()
 
-    /**
-     * @param Request $request
-     * @param Url $url
-     * @return Response
-     */
     #[Route('/{id}/edit', name: 'url_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
     #[IsGranted('EDIT', subject: 'url')]
     public function edit(Request $request, Url $url): Response
@@ -279,11 +232,6 @@ class UrlController extends AbstractController
         );
     }// end edit()
 
-    /**
-     * @param Request $request
-     * @param Url $url
-     * @return Response
-     */
     #[Route('/{id}/block', name: 'url_block', requirements: ['id' => '[1-9]\d*'], methods: 'GET|POST')]
     #[IsGranted('ROLE_ADMIN')]
     public function block(Request $request, Url $url): Response
@@ -317,11 +265,6 @@ class UrlController extends AbstractController
         );
     }// end block()
 
-    /**
-     * @param Request $request
-     * @param Url $url
-     * @return Response
-     */
     #[Route('/{id}/unblock', name: 'url_unblock', requirements: ['id' => '[1-9]\d*'], methods: 'GET|POST')]
     #[IsGranted('ROLE_ADMIN')]
     public function unblock(Request $request, Url $url): Response
@@ -365,10 +308,6 @@ class UrlController extends AbstractController
         );
     }// end unblock()
 
-    /**
-     * @param Request $request
-     * @return array
-     */
     private function getFilters(Request $request): array
     {
         $filters = [];

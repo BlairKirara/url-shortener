@@ -9,15 +9,7 @@ use App\Entity\GuestUser;
  */
 interface GuestUserServiceInterface
 {
-    /**
-     * @param GuestUser $guestUser
-     * @return void
-     */
     public function save(GuestUser $guestUser): void;
 
-    /**
-     * @param string $email
-     * @return int
-     */
     public function countEmailUse(string $email): int;
 }

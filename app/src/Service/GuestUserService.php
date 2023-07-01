@@ -10,25 +10,16 @@ use App\Repository\GuestUserRepository;
  */
 class GuestUserService implements GuestUserServiceInterface
 {
-    /**
-     * @var GuestUserRepository
-     */
     private GuestUserRepository $guestUserRepository;
 
     /**
      * Constructor.
-     *
-     * @param GuestUserRepository $guestUserRepository
      */
     public function __construct(GuestUserRepository $guestUserRepository)
     {
         $this->guestUserRepository = $guestUserRepository;
     }
 
-    /**
-     * @param GuestUser $guestUser
-     * @return void
-     */
     public function save(GuestUser $guestUser): void
     {
         if ($this->guestUserRepository->findOneByEmail($guestUser->getEmail())) {
@@ -39,8 +30,6 @@ class GuestUserService implements GuestUserServiceInterface
     }
 
     /**
-     * @param string $email
-     * @return int
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */

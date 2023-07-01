@@ -13,37 +13,33 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class UserVoter.
+ *
+ * This class is a voter for determining access permissions for user-related actions.
  */
 class UserVoter extends Voter
 {
-    /**
-     * @var Security
-     */
     private Security $security;
 
     /**
      * Constructor.
      *
-     * @param Security $security
+     * @param Security $security The security service
      */
     public function __construct(Security $security)
     {
         $this->security = $security;
     }
 
-    /**
-     *
-     */
-    public const EDIT_USER = 'EDIT_USER';
-    /**
-     *
-     */
-    public const VIEW = 'VIEW';
+    public const EDIT_USER = 'EDIT_USER'; // Permission for editing a user
+    public const VIEW = 'VIEW'; // Permission for viewing a user
 
     /**
-     * @param string $attribute
-     * @param mixed $subject
-     * @return bool
+     * Checks if the voter supports the given attribute and subject.
+     *
+     * @param string $attribute The attribute to check
+     * @param mixed  $subject   The subject to check
+     *
+     * @return bool True if the voter supports the attribute and subject, false otherwise
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -52,10 +48,13 @@ class UserVoter extends Voter
     }
 
     /**
-     * @param string $attribute
-     * @param mixed $subject
-     * @param TokenInterface $token
-     * @return bool
+     * Performs the voting operation based on the attribute, subject, and token.
+     *
+     * @param string         $attribute The attribute to vote on
+     * @param mixed          $subject   The subject to vote on
+     * @param TokenInterface $token     The token representing the user
+     *
+     * @return bool True if access is granted, false otherwise
      */
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
@@ -71,9 +70,12 @@ class UserVoter extends Voter
     }
 
     /**
-     * @param User $subject
-     * @param UserInterface $user
-     * @return bool
+     * Checks if the user has access to perform the given permission on the user.
+     *
+     * @param User          $subject The user object
+     * @param UserInterface $user    The user object representing the current user
+     *
+     * @return bool True if the user has access, false otherwise
      */
     private function canAccess(User $subject, UserInterface $user): bool
     {

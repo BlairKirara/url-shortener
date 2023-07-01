@@ -13,27 +13,14 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  */
 class UserService implements UserServiceInterface
 {
-    /**
-     * @var UserRepository
-     */
     private UserRepository $userRepository;
 
-    /**
-     * @var PaginatorInterface
-     */
     private PaginatorInterface $paginator;
 
-    /**
-     * @var UserPasswordHasherInterface
-     */
     private UserPasswordHasherInterface $passwordHasher;
 
     /**
      * Constructor.
-     *
-     * @param UserRepository $userRepository
-     * @param PaginatorInterface $paginator
-     * @param UserPasswordHasherInterface $passwordHasher
      */
     public function __construct(UserRepository $userRepository, PaginatorInterface $paginator, UserPasswordHasherInterface $passwordHasher)
     {
@@ -42,10 +29,6 @@ class UserService implements UserServiceInterface
         $this->passwordHasher = $passwordHasher;
     }
 
-    /**
-     * @param int $page
-     * @return PaginationInterface
-     */
     public function getPaginatedList(int $page): PaginationInterface
     {
         return $this->paginator->paginate(
@@ -55,10 +38,6 @@ class UserService implements UserServiceInterface
         );
     }
 
-    /**
-     * @param User $user
-     * @return void
-     */
     public function save(User $user): void
     {
         if (null === $user->getId()) {
@@ -73,6 +52,4 @@ class UserService implements UserServiceInterface
 
         $this->userRepository->save($user);
     }
-
-
 }

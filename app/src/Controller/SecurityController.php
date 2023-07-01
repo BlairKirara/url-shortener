@@ -38,7 +38,7 @@ class SecurityController extends AbstractController
     /**
      * Logs the user out.
      *
-     * @throws \LogicException This method can be blank - it will be intercepted by the logout key on your firewall.
+     * @throws \LogicException this method can be blank - it will be intercepted by the logout key on your firewall
      */
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void

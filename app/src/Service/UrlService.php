@@ -15,39 +15,18 @@ use Symfony\Component\Security\Core\Security;
  */
 class UrlService implements UrlServiceInterface
 {
-    /**
-     * @var PaginatorInterface
-     */
     private PaginatorInterface $paginator;
 
-    /**
-     * @var TagServiceInterface
-     */
     private TagServiceInterface $tagService;
 
-    /**
-     * @var UrlRepository
-     */
     private UrlRepository $urlRepository;
 
-    /**
-     * @var Security
-     */
     private Security $security;
 
-    /**
-     * @var GuestUserRepository
-     */
     private GuestUserRepository $guestUserRepository;
 
     /**
      * Constructor.
-     *
-     * @param PaginatorInterface $paginator
-     * @param TagServiceInterface $tagService
-     * @param UrlRepository $urlRepository
-     * @param Security $security
-     * @param GuestUserRepository $guestUserRepository
      */
     public function __construct(PaginatorInterface $paginator, TagServiceInterface $tagService, UrlRepository $urlRepository, Security $security, GuestUserRepository $guestUserRepository)
     {
@@ -58,12 +37,6 @@ class UrlService implements UrlServiceInterface
         $this->guestUserRepository = $guestUserRepository;
     }
 
-    /**
-     * @param int $page
-     * @param User|null $users
-     * @param array $filters
-     * @return PaginationInterface
-     */
     public function getPaginatedList(int $page, ?User $users, array $filters = []): PaginationInterface
     {
         $filters = $this->prepareFilters($filters);
@@ -75,11 +48,6 @@ class UrlService implements UrlServiceInterface
         );
     }
 
-    /**
-     * @param int $page
-     * @param array $filters
-     * @return PaginationInterface
-     */
     public function getPaginatedListForAll(int $page, array $filters = []): PaginationInterface
     {
         $filters = $this->prepareFilters($filters);
@@ -92,8 +60,6 @@ class UrlService implements UrlServiceInterface
     }
 
     /**
-     * @param int $length
-     * @return string
      * @throws \Exception
      */
     public function shortenUrl(int $length = 6): string
@@ -110,8 +76,6 @@ class UrlService implements UrlServiceInterface
     }
 
     /**
-     * @param Url $url
-     * @return void
      * @throws \Exception
      */
     public function save(Url $url): void
@@ -123,28 +87,16 @@ class UrlService implements UrlServiceInterface
         $this->urlRepository->save($url);
     }
 
-    /**
-     * @param Url $url
-     * @return void
-     */
     public function delete(Url $url): void
     {
         $this->urlRepository->delete($url);
     }
 
-    /**
-     * @param string $shortName
-     * @return Url|null
-     */
     public function findOneByShortName(string $shortName): ?Url
     {
         return $this->urlRepository->findOneByShortName(['shortName' => $shortName]);
     }
 
-    /**
-     * @param array $filters
-     * @return array
-     */
     private function prepareFilters(array $filters): array
     {
         $resultFilters = [];

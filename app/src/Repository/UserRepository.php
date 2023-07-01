@@ -1,4 +1,7 @@
 <?php
+/**
+ * User repository.
+ */
 
 namespace App\Repository;
 
@@ -12,18 +15,17 @@ use Doctrine\ORM\QueryBuilder;
 
 /**
  * Class UserRepository.
+ *
+ * This repository is responsible for managing User entities.
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    /**
-     *
-     */
     public const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
      * Constructor.
      *
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $registry The manager registry
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -31,7 +33,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * @return QueryBuilder
+     * Retrieves a QueryBuilder instance for fetching all users.
+     *
+     * @return QueryBuilder The QueryBuilder instance
      */
     public function queryAll(): QueryBuilder
     {
@@ -41,9 +45,12 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * @param PasswordAuthenticatedUserInterface $user
-     * @param string $newHashedPassword
-     * @return void
+     * Upgrades the user's password.
+     *
+     * @param PasswordAuthenticatedUserInterface $user              The user to upgrade the password for
+     * @param string                             $newHashedPassword The new hashed password
+     *
+     * @throws UnsupportedUserException If the user is not an instance of User
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
@@ -57,8 +64,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * @param User $user
-     * @return void
+     * Saves a User entity.
+     *
+     * @param User $user The User entity to save
      */
     public function save(User $user): void
     {
@@ -67,8 +75,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * @param QueryBuilder|null $queryBuilder
-     * @return QueryBuilder
+     * Returns a QueryBuilder instance or creates a new one.
+     *
+     * @param QueryBuilder|null $queryBuilder The optional QueryBuilder instance
+     *
+     * @return QueryBuilder The QueryBuilder instance
      */
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {
