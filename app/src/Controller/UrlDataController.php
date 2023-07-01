@@ -23,6 +23,8 @@ class UrlDataController extends AbstractController
     /**
      * Constructor.
      * Injects the UrlDataServiceInterface dependency.
+     *
+     * @param UrlDataServiceInterface $urlDataService the URL data service
      */
     public function __construct(UrlDataServiceInterface $urlDataService)
     {

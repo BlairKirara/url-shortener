@@ -19,8 +19,9 @@ interface UrlServiceInterface
     /**
      * Retrieves a paginated list of URLs for a specific user.
      *
-     * @param int       $page  The page number
-     * @param User|null $users The user object
+     * @param int       $page    The page number
+     * @param User|null $users   The user object
+     * @param array     $filters The filters to apply
      *
      * @return PaginationInterface The paginated list of URLs
      */
@@ -52,6 +53,8 @@ interface UrlServiceInterface
 
     /**
      * Generates a shortened URL.
+     *
+     * @param int $length The length of the generated URL
      *
      * @return string The generated shortened URL
      */
