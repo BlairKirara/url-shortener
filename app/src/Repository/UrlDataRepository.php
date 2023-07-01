@@ -1,4 +1,7 @@
 <?php
+/**
+ * Url data repository.
+ */
 
 namespace App\Repository;
 
@@ -9,18 +12,17 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Class UrlDataRepository.
+ *
+ * This repository is responsible for managing UrlData entities.
  */
 class UrlDataRepository extends ServiceEntityRepository
 {
-    /**
-     *
-     */
     public const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
      * Constructor.
      *
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $registry The manager registry
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -28,7 +30,9 @@ class UrlDataRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array
+     * Counts the visits for each URL.
+     *
+     * @return array An array containing the visit count, short name, and long name of each URL
      */
     public function countVisits(): array
     {
@@ -42,8 +46,9 @@ class UrlDataRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param int $id
-     * @return void
+     * Deletes all URL visits for a given URL ID.
+     *
+     * @param int $id The ID of the URL
      */
     public function deleteUrlVisits(int $id): void
     {
@@ -58,8 +63,9 @@ class UrlDataRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param UrlData $urlData
-     * @return void
+     * Saves a UrlData entity.
+     *
+     * @param UrlData $urlData The UrlData entity to save
      */
     public function save(UrlData $urlData): void
     {
@@ -68,8 +74,11 @@ class UrlDataRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param QueryBuilder|null $queryBuilder
-     * @return QueryBuilder
+     * Returns a QueryBuilder instance or creates a new one.
+     *
+     * @param QueryBuilder|null $queryBuilder The optional QueryBuilder instance
+     *
+     * @return QueryBuilder The QueryBuilder instance
      */
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {

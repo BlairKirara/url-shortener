@@ -1,4 +1,7 @@
 <?php
+/**
+ * Registration type.
+ */
 
 namespace App\Form\Type;
 
@@ -12,13 +15,16 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Class RegistrationType.
+ *
+ * This class represents the registration form type.
  */
 class RegistrationType extends AbstractType
 {
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     * @return void
+     * Build the registration form.
+     *
+     * @param FormBuilderInterface $builder The form builder
+     * @param array                $options The form options
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -51,7 +57,9 @@ class RegistrationType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * Get the block prefix.
+     *
+     * @return string The block prefix
      */
     public function getBlockPrefix(): string
     {

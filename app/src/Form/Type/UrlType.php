@@ -1,4 +1,7 @@
 <?php
+/**
+ * Url type.
+ */
 
 namespace App\Form\Type;
 
@@ -19,36 +22,23 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class UrlType.
+ *
+ * This class represents the form type for creating or editing a URL.
  */
 class UrlType extends AbstractType
 {
-    /**
-     * @var TagsDataTransformer
-     */
     private TagsDataTransformer $tagsDataTransformer;
-
-    /**
-     * @var Security
-     */
     private Security $security;
-
-    /**
-     * @var GuestUserService
-     */
     private GuestUserService $guestUserService;
-
-    /**
-     * @var TranslatorInterface
-     */
     private TranslatorInterface $translator;
 
     /**
      * Constructor.
      *
-     * @param TagsDataTransformer $tagsDataTransformer
-     * @param Security $security
-     * @param GuestUserService $guestUserService
-     * @param TranslatorInterface $translator
+     * @param TagsDataTransformer    $tagsDataTransformer The tags data transformer
+     * @param Security               $security            The security component
+     * @param GuestUserService       $guestUserService    The guest user service
+     * @param TranslatorInterface    $translator          The translator component
      */
     public function __construct(TagsDataTransformer $tagsDataTransformer, Security $security, GuestUserService $guestUserService, TranslatorInterface $translator)
     {
@@ -59,9 +49,10 @@ class UrlType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     * @return void
+     * Build the URL form.
+     *
+     * @param FormBuilderInterface $builder The form builder
+     * @param array                $options The form options
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -74,6 +65,7 @@ class UrlType extends AbstractType
                 'attr' => ['max_length' => 255],
             ]
         );
+
         $builder->add(
             'tags',
             TextType::class,
@@ -102,9 +94,11 @@ class UrlType extends AbstractType
                     ],
                 ]
             );
+
             $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
                 $email = $event->getForm()->get('email')->getData();
                 $count = $this->guestUserService->countEmailUse($email);
+
                 if ($count >= 10) {
                     $event->getForm()->addError(new FormError($this->translator->trans('message.daily_limit')));
                 }
@@ -113,8 +107,9 @@ class UrlType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
-     * @return void
+     * Configure the form options.
+     *
+     * @param OptionsResolver $resolver The options resolver
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -124,7 +119,9 @@ class UrlType extends AbstractType
     }
 
     /**
-     * @return string
+     * Get the block prefix.
+     *
+     * @return string The block prefix
      */
     public function getBlockPrefix(): string
     {

@@ -1,4 +1,7 @@
 <?php
+/**
+ * User password type.
+ */
 
 namespace App\Form\Type;
 
@@ -11,13 +14,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class UserPasswordType.
+ *
+ * This form type is used for editing the password of a user.
  */
 class UserPasswordType extends AbstractType
 {
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     * @return void
+     * Builds the form.
+     *
+     * @param FormBuilderInterface $builder The form builder
+     * @param array                $options The options for the form
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -29,13 +35,14 @@ class UserPasswordType extends AbstractType
                 'required' => true,
                 'first_options' => ['label' => 'label.password'],
                 'second_options' => ['label' => 'label.repeat_password'],
-            ],
+            ]
         );
     }
 
     /**
-     * @param OptionsResolver $resolver
-     * @return void
+     * Configures the form options.
+     *
+     * @param OptionsResolver $resolver The options resolver
      */
     public function configureOptions(OptionsResolver $resolver): void
     {

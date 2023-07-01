@@ -1,4 +1,7 @@
 <?php
+/**
+ * Tag repository.
+ */
 
 namespace App\Repository;
 
@@ -9,18 +12,17 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Class TagRepository.
+ *
+ * This repository is responsible for managing Tag entities.
  */
 class TagRepository extends ServiceEntityRepository
 {
-    /**
-     *
-     */
     public const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
      * Constructor.
      *
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $registry The manager registry
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -28,7 +30,9 @@ class TagRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return QueryBuilder
+     * Returns a query builder for fetching all tags.
+     *
+     * @return QueryBuilder The query builder
      */
     public function queryAll(): QueryBuilder
     {
@@ -40,8 +44,9 @@ class TagRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Tag $tag
-     * @return void
+     * Saves a Tag entity.
+     *
+     * @param Tag $tag The Tag entity to save
      */
     public function save(Tag $tag): void
     {
@@ -50,8 +55,9 @@ class TagRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param Tag $tag
-     * @return void
+     * Deletes a Tag entity.
+     *
+     * @param Tag $tag The Tag entity to delete
      */
     public function delete(Tag $tag): void
     {
@@ -60,8 +66,11 @@ class TagRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param QueryBuilder|null $queryBuilder
-     * @return QueryBuilder
+     * Returns a QueryBuilder instance or creates a new one.
+     *
+     * @param QueryBuilder|null $queryBuilder The optional QueryBuilder instance
+     *
+     * @return QueryBuilder The QueryBuilder instance
      */
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {

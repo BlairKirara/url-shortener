@@ -1,4 +1,7 @@
 <?php
+/**
+ * Tag type.
+ */
 
 namespace App\Form\Type;
 
@@ -10,13 +13,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class TagType.
+ *
+ * This class represents the form type for the Tag entity.
  */
 class TagType extends AbstractType
 {
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     * @return void
+     * Build the Tag form.
+     *
+     * @param FormBuilderInterface $builder The form builder
+     * @param array                $options The form options
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -32,8 +38,9 @@ class TagType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
-     * @return void
+     * Configure the form options.
+     *
+     * @param OptionsResolver $resolver The options resolver
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -43,7 +50,9 @@ class TagType extends AbstractType
     }
 
     /**
-     * @return string
+     * Get the block prefix.
+     *
+     * @return string The block prefix
      */
     public function getBlockPrefix(): string
     {

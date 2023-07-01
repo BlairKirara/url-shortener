@@ -1,4 +1,7 @@
 <?php
+/**
+ * Guest user repository.
+ */
 
 namespace App\Repository;
 
@@ -10,13 +13,15 @@ use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Class GuestUserRepository.
+ *
+ * This repository is responsible for managing GuestUser entities.
  */
 class GuestUserRepository extends ServiceEntityRepository
 {
     /**
      * Constructor.
      *
-     * @param ManagerRegistry $registry
+     * @param ManagerRegistry $registry The manager registry
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -24,8 +29,9 @@ class GuestUserRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param GuestUser $guestUser
-     * @return void
+     * Saves a GuestUser entity.
+     *
+     * @param GuestUser $guestUser The GuestUser entity to save
      */
     public function save(GuestUser $guestUser): void
     {
@@ -34,8 +40,12 @@ class GuestUserRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string $email
-     * @return int
+     * Counts the number of times an email has been used by a GuestUser within the last 24 hours.
+     *
+     * @param string $email The email address to count
+     *
+     * @return int The count of email usage
+     *
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -53,8 +63,11 @@ class GuestUserRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param QueryBuilder|null $queryBuilder
-     * @return QueryBuilder
+     * Returns a QueryBuilder instance or creates a new one.
+     *
+     * @param QueryBuilder|null $queryBuilder The optional QueryBuilder instance
+     *
+     * @return QueryBuilder The QueryBuilder instance
      */
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {

@@ -1,4 +1,7 @@
 <?php
+/**
+ * User email type.
+ */
 
 namespace App\Form\Type;
 
@@ -10,13 +13,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class UserEmailType.
+ *
+ * This form type is used for editing the email of a user.
  */
 class UserEmailType extends AbstractType
 {
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     * @return void
+     * Builds the form.
+     *
+     * @param FormBuilderInterface $builder The form builder
+     * @param array                $options The options for the form
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -32,8 +38,9 @@ class UserEmailType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
-     * @return void
+     * Configures the form options.
+     *
+     * @param OptionsResolver $resolver The options resolver
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
