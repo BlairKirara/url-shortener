@@ -1,4 +1,7 @@
 <?php
+/**
+ * User service.
+ */
 
 namespace App\Service;
 
@@ -10,6 +13,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * Class UserService.
+ *
+ * This class provides user-related services.
  */
 class UserService implements UserServiceInterface
 {
@@ -21,6 +26,10 @@ class UserService implements UserServiceInterface
 
     /**
      * Constructor.
+     *
+     * @param UserRepository              $userRepository   The user repository
+     * @param PaginatorInterface          $paginator         The paginator
+     * @param UserPasswordHasherInterface $passwordHasher    The password hasher
      */
     public function __construct(UserRepository $userRepository, PaginatorInterface $paginator, UserPasswordHasherInterface $passwordHasher)
     {
@@ -29,6 +38,12 @@ class UserService implements UserServiceInterface
         $this->passwordHasher = $passwordHasher;
     }
 
+    /**
+     * Retrieves a paginated list of users.
+     *
+     * @param int $page The page number
+     * @return PaginationInterface The paginated list of users
+     */
     public function getPaginatedList(int $page): PaginationInterface
     {
         return $this->paginator->paginate(
@@ -38,9 +53,15 @@ class UserService implements UserServiceInterface
         );
     }
 
+    /**
+     * Saves a user.
+     *
+     * @param User $user The user to save
+     */
     public function save(User $user): void
     {
         if (null === $user->getId()) {
+            // Hash the password before saving
             $user->setPassword(
                 $this->passwordHasher->hashPassword(
                     $user,

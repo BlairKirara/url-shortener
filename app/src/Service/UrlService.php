@@ -1,4 +1,7 @@
 <?php
+/**
+ * Url service.
+ */
 
 namespace App\Service;
 
@@ -12,6 +15,8 @@ use Symfony\Component\Security\Core\Security;
 
 /**
  * Class UrlService.
+ *
+ * This class provides URL-related services.
  */
 class UrlService implements UrlServiceInterface
 {
@@ -27,6 +32,12 @@ class UrlService implements UrlServiceInterface
 
     /**
      * Constructor.
+     *
+     * @param PaginatorInterface    $paginator            The paginator
+     * @param TagServiceInterface   $tagService           The tag service
+     * @param UrlRepository         $urlRepository        The URL repository
+     * @param Security              $security             The security component
+     * @param GuestUserRepository   $guestUserRepository  The guest user repository
      */
     public function __construct(PaginatorInterface $paginator, TagServiceInterface $tagService, UrlRepository $urlRepository, Security $security, GuestUserRepository $guestUserRepository)
     {
@@ -37,6 +48,14 @@ class UrlService implements UrlServiceInterface
         $this->guestUserRepository = $guestUserRepository;
     }
 
+    /**
+     * Retrieves a paginated list of URLs for a specific user.
+     *
+     * @param int       $page     The page number
+     * @param User|null $users    The user object
+     * @param array     $filters  The filters to apply
+     * @return PaginationInterface The paginated list of URLs
+     */
     public function getPaginatedList(int $page, ?User $users, array $filters = []): PaginationInterface
     {
         $filters = $this->prepareFilters($filters);
@@ -48,6 +67,13 @@ class UrlService implements UrlServiceInterface
         );
     }
 
+    /**
+     * Retrieves a paginated list of URLs for all users.
+     *
+     * @param int   $page     The page number
+     * @param array $filters  The filters to apply
+     * @return PaginationInterface The paginated list of URLs
+     */
     public function getPaginatedListForAll(int $page, array $filters = []): PaginationInterface
     {
         $filters = $this->prepareFilters($filters);
@@ -60,6 +86,10 @@ class UrlService implements UrlServiceInterface
     }
 
     /**
+     * Generates a shortened URL.
+     *
+     * @param int $length The length of the shortened URL
+     * @return string The generated shortened URL
      * @throws \Exception
      */
     public function shortenUrl(int $length = 6): string
@@ -76,6 +106,9 @@ class UrlService implements UrlServiceInterface
     }
 
     /**
+     * Saves a URL.
+     *
+     * @param Url $url The URL to save
      * @throws \Exception
      */
     public function save(Url $url): void
@@ -87,16 +120,33 @@ class UrlService implements UrlServiceInterface
         $this->urlRepository->save($url);
     }
 
+    /**
+     * Deletes a URL.
+     *
+     * @param Url $url The URL to delete
+     */
     public function delete(Url $url): void
     {
         $this->urlRepository->delete($url);
     }
 
+    /**
+     * Finds a URL by its short name.
+     *
+     * @param string $shortName The short name of the URL
+     * @return Url|null The URL object if found, null otherwise
+     */
     public function findOneByShortName(string $shortName): ?Url
     {
         return $this->urlRepository->findOneByShortName(['shortName' => $shortName]);
     }
 
+    /**
+     * Prepares the filters for querying URLs.
+     *
+     * @param array $filters The filters to prepare
+     * @return array The prepared filters
+     */
     private function prepareFilters(array $filters): array
     {
         $resultFilters = [];
