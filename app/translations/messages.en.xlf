@@ -318,6 +318,18 @@
         <source>label.password_edit</source>
         <target>Edit Password</target>
       </trans-unit>
+      <trans-unit id="80">
+        <source>label.home_welcome</source>
+        <target>Welcome to the homepage!_</target>
+      </trans-unit>
+      <trans-unit id="81">
+        <source>label.home_nav_welcome</source>
+        <target>Use the navigation bar at the top</target>
+      </trans-unit>
+      <trans-unit id="82">
+        <source>label.home_nav_welcome_down</source>
+        <target>and start shortening URLs right now!</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

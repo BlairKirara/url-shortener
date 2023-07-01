@@ -318,6 +318,18 @@
                 <source>label.password_edit</source>
                 <target>Edytuj Hasło</target>
             </trans-unit>
+            <trans-unit id="80">
+                <source>label.home_welcome</source>
+                <target>Witaj na stronie głównej!</target>
+            </trans-unit>
+            <trans-unit id="81">
+                <source>label.home_nav_welcome</source>
+                <target>________Użyj panelu nawigacyjnego</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>label.home_nav_welcome_down</source>
+                <target>__na górze strony i zacznij skracać!</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
