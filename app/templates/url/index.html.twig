@@ -17,10 +17,12 @@
                     <thead>
                     <tr>
                         <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'url.id') }}</th>
-                        <th>{{ knp_pagination_sortable(pagination, 'label.shortName'|trans, 'url.short_name') }}</th>
-                        <th>{{ knp_pagination_sortable(pagination, 'label.longName'|trans, 'url.long_name') }}</th>
-                        <th>{{ knp_pagination_sortable(pagination, 'label.createTime'|trans, 'url.create_time') }}</th>
-                        <th>{{ knp_pagination_sortable(pagination, 'label.blockTime'|trans, 'url.block_time') }}</th>
+                        <th>{{ knp_pagination_sortable(pagination, 'label.shortName'|trans, 'url.shortName') }}</th>
+                        <th>{{ knp_pagination_sortable(pagination, 'label.longName'|trans, 'url.longName') }}</th>
+                        <th>{{ knp_pagination_sortable(pagination, 'label.createTime'|trans, 'url.createTime') }}</th>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <th>{{ knp_pagination_sortable(pagination, 'label.blockTime'|trans, 'url.blockTime') }}</th>
+                        {% endif %}
                         <th>{{ 'label.tag'|trans }}</th>
                         <th>{{ 'label.actions'|trans }}</th>
                     </tr>
@@ -36,11 +38,13 @@
                             </td>
                             <td>{{ url.longName }}</td>
                             <td>{{ url.createTime|format_date('long')}}</td>
+                            {% if is_granted('ROLE_ADMIN') %}
                                 {% if url.isBlocked %}
                                     <td>{{ url.blockTime|format_date('long') }}</td>
                                 {% else %}
                                     <td>{{ 'title.is_not_blocked'|trans }}</td>
                                 {% endif %}
+                            {% endif %}
                             <td>
                                 {% if url.tags is defined and url.tags|length %}
                                     {% for tag in url.tags %}

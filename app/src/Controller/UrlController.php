@@ -226,6 +226,11 @@ class UrlController extends AbstractController
     #[IsGranted('DELETE', subject: 'url')]
     public function delete(Request $request, Url $url): Response
     {
+        if ($url->isIsBlocked() && !$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('warning', $this->translator->trans('message.blocked_url'));
+
+            return $this->redirectToRoute('url_index');
+        }
         $form = $this->createForm(
             FormType::class,
             $url,
@@ -271,8 +276,10 @@ class UrlController extends AbstractController
     #[IsGranted('EDIT', subject: 'url')]
     public function edit(Request $request, Url $url): Response
     {
-        if ($url->isIsBlocked()) {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        if ($url->isIsBlocked() && !$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('warning', $this->translator->trans('message.blocked_url'));
+
+            return $this->redirectToRoute('url_index');
         }
 
         $form = $this->createForm(
