@@ -29,24 +29,39 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/url')]
 class UrlController extends AbstractController
 {
+    /**
+     * Url service.
+     */
     private UrlServiceInterface $urlService;
 
+    /**
+     * Url data service.
+     */
     private UrlDataServiceInterface $urlDataService;
 
-    private GuestUserServiceInterface $guestUserService;
-
+    /**
+     * Translator.
+     */
     private TranslatorInterface $translator;
 
+    /**
+     * Entity manager.
+     */
     private EntityManagerInterface $entityManager;
+
+    /**
+     * Guest user service.
+     */
+    private GuestUserServiceInterface $guestUserService;
 
     /**
      * Constructor.
      *
-     * @param UrlServiceInterface       $urlService
-     * @param UrlDataServiceInterface   $urlDataService
-     * @param TranslatorInterface       $translator
-     * @param EntityManagerInterface    $entityManager
-     * @param GuestUserServiceInterface $guestUserService
+     * @param UrlServiceInterface       $urlService       The url service
+     * @param UrlDataServiceInterface   $urlDataService   The url data service
+     * @param TranslatorInterface       $translator       The translator
+     * @param EntityManagerInterface    $entityManager    The entity manager
+     * @param GuestUserServiceInterface $guestUserService The guest user service
      */
     public function __construct(UrlServiceInterface $urlService, UrlDataServiceInterface $urlDataService, TranslatorInterface $translator, EntityManagerInterface $entityManager, GuestUserServiceInterface $guestUserService)
     {
@@ -60,9 +75,9 @@ class UrlController extends AbstractController
     /**
      * Display the URL index page.
      *
-     * @param Request $request
+     * @param Request $request HTTP request
      *
-     * @return Response
+     * @return Response The HTTP response
      */
     #[Route(
         name: 'url_index',
@@ -85,9 +100,9 @@ class UrlController extends AbstractController
     /**
      * Display the list of all URLs.
      *
-     * @param Request $request
+     * @param Request $request HTTP request
      *
-     * @return Response
+     * @return Response The HTTP response
      */
     #[Route(
         '/list',
@@ -108,22 +123,22 @@ class UrlController extends AbstractController
     /**
      * Display details of a specific URL.
      *
-     * @param Url $url
+     * @param Url $url The URL entity
      *
-     * @return Response
+     * @return Response The HTTP response
      */
     #[Route('/{id}', name: 'url_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
     public function show(Url $url): Response
     {
         return $this->render('url/show.html.twig', ['url' => $url]);
-    }// end show()
+    }
 
     /**
      * Redirect to the long URL associated with the given short name.
      *
-     * @param string $shortName
+     * @param string $shortName The short name
      *
-     * @return Response
+     * @return Response The HTTP response
      */
     #[Route(
         '/short/{shortName}',
@@ -156,9 +171,9 @@ class UrlController extends AbstractController
     /**
      * Create a new URL.
      *
-     * @param Request $request
+     * @param Request $request HTTP request
      *
-     * @return Response
+     * @return Response The HTTP response
      */
     #[Route(
         '/create',
@@ -202,11 +217,10 @@ class UrlController extends AbstractController
     /**
      * Delete a URL.
      *
-     * @param Request $request
-     * @param Url     $url
+     * @param Request $request HTTP request
+     * @param Url     $url     The URL entity
      *
-     * @return Response
-     *
+     * @return Response The HTTP response
      */
     #[Route('/{id}/delete', name: 'url_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
     #[IsGranted('DELETE', subject: 'url')]
@@ -248,11 +262,10 @@ class UrlController extends AbstractController
     /**
      * Edit a URL.
      *
-     * @param Request $request
+     * @param Request $request HTTP request
+     * @param Url     $url     The URL entity
      *
-     * @param Url     $url
-     *
-     * @return Response
+     * @return Response The HTTP response
      */
     #[Route('/{id}/edit', name: 'url_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
     #[IsGranted('EDIT', subject: 'url')]
@@ -293,10 +306,10 @@ class UrlController extends AbstractController
     /**
      * Block a URL.
      *
-     * @param Request $request
-     * @param Url     $url
+     * @param Request $request HTTP request
+     * @param Url     $url     The URL entity
      *
-     * @return Response
+     * @return Response The HTTP response
      */
     #[Route('/{id}/block', name: 'url_block', requirements: ['id' => '[1-9]\d*'], methods: 'GET|POST')]
     #[IsGranted('ROLE_ADMIN')]
@@ -334,10 +347,10 @@ class UrlController extends AbstractController
     /**
      * Unblock a URL.
      *
-     * @param Request $request
-     * @param Url     $url
+     * @param Request $request HTTP request
+     * @param Url     $url     The URL entity
      *
-     * @return Response
+     * @return Response The HTTP response
      */
     #[Route('/{id}/unblock', name: 'url_unblock', requirements: ['id' => '[1-9]\d*'], methods: 'GET|POST')]
     #[IsGranted('ROLE_ADMIN')]
@@ -385,9 +398,9 @@ class UrlController extends AbstractController
     /**
      * Get the URL filters from the request.
      *
-     * @param Request $request
+     * @param Request $request HTTP request
      *
-     * @return array
+     * @return array The URL filters
      */
     private function getFilters(Request $request): array
     {
