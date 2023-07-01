@@ -3,7 +3,6 @@
  * Guest user service.
  */
 
-
 namespace App\Service;
 
 use App\Entity\GuestUser;
@@ -48,7 +47,9 @@ class GuestUserService implements GuestUserServiceInterface
      * Counts the number of times an email has been used by guest users.
      *
      * @param string $email The email to count usage for
+     *
      * @return int The number of times the email has been used
+     *
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */

@@ -27,9 +27,9 @@ class UserService implements UserServiceInterface
     /**
      * Constructor.
      *
-     * @param UserRepository              $userRepository   The user repository
-     * @param PaginatorInterface          $paginator         The paginator
-     * @param UserPasswordHasherInterface $passwordHasher    The password hasher
+     * @param UserRepository              $userRepository The user repository
+     * @param PaginatorInterface          $paginator      The paginator
+     * @param UserPasswordHasherInterface $passwordHasher The password hasher
      */
     public function __construct(UserRepository $userRepository, PaginatorInterface $paginator, UserPasswordHasherInterface $passwordHasher)
     {
@@ -42,6 +42,7 @@ class UserService implements UserServiceInterface
      * Retrieves a paginated list of users.
      *
      * @param int $page The page number
+     *
      * @return PaginationInterface The paginated list of users
      */
     public function getPaginatedList(int $page): PaginationInterface

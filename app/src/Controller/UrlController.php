@@ -1,4 +1,7 @@
 <?php
+/**
+ * Url controller.
+ */
 
 namespace App\Controller;
 
@@ -38,16 +41,29 @@ class UrlController extends AbstractController
 
     /**
      * Constructor.
+     *
+     * @param UrlServiceInterface       $urlService
+     * @param UrlDataServiceInterface   $urlDataService
+     * @param TranslatorInterface       $translator
+     * @param EntityManagerInterface    $entityManager
+     * @param GuestUserServiceInterface $guestUserService
      */
-    public function __construct(UrlServiceInterface $urlService, EntityManagerInterface $entityManager, UrlDataServiceInterface $urlDataService, TranslatorInterface $translator, GuestUserServiceInterface $guestUserService)
+    public function __construct(UrlServiceInterface $urlService, UrlDataServiceInterface $urlDataService, TranslatorInterface $translator, EntityManagerInterface $entityManager, GuestUserServiceInterface $guestUserService)
     {
         $this->urlService = $urlService;
         $this->urlDataService = $urlDataService;
         $this->translator = $translator;
         $this->entityManager = $entityManager;
         $this->guestUserService = $guestUserService;
-    }// end __construct()
+    }
 
+    /**
+     * Display the URL index page.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
     #[Route(
         name: 'url_index',
         methods: 'GET'
@@ -55,9 +71,7 @@ class UrlController extends AbstractController
     public function index(Request $request): Response
     {
         $filters = $this->getFilters($request);
-        /*
-            @var User $user
-        */
+        /* @var User $user */
         $user = $this->getUser();
         $pagination = $this->urlService->getPaginatedList(
             $request->query->getInt('page', 1),
@@ -66,8 +80,15 @@ class UrlController extends AbstractController
         );
 
         return $this->render('url/index.html.twig', ['pagination' => $pagination]);
-    }// end index()
+    }
 
+    /**
+     * Display the list of all URLs.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
     #[Route(
         '/list',
         name: 'list',
@@ -82,14 +103,28 @@ class UrlController extends AbstractController
         );
 
         return $this->render('url/list.html.twig', ['pagination' => $pagination]);
-    }// end list()
+    }
 
+    /**
+     * Display details of a specific URL.
+     *
+     * @param Url $url
+     *
+     * @return Response
+     */
     #[Route('/{id}', name: 'url_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
     public function show(Url $url): Response
     {
         return $this->render('url/show.html.twig', ['url' => $url]);
     }// end show()
 
+    /**
+     * Redirect to the long URL associated with the given short name.
+     *
+     * @param string $shortName
+     *
+     * @return Response
+     */
     #[Route(
         '/short/{shortName}',
         name: 'app_url_redirecttourl',
@@ -118,6 +153,13 @@ class UrlController extends AbstractController
         return $this->redirectToRoute('list');
     }
 
+    /**
+     * Create a new URL.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
     #[Route(
         '/create',
         name: 'url_create',
@@ -125,9 +167,7 @@ class UrlController extends AbstractController
     )]
     public function create(Request $request): Response
     {
-        /*
-            @var User $user
-        */
+        /* @var User $user */
         $user = $this->getUser();
         $url = new Url();
         $url->setUsers($user);
@@ -157,8 +197,17 @@ class UrlController extends AbstractController
             'url/create.html.twig',
             ['form' => $form->createView()]
         );
-    }// end create()
+    }
 
+    /**
+     * Delete a URL.
+     *
+     * @param Request $request
+     * @param Url     $url
+     *
+     * @return Response
+     *
+     */
     #[Route('/{id}/delete', name: 'url_delete', requirements: ['id' => '[1-9]\d*'], methods: 'GET|DELETE')]
     #[IsGranted('DELETE', subject: 'url')]
     public function delete(Request $request, Url $url): Response
@@ -194,8 +243,17 @@ class UrlController extends AbstractController
                 'url' => $url,
             ]
         );
-    }// end delete()
+    }
 
+    /**
+     * Edit a URL.
+     *
+     * @param Request $request
+     *
+     * @param Url     $url
+     *
+     * @return Response
+     */
     #[Route('/{id}/edit', name: 'url_edit', requirements: ['id' => '[1-9]\d*'], methods: 'GET|PUT')]
     #[IsGranted('EDIT', subject: 'url')]
     public function edit(Request $request, Url $url): Response
@@ -230,8 +288,16 @@ class UrlController extends AbstractController
                 'url' => $url,
             ]
         );
-    }// end edit()
+    }
 
+    /**
+     * Block a URL.
+     *
+     * @param Request $request
+     * @param Url     $url
+     *
+     * @return Response
+     */
     #[Route('/{id}/block', name: 'url_block', requirements: ['id' => '[1-9]\d*'], methods: 'GET|POST')]
     #[IsGranted('ROLE_ADMIN')]
     public function block(Request $request, Url $url): Response
@@ -263,8 +329,16 @@ class UrlController extends AbstractController
                 'url' => $url,
             ]
         );
-    }// end block()
+    }
 
+    /**
+     * Unblock a URL.
+     *
+     * @param Request $request
+     * @param Url     $url
+     *
+     * @return Response
+     */
     #[Route('/{id}/unblock', name: 'url_unblock', requirements: ['id' => '[1-9]\d*'], methods: 'GET|POST')]
     #[IsGranted('ROLE_ADMIN')]
     public function unblock(Request $request, Url $url): Response
@@ -306,13 +380,20 @@ class UrlController extends AbstractController
                 'url' => $url,
             ]
         );
-    }// end unblock()
+    }
 
+    /**
+     * Get the URL filters from the request.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
     private function getFilters(Request $request): array
     {
         $filters = [];
         $filters['tag_id'] = $request->query->getInt('filters_tag_id');
 
         return $filters;
-    }// end getFilters()
-}// end class
+    }
+}

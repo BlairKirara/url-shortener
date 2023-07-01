@@ -33,11 +33,11 @@ class UrlService implements UrlServiceInterface
     /**
      * Constructor.
      *
-     * @param PaginatorInterface    $paginator            The paginator
-     * @param TagServiceInterface   $tagService           The tag service
-     * @param UrlRepository         $urlRepository        The URL repository
-     * @param Security              $security             The security component
-     * @param GuestUserRepository   $guestUserRepository  The guest user repository
+     * @param PaginatorInterface  $paginator           The paginator
+     * @param TagServiceInterface $tagService          The tag service
+     * @param UrlRepository       $urlRepository       The URL repository
+     * @param Security            $security            The security component
+     * @param GuestUserRepository $guestUserRepository The guest user repository
      */
     public function __construct(PaginatorInterface $paginator, TagServiceInterface $tagService, UrlRepository $urlRepository, Security $security, GuestUserRepository $guestUserRepository)
     {
@@ -51,9 +51,10 @@ class UrlService implements UrlServiceInterface
     /**
      * Retrieves a paginated list of URLs for a specific user.
      *
-     * @param int       $page     The page number
-     * @param User|null $users    The user object
-     * @param array     $filters  The filters to apply
+     * @param int       $page    The page number
+     * @param User|null $users   The user object
+     * @param array     $filters The filters to apply
+     *
      * @return PaginationInterface The paginated list of URLs
      */
     public function getPaginatedList(int $page, ?User $users, array $filters = []): PaginationInterface
@@ -70,8 +71,9 @@ class UrlService implements UrlServiceInterface
     /**
      * Retrieves a paginated list of URLs for all users.
      *
-     * @param int   $page     The page number
-     * @param array $filters  The filters to apply
+     * @param int   $page    The page number
+     * @param array $filters The filters to apply
+     *
      * @return PaginationInterface The paginated list of URLs
      */
     public function getPaginatedListForAll(int $page, array $filters = []): PaginationInterface
@@ -89,7 +91,9 @@ class UrlService implements UrlServiceInterface
      * Generates a shortened URL.
      *
      * @param int $length The length of the shortened URL
+     *
      * @return string The generated shortened URL
+     *
      * @throws \Exception
      */
     public function shortenUrl(int $length = 6): string
@@ -109,6 +113,7 @@ class UrlService implements UrlServiceInterface
      * Saves a URL.
      *
      * @param Url $url The URL to save
+     *
      * @throws \Exception
      */
     public function save(Url $url): void
@@ -134,6 +139,7 @@ class UrlService implements UrlServiceInterface
      * Finds a URL by its short name.
      *
      * @param string $shortName The short name of the URL
+     *
      * @return Url|null The URL object if found, null otherwise
      */
     public function findOneByShortName(string $shortName): ?Url
@@ -145,6 +151,7 @@ class UrlService implements UrlServiceInterface
      * Prepares the filters for querying URLs.
      *
      * @param array $filters The filters to prepare
+     *
      * @return array The prepared filters
      */
     private function prepareFilters(array $filters): array

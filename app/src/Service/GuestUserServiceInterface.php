@@ -25,6 +25,7 @@ interface GuestUserServiceInterface
      * Counts the number of times an email has been used by guest users.
      *
      * @param string $email The email to count usage for
+     *
      * @return int The number of times the email has been used
      */
     public function countEmailUse(string $email): int;

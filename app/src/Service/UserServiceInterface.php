@@ -19,6 +19,7 @@ interface UserServiceInterface
      * Retrieves a paginated list of users.
      *
      * @param int $page The page number
+     *
      * @return PaginationInterface The paginated list of users
      */
     public function getPaginatedList(int $page): PaginationInterface;

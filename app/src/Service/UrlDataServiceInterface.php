@@ -26,6 +26,7 @@ interface UrlDataServiceInterface
      * Counts visits and returns a paginated list.
      *
      * @param int $page The page number
+     *
      * @return PaginationInterface The paginated list of visit counts
      */
     public function countVisits(int $page): PaginationInterface;
