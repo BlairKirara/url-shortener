@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class UrlDataController.
  * Controller for managing URL visits.
  */
+#[Route('/visits')]
 class UrlDataController extends AbstractController
 {
     /**
