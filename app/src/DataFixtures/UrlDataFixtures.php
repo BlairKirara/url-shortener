@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Url data fixtures.
  */
@@ -7,6 +8,7 @@ namespace App\DataFixtures;
 
 use App\Entity\UrlData;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use App\Entity\Url;
 
 /**
  * Class UrlDataFixtures.
@@ -24,14 +26,14 @@ class UrlDataFixtures extends AbstractBaseFixtures implements DependentFixtureIn
     public function loadData(): void
     {
         // Check if the manager and faker objects are set
-        if (null === $this->manager || null === $this->faker) {
+        if (!$this->manager instanceof \Doctrine\Persistence\ObjectManager || !$this->faker instanceof \Faker\Generator) {
             return;
         }
 
         // Create 70 URL data entities
         $this->createMany(70, 'urlData', function () {
             $urlData = new UrlData();
-            $urlData->setUrl($this->getRandomReference('urls'));
+            $urlData->setUrl($this->getRandomReference('urls', Url::class));
             $urlData->setVisitTime(
                 \DateTimeImmutable::createFromMutable(
                     $this->faker->dateTimeBetween('-100 days', '-1 days')

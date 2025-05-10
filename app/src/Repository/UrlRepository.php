@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Url repository.
  */
@@ -133,7 +134,7 @@ class UrlRepository extends ServiceEntityRepository
      *
      * @return QueryBuilder The QueryBuilder instance
      */
-    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
+    private function getOrCreateQueryBuilder(?QueryBuilder $queryBuilder = null): QueryBuilder
     {
         return $queryBuilder ?? $this->createQueryBuilder('url');
     }

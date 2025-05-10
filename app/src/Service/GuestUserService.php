@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Guest user service.
  */
@@ -15,16 +16,13 @@ use App\Repository\GuestUserRepository;
  */
 class GuestUserService implements GuestUserServiceInterface
 {
-    private GuestUserRepository $guestUserRepository;
-
     /**
      * Constructor.
      *
      * @param GuestUserRepository $guestUserRepository The repository for guest users
      */
-    public function __construct(GuestUserRepository $guestUserRepository)
+    public function __construct(private readonly GuestUserRepository $guestUserRepository)
     {
-        $this->guestUserRepository = $guestUserRepository;
     }
 
     /**

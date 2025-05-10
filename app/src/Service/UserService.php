@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User service.
  */
@@ -18,12 +19,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  */
 class UserService implements UserServiceInterface
 {
-    private UserRepository $userRepository;
-
-    private PaginatorInterface $paginator;
-
-    private UserPasswordHasherInterface $passwordHasher;
-
     /**
      * Constructor.
      *
@@ -31,11 +26,8 @@ class UserService implements UserServiceInterface
      * @param PaginatorInterface          $paginator      The paginator
      * @param UserPasswordHasherInterface $passwordHasher The password hasher
      */
-    public function __construct(UserRepository $userRepository, PaginatorInterface $paginator, UserPasswordHasherInterface $passwordHasher)
+    public function __construct(private readonly UserRepository $userRepository, private readonly PaginatorInterface $paginator, private readonly UserPasswordHasherInterface $passwordHasher)
     {
-        $this->userRepository = $userRepository;
-        $this->paginator = $paginator;
-        $this->passwordHasher = $passwordHasher;
     }
 
     /**

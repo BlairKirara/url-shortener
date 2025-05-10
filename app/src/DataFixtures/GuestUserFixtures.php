@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Guest user fixtures.
  */
@@ -22,7 +23,7 @@ class GuestUserFixtures extends AbstractBaseFixtures
     public function loadData(): void
     {
         // Check if the manager and faker objects are set
-        if (null === $this->manager || null === $this->faker) {
+        if (!$this->manager instanceof \Doctrine\Persistence\ObjectManager || !$this->faker instanceof \Faker\Generator) {
             return;
         }
 

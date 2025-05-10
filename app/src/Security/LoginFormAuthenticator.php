@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Login form authenticator.
  */
@@ -28,18 +29,15 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     use TargetPathTrait;
 
     public const LOGIN_ROUTE = 'app_login'; // The login route name
-    public const DEFAULT_ROUTE = 'app_homepage'; // The default route name after successful login
-
-    private UrlGeneratorInterface $urlGenerator;
+    public const DEFAULT_ROUTE = 'app_homepage';
 
     /**
      * Constructor.
      *
      * @param UrlGeneratorInterface $urlGenerator The URL generator service
      */
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    public function __construct(private UrlGeneratorInterface $urlGenerator)
     {
-        $this->urlGenerator = $urlGenerator;
     }
 
     /**

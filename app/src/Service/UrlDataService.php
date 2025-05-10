@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Url data service.
  */
@@ -17,19 +18,14 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class UrlDataService implements UrlDataServiceInterface
 {
-    private UrlDataRepository $urlDataRepository;
-    private PaginatorInterface $paginator;
-
     /**
      * Constructor.
      *
      * @param UrlDataRepository  $urlDataRepository The URL data repository
      * @param PaginatorInterface $paginator         The paginator
      */
-    public function __construct(UrlDataRepository $urlDataRepository, PaginatorInterface $paginator)
+    public function __construct(private readonly UrlDataRepository $urlDataRepository, private readonly PaginatorInterface $paginator)
     {
-        $this->urlDataRepository = $urlDataRepository;
-        $this->paginator = $paginator;
     }
 
     /**

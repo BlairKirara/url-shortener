@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Registration controller.
  */
@@ -20,25 +21,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RegistrationController extends AbstractController
 {
     /**
-     * Translator.
-     */
-    private TranslatorInterface $translator;
-
-    /**
-     * User Service.
-     */
-    private UserServiceInterface $userService;
-
-    /**
      * Constructor.
      *
      * @param UserServiceInterface $userService User service
      * @param TranslatorInterface  $translator  Translator
      */
-    public function __construct(UserServiceInterface $userService, TranslatorInterface $translator)
+    public function __construct(private readonly UserServiceInterface $userService, private readonly TranslatorInterface $translator)
     {
-        $this->translator = $translator;
-        $this->userService = $userService;
     }
 
     /**
@@ -48,7 +37,7 @@ class RegistrationController extends AbstractController
      *
      * @return Response HTTP response
      */
-    #[Route(
+    #[\Symfony\Component\Routing\Attribute\Route(
         path: '/register',
         name: 'app_register',
         methods: [

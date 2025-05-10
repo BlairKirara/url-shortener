@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User voter.
  */
@@ -18,16 +19,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserVoter extends Voter
 {
-    private Security $security;
-
     /**
      * Constructor.
      *
      * @param Security $security The security service
      */
-    public function __construct(Security $security)
+    public function __construct(private readonly Security $security)
     {
-        $this->security = $security;
     }
 
     public const EDIT_USER = 'EDIT_USER'; // Permission for editing a user

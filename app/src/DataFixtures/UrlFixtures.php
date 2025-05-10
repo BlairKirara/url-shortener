@@ -1,7 +1,4 @@
 <?php
-/**
- * Url fixtures.
- */
 
 namespace App\DataFixtures;
 
@@ -14,24 +11,16 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 /**
  * Class UrlFixtures.
  *
- * This class is responsible for loading URL fixtures into the database.
- * It implements the DependentFixtureInterface to define dependencies on other fixtures.
+ * Loads URL fixtures into the database.
  */
 class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
 {
-    /**
-     * Load URL fixtures into the database.
-     *
-     * This method is called when loading the fixtures and creates multiple URL entities.
-     */
     public function loadData(): void
     {
-        // Check if the manager and faker objects are set
-        if (null === $this->manager || null === $this->faker) {
+        if (!$this->manager instanceof \Doctrine\Persistence\ObjectManager || !$this->faker instanceof \Faker\Generator) {
             return;
         }
 
-        // Create 90 URL entities
         $this->createMany(90, 'urls', function () {
             $url = new Url();
             $url->setLongName($this->faker->url);
@@ -51,40 +40,28 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
                 );
             }
 
-            // Get random tags and add them to the URL entity
-            /** @var array<array-key, Tag> $tags */
-            $tags = $this->getRandomReferences('tags', $this->faker->numberBetween(0, 2));
+            /** @var Tag[] $tags */
+            $tags = $this->getRandomReferenceList('tags', Tag::class, $this->faker->numberBetween(0, 2));
             foreach ($tags as $tag) {
                 $url->addTag($tag);
             }
 
             if ($this->faker->boolean(55)) {
-                // Get a random user and set it as the URL's owner
-                /** @var User $users */
-                $users = $this->getRandomReference('users');
-                $url->setUsers($users);
+                /** @var User $user */
+                $user = $this->getRandomReferenceList('users', User::class, 1)[0];
+                $url->setUsers($user);
             } else {
-                // Get a random guest user and set it as the URL's owner
-                /** @var GuestUser $guestUsers */
-                $guestUsers = $this->getRandomReference('guestUsers');
-                $url->setGuestUser($guestUsers);
+                /** @var GuestUser $guestUser */
+                $guestUser = $this->getRandomReferenceList('guestUsers', GuestUser::class, 1)[0];
+                $url->setGuestUser($guestUser);
             }
 
             return $url;
         });
 
-        // Flush the changes to the database
         $this->manager->flush();
     }
 
-    /**
-     * Get the dependencies for this fixture.
-     *
-     * This method defines the dependencies of this fixture on other fixtures.
-     * In this case, it depends on the TagFixtures, UserFixtures, and GuestUserFixtures classes.
-     *
-     * @return string[] An array of fixture class names that this fixture depends on
-     */
     public function getDependencies(): array
     {
         return [

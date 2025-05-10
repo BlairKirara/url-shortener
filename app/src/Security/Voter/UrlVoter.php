@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Url voter.
  */
@@ -22,18 +23,15 @@ class UrlVoter extends Voter
     public const EDIT = 'EDIT'; // Permission for editing a URL
     public const VIEW = 'VIEW'; // Permission for viewing a URL
     public const DELETE = 'DELETE'; // Permission for deleting a URL
-    public const BLOCK = 'BLOCK'; // Permission for blocking a URL
-
-    private Security $security;
+    public const BLOCK = 'BLOCK';
 
     /**
      * Constructor.
      *
      * @param Security $security The security service
      */
-    public function __construct(Security $security)
+    public function __construct(private readonly Security $security)
     {
-        $this->security = $security;
     }
 
     /**

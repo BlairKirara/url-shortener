@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tag service.
  */
@@ -17,20 +18,14 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class TagService implements TagServiceInterface
 {
-    private TagRepository $tagRepository;
-
-    private PaginatorInterface $paginator;
-
     /**
      * Constructor.
      *
      * @param TagRepository      $tagRepository The tag repository
      * @param PaginatorInterface $paginator     The paginator
      */
-    public function __construct(TagRepository $tagRepository, PaginatorInterface $paginator)
+    public function __construct(private readonly TagRepository $tagRepository, private readonly PaginatorInterface $paginator)
     {
-        $this->tagRepository = $tagRepository;
-        $this->paginator = $paginator;
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Url data controller.
  */
@@ -15,22 +16,17 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class UrlDataController.
  * Controller for managing URL visits.
  */
-#[Route('/visits')]
 class UrlDataController extends AbstractController
 {
-    private UrlDataServiceInterface $urlDataService;
-
     /**
      * Constructor.
      * Injects the UrlDataServiceInterface dependency.
      *
      * @param UrlDataServiceInterface $urlDataService the URL data service
      */
-    public function __construct(UrlDataServiceInterface $urlDataService)
+    public function __construct(private readonly UrlDataServiceInterface $urlDataService)
     {
-        $this->urlDataService = $urlDataService;
     }
-
     /**
      * Displays the visits count for URLs.
      *
@@ -38,7 +34,7 @@ class UrlDataController extends AbstractController
      *
      * @return Response the response object
      */
-    #[Route(name: 'visits_index', methods: 'GET')]
+    #[\Symfony\Component\Routing\Attribute\Route(name: 'visits_index', methods: 'GET')]
     public function visitsCount(Request $request): Response
     {
         $pagination = $this->urlDataService->countVisits(

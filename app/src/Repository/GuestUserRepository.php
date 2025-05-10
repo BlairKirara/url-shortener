@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Guest user repository.
  */
@@ -69,7 +70,7 @@ class GuestUserRepository extends ServiceEntityRepository
      *
      * @return QueryBuilder The QueryBuilder instance
      */
-    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
+    private function getOrCreateQueryBuilder(?QueryBuilder $queryBuilder = null): QueryBuilder
     {
         return $queryBuilder ?? $this->createQueryBuilder('guestUser');
     }

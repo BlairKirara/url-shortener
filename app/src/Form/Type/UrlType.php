@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Url type.
  */
@@ -27,11 +28,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class UrlType extends AbstractType
 {
-    private TagsDataTransformer $tagsDataTransformer;
-    private Security $security;
-    private GuestUserService $guestUserService;
-    private TranslatorInterface $translator;
-
     /**
      * Constructor.
      *
@@ -40,12 +36,8 @@ class UrlType extends AbstractType
      * @param GuestUserService    $guestUserService    The guest user service
      * @param TranslatorInterface $translator          The translator component
      */
-    public function __construct(TagsDataTransformer $tagsDataTransformer, Security $security, GuestUserService $guestUserService, TranslatorInterface $translator)
+    public function __construct(private readonly TagsDataTransformer $tagsDataTransformer, private readonly Security $security, private readonly GuestUserService $guestUserService, private readonly TranslatorInterface $translator)
     {
-        $this->tagsDataTransformer = $tagsDataTransformer;
-        $this->security = $security;
-        $this->guestUserService = $guestUserService;
-        $this->translator = $translator;
     }
 
     /**
@@ -80,7 +72,7 @@ class UrlType extends AbstractType
             $this->tagsDataTransformer
         );
 
-        if (!$this->security->getUser()) {
+        if (!$this->security->getUser() instanceof \Symfony\Component\Security\Core\User\UserInterface) {
             $builder->add(
                 'email',
                 EmailType::class,

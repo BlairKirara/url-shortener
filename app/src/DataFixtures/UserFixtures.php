@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User fixtures.
  */
@@ -16,16 +17,13 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  */
 class UserFixtures extends AbstractBaseFixtures
 {
-    private UserPasswordHasherInterface $passwordHasher;
-
     /**
      * Constructor.
      *
      * @param UserPasswordHasherInterface $passwordHasher The user password hasher
      */
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    public function __construct(private readonly UserPasswordHasherInterface $passwordHasher)
     {
-        $this->passwordHasher = $passwordHasher;
     }
 
     /**
@@ -36,7 +34,7 @@ class UserFixtures extends AbstractBaseFixtures
     protected function loadData(): void
     {
         // Check if the manager and faker objects are set
-        if (null === $this->manager || null === $this->faker) {
+        if (!$this->manager instanceof \Doctrine\Persistence\ObjectManager || !$this->faker instanceof \Faker\Generator) {
             return;
         }
 

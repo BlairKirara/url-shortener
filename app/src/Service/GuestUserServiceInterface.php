@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Guest user service interface.
  */

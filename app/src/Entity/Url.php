@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Url.
  */
@@ -57,7 +58,7 @@ class Url
     #[ORM\ManyToOne(targetEntity: User::class, fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(name: 'user_id', nullable: true)]
     #[Assert\Type(User::class)]
-    private ?User $users;
+    private ?User $users = null;
 
     #[ORM\ManyToOne(targetEntity: GuestUser::class, fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(name: 'guest_user_id', nullable: true)]

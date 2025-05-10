@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Security controller.
  */
@@ -22,7 +23,7 @@ class SecurityController extends AbstractController
      *
      * @return Response The HTTP response
      */
-    #[Route(path: '/login', name: 'app_login')]
+    #[\Symfony\Component\Routing\Attribute\Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // Get the last authentication error, if any
@@ -40,7 +41,7 @@ class SecurityController extends AbstractController
      *
      * @throws \LogicException this method can be blank - it will be intercepted by the logout key on your firewall
      */
-    #[Route(path: '/logout', name: 'app_logout')]
+    #[\Symfony\Component\Routing\Attribute\Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');

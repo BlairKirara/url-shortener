@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Url service.
  */
@@ -20,16 +21,6 @@ use Symfony\Component\Security\Core\Security;
  */
 class UrlService implements UrlServiceInterface
 {
-    private PaginatorInterface $paginator;
-
-    private TagServiceInterface $tagService;
-
-    private UrlRepository $urlRepository;
-
-    private Security $security;
-
-    private GuestUserRepository $guestUserRepository;
-
     /**
      * Constructor.
      *
@@ -39,13 +30,8 @@ class UrlService implements UrlServiceInterface
      * @param Security            $security            The security component
      * @param GuestUserRepository $guestUserRepository The guest user repository
      */
-    public function __construct(PaginatorInterface $paginator, TagServiceInterface $tagService, UrlRepository $urlRepository, Security $security, GuestUserRepository $guestUserRepository)
+    public function __construct(private readonly PaginatorInterface $paginator, private readonly TagServiceInterface $tagService, private readonly UrlRepository $urlRepository, private readonly Security $security, private readonly GuestUserRepository $guestUserRepository)
     {
-        $this->paginator = $paginator;
-        $this->tagService = $tagService;
-        $this->urlRepository = $urlRepository;
-        $this->security = $security;
-        $this->guestUserRepository = $guestUserRepository;
     }
 
     /**

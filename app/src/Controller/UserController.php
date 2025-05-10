@@ -1,4 +1,5 @@
 <?php
+
 /**
  * User controller.
  */
@@ -20,13 +21,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 /**
  * Class UserController.
  */
-#[Route('/user')]
 class UserController extends AbstractController
 {
-    private UserServiceInterface $userService;
-    private TranslatorInterface $translator;
-    private UserPasswordHasherInterface $passwordHasher;
-
     /**
      * Constructor.
      *
@@ -34,13 +30,9 @@ class UserController extends AbstractController
      * @param TranslatorInterface         $translator     the translator
      * @param UserPasswordHasherInterface $passwordHasher the password hasher
      */
-    public function __construct(UserServiceInterface $userService, TranslatorInterface $translator, UserPasswordHasherInterface $passwordHasher)
+    public function __construct(private readonly UserServiceInterface $userService, private readonly TranslatorInterface $translator, private readonly UserPasswordHasherInterface $passwordHasher)
     {
-        $this->userService = $userService;
-        $this->translator = $translator;
-        $this->passwordHasher = $passwordHasher;
     }
-
     /**
      * User index page.
      *
@@ -48,10 +40,10 @@ class UserController extends AbstractController
      *
      * @return Response the response object
      *
-     * @Route(name="user_index", methods="GET")
      *
      * @IsGranted("ROLE_ADMIN")
      */
+    #[Route(name: 'user_index', methods: 'GET')]
     public function index(Request $request): Response
     {
         $pagination = $this->userService->getPaginatedList($request->query->getInt('page', 1));
@@ -61,7 +53,6 @@ class UserController extends AbstractController
             ['pagination' => $pagination]
         );
     }
-
     /**
      * Show user details.
      *
@@ -69,10 +60,10 @@ class UserController extends AbstractController
      *
      * @return Response the response object
      *
-     * @Route("/{id}", name="user_show", requirements={"id"="[1-9]\d*"}, methods={"GET"})
      *
      * @IsGranted("VIEW", subject="user")
      */
+    #[Route(path: '/user/{id}', name: 'user_show', requirements: ['id' => '[1-9]\d*'], methods: ['GET'])]
     public function show(User $user): Response
     {
         return $this->render(
@@ -80,7 +71,6 @@ class UserController extends AbstractController
             ['user' => $user]
         );
     }
-
     /**
      * Edit user password.
      *
@@ -89,10 +79,10 @@ class UserController extends AbstractController
      *
      * @return Response the response object
      *
-     * @Route("/{id}/edit/password", name="user_edit", requirements={"id"="[1-9]\d*"}, methods={"GET", "PUT"})
      *
      * @IsGranted("EDIT_USER", subject="user")
      */
+    #[Route(path: '/user/{id}/edit/password', name: 'user_edit', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
     public function edit(Request $request, User $user): Response
     {
         $form = $this->createForm(UserPasswordType::class, $user, ['method' => 'PUT']);
@@ -114,7 +104,6 @@ class UserController extends AbstractController
             ]
         );
     }
-
     /**
      * Edit user email.
      *
@@ -123,10 +112,10 @@ class UserController extends AbstractController
      *
      * @return Response the response object
      *
-     * @Route("/{id}/edit/email", name="user_edit_email", requirements={"id"="[1-9]\d*"}, methods={"GET", "PUT"})
      *
      * @IsGranted("EDIT_USER", subject="user")
      */
+    #[Route(path: '/user/{id}/edit/email', name: 'user_edit_email', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
     public function editEmail(Request $request, User $user): Response
     {
         $form = $this->createForm(UserEmailType::class, $user, ['method' => 'PUT']);
