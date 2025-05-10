@@ -37,7 +37,7 @@ class RegistrationController extends AbstractController
      *
      * @return Response HTTP response
      */
-    #[\Symfony\Component\Routing\Attribute\Route(
+    #[Route(
         path: '/register',
         name: 'app_register',
         methods: [

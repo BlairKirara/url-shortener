@@ -20,7 +20,7 @@ class HomePageController extends AbstractController
      *
      * @return Response The HTTP response
      */
-    #[\Symfony\Component\Routing\Attribute\Route(path: '/', name: 'app_homepage')]
+    #[Route(path: '/', name: 'app_homepage')]
     public function index(): Response
     {
         /* @var TYPE_NAME $this */

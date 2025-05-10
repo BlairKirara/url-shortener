@@ -34,7 +34,7 @@ class UrlDataController extends AbstractController
      *
      * @return Response the response object
      */
-    #[\Symfony\Component\Routing\Attribute\Route(name: 'visits_index', methods: 'GET')]
+    #[Route(name: 'visits_index', methods: 'GET')]
     public function visitsCount(Request $request): Response
     {
         $pagination = $this->urlDataService->countVisits(

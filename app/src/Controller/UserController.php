@@ -21,6 +21,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 /**
  * Class UserController.
  */
+#[Route('/user')]
 class UserController extends AbstractController
 {
     /**
@@ -63,7 +64,7 @@ class UserController extends AbstractController
      *
      * @IsGranted("VIEW", subject="user")
      */
-    #[Route(path: '/user/{id}', name: 'user_show', requirements: ['id' => '[1-9]\d*'], methods: ['GET'])]
+    #[Route(path: '/{id}', name: 'user_show', requirements: ['id' => '[1-9]\d*'], methods: ['GET'])]
     public function show(User $user): Response
     {
         return $this->render(
@@ -82,7 +83,7 @@ class UserController extends AbstractController
      *
      * @IsGranted("EDIT_USER", subject="user")
      */
-    #[Route(path: '/user/{id}/edit/password', name: 'user_edit', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
+    #[Route(path: '/{id}/edit/password', name: 'user_edit', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
     public function edit(Request $request, User $user): Response
     {
         $form = $this->createForm(UserPasswordType::class, $user, ['method' => 'PUT']);
@@ -115,7 +116,7 @@ class UserController extends AbstractController
      *
      * @IsGranted("EDIT_USER", subject="user")
      */
-    #[Route(path: '/user/{id}/edit/email', name: 'user_edit_email', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
+    #[Route(path: '/{id}/edit/email', name: 'user_edit_email', requirements: ['id' => '[1-9]\d*'], methods: ['GET', 'PUT'])]
     public function editEmail(Request $request, User $user): Response
     {
         $form = $this->createForm(UserEmailType::class, $user, ['method' => 'PUT']);
