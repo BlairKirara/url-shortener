@@ -5,36 +5,41 @@ namespace App\Tests\Controller;
 use App\Controller\SecurityController;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\HttpKernel\Exception\LogicException;
 
 class SecurityControllerTest extends TestCase
 {
     public function testLoginReturnsResponseWithExpectedTemplateVariables(): void
     {
         $lastUsername = 'testuser';
-        $error = new \Exception('Invalid credentials');
+        $error = $this->createMock(AuthenticationException::class);
 
         // Mock AuthenticationUtils
         $authUtilsMock = $this->createMock(AuthenticationUtils::class);
         $authUtilsMock->method('getLastAuthenticationError')->willReturn($error);
         $authUtilsMock->method('getLastUsername')->willReturn($lastUsername);
 
-        $controller = new SecurityController();
+        // Create a partial mock of SecurityController that mocks render()
+        $controller = $this->getMockBuilder(SecurityController::class)
+            ->onlyMethods(['render'])
+            ->getMock();
 
-        // Because render() is a method from AbstractController and is final,
-        // we can’t easily mock it without a functional test.
-        // Instead, call login() and check Response instance and content type.
+        $controller->expects($this->once())
+            ->method('render')
+            ->with(
+                'security/login.html.twig',
+                $this->callback(function ($context) use ($lastUsername, $error) {
+                    return $context['last_username'] === $lastUsername &&
+                        $context['error'] === $error;
+                })
+            )
+            ->willReturn(new Response('Mocked login page'));
+
         $response = $controller->login($authUtilsMock);
 
         $this->assertInstanceOf(Response::class, $response);
-
-        // We can check that the response content contains the last username and error message strings,
-        // assuming the template renders those somewhere. This is a minimal check without full functional testing.
-        $content = $response->getContent();
-
-        $this->assertStringContainsString($lastUsername, $content);
-        $this->assertStringContainsString('Invalid credentials', $content);
+        $this->assertEquals('Mocked login page', $response->getContent());
     }
 
     public function testLogoutThrowsLogicException(): void
