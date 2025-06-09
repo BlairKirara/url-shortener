@@ -30,7 +30,6 @@ class UserControllerTest extends TestCase
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
 
-        // Partial mock controller to override createForm, addFlash, redirectToRoute, render methods
         $this->controller = $this->getMockBuilder(UserController::class)
             ->setConstructorArgs([$this->userService, $this->translator, $this->passwordHasher])
             ->onlyMethods(['createForm', 'addFlash', 'redirectToRoute', 'render'])
@@ -39,7 +38,6 @@ class UserControllerTest extends TestCase
 
     public function testIndexReturnsPaginationResponse()
     {
-        // Mock PaginationInterface instance (not a plain array)
         $pagination = $this->createMock(PaginationInterface::class);
 
         $request = new Request(['page' => 3]);
@@ -77,7 +75,6 @@ class UserControllerTest extends TestCase
         $request = new Request();
 
         $form = $this->createMock(FormInterface::class);
-        // Remove createView expectation here
 
         $form->expects($this->once())->method('handleRequest')->with($request);
         $form->expects($this->once())->method('isSubmitted')->willReturn(true);
@@ -139,7 +136,6 @@ class UserControllerTest extends TestCase
         $request = new Request();
 
         $form = $this->createMock(FormInterface::class);
-        // Remove createView expectation here
 
         $form->expects($this->once())->method('handleRequest')->with($request);
         $form->expects($this->once())->method('isSubmitted')->willReturn(true);

@@ -21,25 +21,19 @@ class UrlDataControllerTest extends TestCase
         $this->urlDataService = $this->createMock(UrlDataServiceInterface::class);
         $this->controller = new UrlDataController($this->urlDataService);
 
-        // Mock Twig environment (needed for rendering in AbstractController)
         $twig = $this->createMock(TwigEnvironment::class);
 
-        // When render() is called, return some dummy HTML content
         $twig->method('render')
             ->willReturn('<html>dummy content</html>');
 
-        // Mock the container
         $container = $this->createMock(ContainerInterface::class);
 
-        // container->has('twig') returns true
         $container->method('has')
             ->willReturnCallback(fn($service) => $service === 'twig');
 
-        // container->get('twig') returns our twig mock
         $container->method('get')
             ->willReturnCallback(fn($service) => $service === 'twig' ? $twig : null);
 
-        // Inject the container into controller
         $this->controller->setContainer($container);
     }
 

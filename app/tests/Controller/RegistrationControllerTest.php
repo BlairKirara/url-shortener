@@ -26,7 +26,6 @@ class RegistrationControllerTest extends TestCase
         $this->userServiceMock = $this->createMock(UserServiceInterface::class);
         $this->translatorMock = $this->createMock(TranslatorInterface::class);
 
-        // Create controller mock to mock createForm and addFlash and redirectToRoute
         $this->controller = $this->getMockBuilder(RegistrationController::class)
             ->setConstructorArgs([$this->userServiceMock, $this->translatorMock])
             ->onlyMethods(['createForm', 'addFlash', 'redirectToRoute', 'render'])
@@ -62,7 +61,7 @@ class RegistrationControllerTest extends TestCase
             ->with('registration/index.html.twig', ['form' => $formViewMock])
             ->willReturn(new Response('form with errors'));
 
-        $response = $this->controller->register(new Request([], [])); // empty POST simulates invalid
+        $response = $this->controller->register(new Request([], []));
 
         $this->assertInstanceOf(Response::class, $response);
         $this->assertStringContainsString('form with errors', $response->getContent());
@@ -88,11 +87,6 @@ class RegistrationControllerTest extends TestCase
         $formMock->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
-
-        // REMOVE getData expectation (not called in controller)
-        // $formMock->expects($this->once())
-        //     ->method('getData')
-        //     ->willReturn($user);
 
         $this->userServiceMock->expects($this->once())
             ->method('save')

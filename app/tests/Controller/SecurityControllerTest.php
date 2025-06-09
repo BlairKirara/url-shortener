@@ -15,12 +15,10 @@ class SecurityControllerTest extends TestCase
         $lastUsername = 'testuser';
         $error = $this->createMock(AuthenticationException::class);
 
-        // Mock AuthenticationUtils
         $authUtilsMock = $this->createMock(AuthenticationUtils::class);
         $authUtilsMock->method('getLastAuthenticationError')->willReturn($error);
         $authUtilsMock->method('getLastUsername')->willReturn($lastUsername);
 
-        // Create a partial mock of SecurityController that mocks render()
         $controller = $this->getMockBuilder(SecurityController::class)
             ->onlyMethods(['render'])
             ->getMock();
