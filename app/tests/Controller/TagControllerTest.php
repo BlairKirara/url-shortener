@@ -106,6 +106,33 @@ class TagControllerTest extends TestCase
         $this->assertStringContainsString('form invalid', $response->getContent());
     }
 
+    public function testCreateHandlesNotSubmittedForm(): void
+    {
+        $tag = new Tag();
+        $form = $this->createMock(FormInterface::class);
+        $formView = $this->createMock(FormView::class);
+
+        $this->controller->expects($this->once())
+            ->method('createForm')
+            ->with(TagType::class, $tag)
+            ->willReturn($form);
+
+        $form->expects($this->once())->method('handleRequest');
+        $form->expects($this->once())->method('isSubmitted')->willReturn(false);
+        $form->expects($this->never())->method('isValid');
+        $form->expects($this->once())->method('createView')->willReturn($formView);
+
+        $this->controller->expects($this->once())
+            ->method('render')
+            ->with('tag/create.html.twig', ['form' => $formView])
+            ->willReturn(new Response('new form'));
+
+        $response = $this->controller->create(new Request());
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertStringContainsString('new form', $response->getContent());
+    }
+
     public function testDeleteHandlesValidForm(): void
     {
         $tag = $this->createMock(Tag::class);
@@ -135,6 +162,39 @@ class TagControllerTest extends TestCase
 
         $response = $this->controller->delete(new Request(), $tag);
         $this->assertInstanceOf(RedirectResponse::class, $response);
+    }
+
+    public function testDeleteHandlesInvalidForm(): void
+    {
+        $tag = $this->createMock(Tag::class);
+        $tag->method('getId')->willReturn(123);
+
+        $form = $this->createMock(FormInterface::class);
+        $formView = $this->createMock(FormView::class);
+
+        $this->controller->expects($this->once())
+            ->method('generateUrl')
+            ->with('tag_delete', ['id' => 123])
+            ->willReturn('/tag/123/delete');
+
+        $this->controller->expects($this->once())
+            ->method('createForm')
+            ->with(FormType::class, $tag, ['method' => 'DELETE', 'action' => '/tag/123/delete'])
+            ->willReturn($form);
+
+        $form->expects($this->once())->method('handleRequest');
+        $form->expects($this->once())->method('isSubmitted')->willReturn(false);
+        $form->expects($this->never())->method('isValid');
+        $form->expects($this->once())->method('createView')->willReturn($formView);
+
+        $this->controller->expects($this->once())
+            ->method('render')
+            ->with('tag/delete.html.twig', ['form' => $formView, 'tag' => $tag])
+            ->willReturn(new Response('delete form'));
+
+        $response = $this->controller->delete(new Request(), $tag);
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertStringContainsString('delete form', $response->getContent());
     }
 
     public function testEditHandlesValidForm(): void
@@ -197,6 +257,38 @@ class TagControllerTest extends TestCase
         $response = $this->controller->edit(new Request(), $tag);
         $this->assertInstanceOf(Response::class, $response);
         $this->assertStringContainsString('invalid edit', $response->getContent());
+    }
+
+    public function testEditHandlesNotSubmittedForm(): void
+    {
+        $tag = $this->createMock(Tag::class);
+        $tag->method('getId')->willReturn(789);
+
+        $form = $this->createMock(FormInterface::class);
+        $formView = $this->createMock(FormView::class);
+
+        $this->controller->expects($this->once())
+            ->method('generateUrl')
+            ->with('tag_edit', ['id' => 789])
+            ->willReturn('/tag/789/edit');
+
+        $this->controller->expects($this->once())
+            ->method('createForm')
+            ->willReturn($form);
+
+        $form->expects($this->once())->method('handleRequest');
+        $form->expects($this->once())->method('isSubmitted')->willReturn(false);
+        $form->expects($this->never())->method('isValid');
+        $form->expects($this->once())->method('createView')->willReturn($formView);
+
+        $this->controller->expects($this->once())
+            ->method('render')
+            ->with('tag/edit.html.twig', ['form' => $formView, 'tag' => $tag])
+            ->willReturn(new Response('edit form'));
+
+        $response = $this->controller->edit(new Request(), $tag);
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertStringContainsString('edit form', $response->getContent());
     }
 
     public function testShowRendersTag(): void
