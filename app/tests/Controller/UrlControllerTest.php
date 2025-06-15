@@ -2,567 +2,463 @@
 
 namespace App\Tests\Controller;
 
-use App\Controller\UrlController;
-use App\Entity\GuestUser;
 use App\Entity\Url;
-use App\Entity\UrlData;
 use App\Entity\User;
-use App\Form\Type\UrlBlockType;
-use App\Form\Type\UrlType;
-use App\Service\GuestUserServiceInterface;
-use App\Service\UrlDataServiceInterface;
-use App\Service\UrlServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
-use Knp\Component\Pager\Pagination\PaginationInterface;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Entity\Tag;
+use App\Entity\GuestUser;
+use App\Repository\UrlRepository;
+use App\Repository\UserRepository;
+use App\Repository\TagRepository;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-/**
- * Class UrlControllerTest.
- *
- * Tests for the UrlController.
- */
-class UrlControllerTest extends TestCase
+class UrlControllerTest extends WebTestCase
 {
-    /**
-     * URL service.
-     */
-    private UrlServiceInterface $urlService;
+    private $client;
+    private $urlRepository;
+    private $userRepository;
+    private $tagRepository;
+    private $entityManager;
 
-    /**
-     * URL data service.
-     */
-    private UrlDataServiceInterface $urlDataService;
-
-    /**
-     * Translator.
-     */
-    private TranslatorInterface $translator;
-
-    /**
-     * Entity manager.
-     */
-    private EntityManagerInterface $entityManager;
-
-    /**
-     * Guest user service.
-     */
-    private GuestUserServiceInterface $guestUserService;
-
-    /**
-     * URL controller.
-     */
-    private UrlController $urlController;
-
-    /**
-     * Security.
-     */
-    private Security $security;
-
-    /**
-     * Authorization checker.
-     */
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    /**
-     * Form factory.
-     */
-    private FormFactoryInterface $formFactory;
-
-    /**
-     * URL generator.
-     */
-    private UrlGeneratorInterface $urlGenerator;
-
-    /**
-     * Session.
-     */
-    private Session $session;
-
-    /**
-     * Flash bag.
-     */
-    private FlashBagInterface $flashBag;
-
-    /**
-     * Set up test environment.
-     */
     protected function setUp(): void
     {
-        $this->urlService = $this->createMock(UrlServiceInterface::class);
-        $this->urlDataService = $this->createMock(UrlDataServiceInterface::class);
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->guestUserService = $this->createMock(GuestUserServiceInterface::class);
-        $this->security = $this->createMock(Security::class);
-        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        
-        // Set up session and flash bag
-        $this->flashBag = $this->createMock(FlashBagInterface::class);
-        $this->session = $this->createMock(Session::class);
-        $this->session->method('getFlashBag')->willReturn($this->flashBag);
+        $this->client = static::createClient();
+        $container = static::getContainer();
+        $this->urlRepository = $container->get(UrlRepository::class);
+        $this->userRepository = $container->get(UserRepository::class);
+        $this->tagRepository = $container->get(TagRepository::class);
+        $this->entityManager = $container->get('doctrine.orm.entity_manager');
 
-        // Create controller instance
-        $this->urlController = new UrlController(
-            $this->urlService,
-            $this->urlDataService,
-            $this->translator,
-            $this->entityManager,
-            $this->guestUserService
-        );
-
-        // Set required properties on controller using reflection
-        $reflection = new \ReflectionClass($this->urlController);
-        
-        $containerProperty = $reflection->getProperty('container');
-        $containerProperty->setAccessible(true);
-        
-        $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        
-        $container->method('get')
-            ->willReturnCallback(function ($serviceName) {
-                switch ($serviceName) {
-                    case 'security.authorization_checker':
-                        return $this->authorizationChecker;
-                    case 'form.factory':
-                        return $this->formFactory;
-                    case 'router':
-                        return $this->urlGenerator;
-                    case 'session':
-                        return $this->session;
-                    case 'security.helper':
-                        return $this->security;
-                    default:
-                        return null;
-                }
-            });
-        
-        $containerProperty->setValue($this->urlController, $container);
+        // Create test data if needed
+        $this->createTestData();
     }
 
-    /**
-     * Test index method.
-     */
+    private function createTestData(): void
+    {
+        // Check if we need to create test data
+        if ($this->urlRepository->count([]) > 0) {
+            return; // Data already exists
+        }
+
+        // Create admin and user with explicit flush after each
+        $admin = $this->userRepository->findOneByEmail('admin@example.com');
+        if (!$admin) {
+            $admin = new User();
+            $admin->setEmail('admin@example.com');
+            $admin->setPassword('$2y$13$hK3.LXmXx1dC3eJca3S2CO3ReozDNnZQbYOlqpV/LRqzDNJxlDU4m'); // hashed 'admin'
+            $admin->setRoles(['ROLE_ADMIN']);
+            $this->entityManager->persist($admin);
+            $this->entityManager->flush(); // Explicitly flush after creating admin
+        }
+
+        $user = $this->userRepository->findOneByEmail('user@example.com');
+        if (!$user) {
+            $user = new User();
+            $user->setEmail('user@example.com');
+            $user->setPassword('$2y$13$KuJnAI.jPEQv6q.QjmJ.xOCAjA9e2sGGAS8jPUefJhW9B5Z4tGhXa'); // hashed 'user'
+            $user->setRoles(['ROLE_USER']);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush(); // Explicitly flush after creating user
+        }
+
+        $anotherUser = $this->userRepository->findOneByEmail('another@example.com');
+        if (!$anotherUser) {
+            $anotherUser = new User();
+            $anotherUser->setEmail('another@example.com');
+            $anotherUser->setPassword('$2y$13$KuJnAI.jPEQv6q.QjmJ.xOCAjA9e2sGGAS8jPUefJhW9B5Z4tGhXa'); // hashed 'user'
+            $anotherUser->setRoles(['ROLE_USER']);
+            $this->entityManager->persist($anotherUser);
+            $this->entityManager->flush(); // Explicitly flush after creating another user
+        }
+
+        // Re-fetch users to ensure we have the persisted versions
+        $admin = $this->userRepository->findOneByEmail('admin@example.com');
+        $user = $this->userRepository->findOneByEmail('user@example.com');
+        $anotherUser = $this->userRepository->findOneByEmail('another@example.com');
+
+        // Create tag
+        $tag = new Tag();
+        $tag->setName('test-tag');
+        $this->entityManager->persist($tag);
+        $this->entityManager->flush();
+
+        // Create non-blocked URL
+        $url1 = new Url();
+        $url1->setLongName('https://example.com');
+        $url1->setShortName('test123');
+        $url1->setIsBlocked(false);
+        $url1->setUsers($user);
+        $url1->addTag($tag);
+        $this->entityManager->persist($url1);
+
+        // Create URL for another user
+        $url2 = new Url();
+        $url2->setLongName('https://another-example.com');
+        $url2->setShortName('another123');
+        $url2->setIsBlocked(false);
+        $url2->setUsers($anotherUser);
+        $this->entityManager->persist($url2);
+
+        // Create blocked URL
+        $url3 = new Url();
+        $url3->setLongName('https://blocked-example.com');
+        $url3->setShortName('blocked123');
+        $url3->setIsBlocked(true);
+        $url3->setBlockTime(new \DateTimeImmutable('+1 day'));
+        $url3->setUsers($admin);
+        $this->entityManager->persist($url3);
+
+        $this->entityManager->flush();
+    }
+
+    private function loginAsAdmin(): void
+    {
+        $admin = $this->userRepository->findOneByEmail('admin@example.com');
+
+        if (!$admin) {
+            // Create admin if it doesn't exist
+            $admin = new User();
+            $admin->setEmail('admin@example.com');
+            $admin->setPassword('$2y$13$hK3.LXmXx1dC3eJca3S2CO3ReozDNnZQbYOlqpV/LRqzDNJxlDU4m');
+            $admin->setRoles(['ROLE_ADMIN']);
+            $this->entityManager->persist($admin);
+            $this->entityManager->flush();
+
+            // Re-fetch the admin to get the persisted version
+            $admin = $this->userRepository->findOneByEmail('admin@example.com');
+        }
+
+        $this->client->loginUser($admin);
+    }
+
+    private function loginAsUser(): void
+    {
+        $user = $this->userRepository->findOneByEmail('user@example.com');
+
+        if (!$user) {
+            // Create user if it doesn't exist
+            $user = new User();
+            $user->setEmail('user@example.com');
+            $user->setPassword('$2y$13$KuJnAI.jPEQv6q.QjmJ.xOCAjA9e2sGGAS8jPUefJhW9B5Z4tGhXa');
+            $user->setRoles(['ROLE_USER']);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+
+            // Re-fetch the user to get the persisted version
+            $user = $this->userRepository->findOneByEmail('user@example.com');
+        }
+
+        $this->client->loginUser($user);
+    }
+
     public function testIndex(): void
     {
-        // Given
-        $user = $this->createMock(User::class);
-        $pagination = $this->createMock(PaginationInterface::class);
-        $request = new Request();
-        $request->query->set('page', 1);
-        $request->query->set('filters_tag_id', 2);
+        $this->loginAsUser();
 
-        // Set up security to return a user
-        $this->security->method('getUser')->willReturn($user);
-
-        // Set up URL service to return pagination
-        $this->urlService->expects($this->once())
-            ->method('getPaginatedList')
-            ->with(1, $user, ['tag_id' => 2])
-            ->willReturn($pagination);
-
-        // Mock render method
-        $this->urlController = $this->getMockBuilder(UrlController::class)
-            ->setConstructorArgs([
-                $this->urlService,
-                $this->urlDataService,
-                $this->translator,
-                $this->entityManager,
-                $this->guestUserService
-            ])
-            ->onlyMethods(['render', 'getUser'])
-            ->getMock();
-
-        $this->urlController->method('getUser')->willReturn($user);
-
-        $this->urlController->expects($this->once())
-            ->method('render')
-            ->with(
-                'url/index.html.twig',
-                ['pagination' => $pagination]
-            )
-            ->willReturn($this->createMock(Response::class));
-
-        // When
-        $result = $this->urlController->index($request);
-
-        // Then
-        $this->assertInstanceOf(Response::class, $result);
+        $this->client->request('GET', '/url');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.container');
     }
 
-    /**
-     * Test list method.
-     */
     public function testList(): void
     {
-        // Given
-        $pagination = $this->createMock(PaginationInterface::class);
-        $request = new Request();
-        $request->query->set('page', 1);
-        $request->query->set('filters_tag_id', 2);
-
-        // Set up URL service to return pagination
-        $this->urlService->expects($this->once())
-            ->method('getPaginatedListForAll')
-            ->with(1, ['tag_id' => 2])
-            ->willReturn($pagination);
-
-        // Mock render method
-        $this->urlController = $this->getMockBuilder(UrlController::class)
-            ->setConstructorArgs([
-                $this->urlService,
-                $this->urlDataService,
-                $this->translator,
-                $this->entityManager,
-                $this->guestUserService
-            ])
-            ->onlyMethods(['render'])
-            ->getMock();
-
-        $this->urlController->expects($this->once())
-            ->method('render')
-            ->with(
-                'url/list.html.twig',
-                ['pagination' => $pagination]
-            )
-            ->willReturn($this->createMock(Response::class));
-
-        // When
-        $result = $this->urlController->list($request);
-
-        // Then
-        $this->assertInstanceOf(Response::class, $result);
+        $this->client->request('GET', '/url/list');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.container');
     }
 
-    /**
-     * Test show method.
-     */
     public function testShow(): void
     {
-        // Given
-        $url = new Url();
-        $url->setLongName('https://example.com');
-        $url->setShortName('abc123');
+        $url = $this->urlRepository->findOneBy(['isBlocked' => false]);
+        $this->assertNotNull($url, 'No unblocked URLs in database');
 
-        // Mock render method
-        $this->urlController = $this->getMockBuilder(UrlController::class)
-            ->setConstructorArgs([
-                $this->urlService,
-                $this->urlDataService,
-                $this->translator,
-                $this->entityManager,
-                $this->guestUserService
-            ])
-            ->onlyMethods(['render'])
-            ->getMock();
-
-        $this->urlController->expects($this->once())
-            ->method('render')
-            ->with(
-                'url/show.html.twig',
-                ['url' => $url]
-            )
-            ->willReturn($this->createMock(Response::class));
-
-        // When
-        $result = $this->urlController->show($url);
-
-        // Then
-        $this->assertInstanceOf(Response::class, $result);
+        $this->client->request('GET', '/url/' . $url->getId());
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('body', $url->getLongName());
     }
 
-    /**
-     * Test redirectToUrl method with valid, unblocked URL.
-     */
-    public function testRedirectToUrlWithValidUnblockedUrl(): void
+    public function testRedirectToUrl(): void
     {
-        // Given
-        $shortName = 'abc123';
-        $url = new Url();
-        $url->setLongName('https://example.com');
-        $url->setShortName($shortName);
-        $url->setIsBlocked(false);
+        // Find an unblocked URL
+        $url = $this->urlRepository->findOneBy(['isBlocked' => false]);
+        $this->assertNotNull($url, 'No unblocked URLs in database');
 
-        // Set up URL service to return a URL
-        $this->urlService->expects($this->once())
-            ->method('findOneByShortName')
-            ->with($shortName)
-            ->willReturn($url);
+        $shortName = $url->getShortName();
+        $this->client->request('GET', '/url/short/' . $shortName);
 
-        // Expect URL data service to save a visit
-        $this->urlDataService->expects($this->once())
-            ->method('save')
-            ->with($this->callback(function ($urlData) use ($url) {
-                return $urlData instanceof UrlData && $urlData->getUrl() === $url;
-            }));
-
-        // Mock generateUrl method to prevent null reference
-        $this->urlController = $this->getMockBuilder(UrlController::class)
-            ->setConstructorArgs([
-                $this->urlService,
-                $this->urlDataService,
-                $this->translator,
-                $this->entityManager,
-                $this->guestUserService
-            ])
-            ->onlyMethods(['generateUrl'])
-            ->getMock();
-            
-        $this->urlController->method('generateUrl')
-            ->willReturn('/some/url');
-
-        // When
-        $result = $this->urlController->redirectToUrl($shortName);
-
-        // Then
-        $this->assertInstanceOf(RedirectResponse::class, $result);
-        $this->assertEquals('https://example.com', $result->getTargetUrl());
+        $this->assertResponseRedirects($url->getLongName());
     }
 
-    /**
-     * Test redirectToUrl method with blocked URL.
-     */
-    public function testRedirectToUrlWithBlockedUrl(): void
+    public function testRedirectToBlockedUrl(): void
     {
-        // Given
-        $shortName = 'abc123';
-        $url = new Url();
-        $url->setLongName('https://example.com');
-        $url->setShortName($shortName);
-        $url->setIsBlocked(true);
-        $url->setBlockTime(new \DateTimeImmutable('+1 day')); // Block time in the future
+        // Create or find a blocked URL
+        $url = $this->prepareBlockedUrl();
+        $this->assertNotNull($url, 'No blocked URL available for testing');
 
-        // Set up URL service to return a URL
-        $this->urlService->expects($this->once())
-            ->method('findOneByShortName')
-            ->with($shortName)
-            ->willReturn($url);
+        $shortName = $url->getShortName();
+        $this->client->request('GET', '/url/short/' . $shortName);
 
-        // Expect translator to translate the blocked message
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with('message.blocked_url')
-            ->willReturn('This URL is blocked');
-
-        // Mock the controller with specific methods we need to control
-        $this->urlController = $this->getMockBuilder(UrlController::class)
-            ->setConstructorArgs([
-                $this->urlService,
-                $this->urlDataService,
-                $this->translator,
-                $this->entityManager,
-                $this->guestUserService
-            ])
-            ->onlyMethods(['redirectToRoute', 'addFlash'])
-            ->getMock();
-            
-        // Set expectations for addFlash to be called
-        $this->urlController->expects($this->once())
-            ->method('addFlash')
-            ->with('warning', 'This URL is blocked');
-            
-        // Set expectations for redirectToRoute
-        $this->urlController->expects($this->once())
-            ->method('redirectToRoute')
-            ->with('list')
-            ->willReturn(new RedirectResponse('/list'));
-
-        // When
-        $result = $this->urlController->redirectToUrl($shortName);
-
-        // Then
-        $this->assertInstanceOf(RedirectResponse::class, $result);
-        $this->assertEquals('/list', $result->getTargetUrl());
+        // Should redirect to list with warning flash
+        $this->assertResponseRedirects('/url/list');
     }
 
-    /**
-     * Test delete method.
-     */
-    public function testDelete(): void
-    {
-        // Given
-        $request = new Request();
-        $url = new Url();
-        $url->setLongName('https://example.com');
-        $url->setShortName('abc123');
-        $url->setIsBlocked(false);
-        
-        // Use reflection to set the ID property
-        $reflection = new \ReflectionClass($url);
-        $property = $reflection->getProperty('id');
-        $property->setAccessible(true);
-        $property->setValue($url, 1);
-        
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
-        
-        // Mock controller methods
-        $this->urlController = $this->getMockBuilder(UrlController::class)
-            ->setConstructorArgs([
-                $this->urlService,
-                $this->urlDataService,
-                $this->translator,
-                $this->entityManager,
-                $this->guestUserService
-            ])
-            ->onlyMethods(['createForm', 'render', 'generateUrl', 'isGranted', 'redirectToRoute', 'addFlash'])
-            ->getMock();
-    
-        // Since the URL is not blocked, we won't check ROLE_ADMIN
-        // But we need to account for the check on isIsBlocked, which will evaluate to false
-        
-        // isGranted is called ONCE in the if condition: if ($url->isIsBlocked() && !$this->isGranted('ROLE_ADMIN'))
-        // Since $url->isIsBlocked() is false, the second part (!$this->isGranted('ROLE_ADMIN')) is not evaluated
-        // due to short-circuit evaluation in PHP, so isGranted won't be called.
-    
-        // Let's explicitly set the expectation that isGranted will NOT be called
-        $this->urlController->expects($this->never())
-            ->method('isGranted')
-            ->with('ROLE_ADMIN');
-        
-        $this->urlController->method('createForm')
-            ->willReturn($form);
-        
-        $this->urlController->method('generateUrl')
-            ->willReturn('/url/1/delete');
-        
-        // Set up form methods
-        $form->expects($this->once())
-            ->method('handleRequest')
-            ->with($request);
-        
-        $form->expects($this->once())
-            ->method('isSubmitted')
-            ->willReturn(false);
-        
-        $form->expects($this->once())
-            ->method('createView')
-            ->willReturn($formView);
-        
-        $this->urlController->expects($this->once())
-            ->method('render')
-            ->with(
-                'url/delete.html.twig',
-                [
-                    'form' => $formView,
-                    'url' => $url,
-                ]
-            )
-            ->willReturn($this->createMock(Response::class));
-
-        // When
-        $result = $this->urlController->delete($request, $url);
-
-        // Then
-        $this->assertInstanceOf(Response::class, $result);
-    }
-
-    /**
-     * Test create method.
-     */
     public function testCreate(): void
     {
-        // Given
-        $request = new Request();
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
-        
-        // Create a User mock
-        $user = $this->createMock(User::class);
-        
-        // Mock controller methods
-        $this->urlController = $this->getMockBuilder(UrlController::class)
-            ->setConstructorArgs([
-                $this->urlService,
-                $this->urlDataService,
-                $this->translator,
-                $this->entityManager,
-                $this->guestUserService
-            ])
-            ->onlyMethods(['getUser', 'createForm', 'render', 'generateUrl'])
-            ->getMock();
-        
-        $this->urlController->method('getUser')
-            ->willReturn($user);
-        
-        // Expect createForm to be called once with the correct parameters
-        $this->urlController->expects($this->once())
-            ->method('createForm')
-            ->with(
-                UrlType::class,
-                $this->callback(function ($url) use ($user) {
-                    return $url instanceof Url && $url->getUsers() === $user;
-                }),
-                ['action' => '/url/create']
-            )
-            ->willReturn($form);
-        
-        $this->urlController->method('generateUrl')
-            ->with('url_create')
-            ->willReturn('/url/create');
-        
-        // Set up form methods
-        $form->expects($this->once())
-            ->method('handleRequest')
-            ->with($request);
-        
-        $form->expects($this->once())
-            ->method('isSubmitted')
-            ->willReturn(false);
-        
-        $form->expects($this->once())
-            ->method('createView')
-            ->willReturn($formView);
-        
-        $this->urlController->expects($this->once())
-            ->method('render')
-            ->with(
-                'url/create.html.twig',
-                ['form' => $formView]
-            )
-            ->willReturn($this->createMock(Response::class));
+        $this->loginAsUser();
 
-        // When
-        $result = $this->urlController->create($request);
+        $this->client->request('GET', '/url/create');
+        $this->assertResponseIsSuccessful();
 
-        // Then
-        $this->assertInstanceOf(Response::class, $result);
+        $tag = $this->tagRepository->findOneBy([]);
+        $this->assertNotNull($tag, 'No tags in database');
+
+        // Use the correct button name "Zapisz" (based on the form type's block prefix "Url")
+        $this->client->submitForm('Zapisz', [
+            'Url[longName]' => 'https://test.example.com',
+            'Url[tags]' => $tag->getName()
+        ]);
+
+        $this->assertResponseRedirects('/url/list');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-success');
+
+        $url = $this->urlRepository->findOneBy(['longName' => 'https://test.example.com']);
+        $this->assertNotNull($url);
     }
 
-    /**
-     * Tear down test environment.
-     */
-    protected function tearDown(): void
+    public function testCreateAsGuest(): void
     {
-        unset(
-            $this->urlService,
-            $this->urlDataService,
-            $this->translator,
-            $this->entityManager,
-            $this->guestUserService,
-            $this->urlController,
-            $this->security,
-            $this->authorizationChecker,
-            $this->formFactory,
-            $this->urlGenerator,
-            $this->session,
-            $this->flashBag
-        );
+        $this->client->request('GET', '/url/create');
+        $this->assertResponseIsSuccessful();
+
+        $tag = $this->tagRepository->findOneBy([]);
+        $this->assertNotNull($tag, 'No tags in database');
+
+        // Include email field for guest users
+        $this->client->submitForm('Zapisz', [
+            'Url[email]' => 'guest@example.com',
+            'Url[longName]' => 'https://guest.example.com',
+            'Url[tags]' => $tag->getName()
+        ]);
+
+        $this->assertResponseRedirects('/url/list');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-success');
+
+        $url = $this->urlRepository->findOneBy(['longName' => 'https://guest.example.com']);
+        $this->assertNotNull($url);
+    }
+
+    public function testDelete(): void
+    {
+        $this->loginAsUser();
+
+        $user = $this->userRepository->findOneByEmail('user@example.com');
+        $url = $this->urlRepository->findOneBy(['users' => $user]);
+        $this->assertNotNull($url, 'No URLs for test user');
+
+        $urlId = $url->getId();
+
+        // Get the crawler so we can find the form
+        $crawler = $this->client->request('GET', '/url/' . $urlId . '/delete');
+        $this->assertResponseIsSuccessful();
+
+        // Find form and submit it
+        $form = $crawler->filter('form[name="form"]')->form();
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/url');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-success');
+
+        // Verify the URL was deleted
+        $deletedUrl = $this->urlRepository->find($urlId);
+        $this->assertNull($deletedUrl);
+    }
+
+    public function testEdit(): void
+    {
+        $this->loginAsUser();
+
+        // Find or create a URL for this user
+        $user = $this->userRepository->findOneByEmail('user@example.com');
+        $this->assertNotNull($user, 'Test user not found');
+
+        $url = $this->urlRepository->findOneBy(['users' => $user]);
+
+        if (!$url) {
+            // Create a URL for this user if none exists
+            $url = new Url();
+            $url->setLongName('https://user-test-url.com');
+            $url->setShortName('user-test-' . uniqid());
+            $url->setIsBlocked(false);
+            $url->setUsers($user);
+            $this->entityManager->persist($url);
+            $this->entityManager->flush();
+        }
+
+        $this->assertNotNull($url, 'No URLs for test user');
+
+        $this->client->request('GET', '/url/' . $url->getId() . '/edit');
+        $this->assertResponseIsSuccessful();
+
+        $this->client->submitForm('Edytuj', [
+            'Url[longName]' => 'https://updated.example.com',
+            'Url[tags]' => 'updated-tag'
+        ]);
+
+        $this->assertResponseRedirects('/url');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-success');
+
+        $updatedUrl = $this->urlRepository->find($url->getId());
+        $this->assertEquals('https://updated.example.com', $updatedUrl->getLongName());
+    }
+
+    public function testBlock(): void
+    {
+        $this->loginAsAdmin();
+
+        $url = $this->urlRepository->findOneBy(['isBlocked' => false]);
+        $this->assertNotNull($url, 'No unblocked URLs in database');
+
+        // Get the crawler so we can find the form
+        $crawler = $this->client->request('GET', '/url/' . $url->getId() . '/block');
+        $this->assertResponseIsSuccessful();
+
+        $futureDate = new \DateTime('tomorrow');
+
+        // Find the form by name and fill in fields directly
+        $form = $crawler->filter('form[name="BlockUrl"]')->form();
+        $form['BlockUrl[blockTime][date][day]'] = $futureDate->format('j');
+        $form['BlockUrl[blockTime][date][month]'] = $futureDate->format('n');
+        $form['BlockUrl[blockTime][date][year]'] = $futureDate->format('Y');
+        $form['BlockUrl[blockTime][time][hour]'] = $futureDate->format('G');
+        $form['BlockUrl[blockTime][time][minute]'] = (int)$futureDate->format('i');
+
+        // Submit the form directly without referencing a button
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/url/list');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-success');
+    }
+
+    private function prepareBlockedUrl(): ?Url
+    {
+        $url = $this->urlRepository->findOneBy(['isBlocked' => true]);
+
+        if (!$url) {
+            // If no blocked URL exists, find any URL and block it
+            $url = $this->urlRepository->findOneBy([]);
+            if ($url) {
+                $url->setIsBlocked(true);
+                $url->setBlockTime(new \DateTimeImmutable('+1 day'));
+                $this->entityManager->flush();
+            }
+        }
+
+        return $url;
+    }
+
+    public function testUnblock(): void
+    {
+        $this->loginAsAdmin();
+
+        // Create a blocked URL with a future block time
+        $url = $this->urlRepository->findOneBy(['isBlocked' => true]);
+        if (!$url) {
+            $url = $this->prepareBlockedUrl();
+        }
+        $this->assertNotNull($url, 'No blocked URL available for testing');
+
+        $urlId = $url->getId(); // Store ID for later retrieval
+
+        // Get the crawler so we can find the form
+        $crawler = $this->client->request('GET', '/url/' . $urlId . '/unblock');
+        $this->assertResponseIsSuccessful();
+
+        // Find form and submit it
+        $form = $crawler->filter('form[name="form"]')->form();
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/url/list');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-success');
+
+        // Fetch the entity fresh from the database instead of refreshing
+        $updatedUrl = $this->urlRepository->find($urlId);
+        $this->assertFalse($updatedUrl->isIsBlocked());
+        $this->assertNull($updatedUrl->getBlockTime());
+    }
+
+    public function testAutoUnblock(): void
+    {
+        $this->loginAsAdmin();
+
+        // Find an unblocked URL and modify it
+        $url = $this->urlRepository->findOneBy(['isBlocked' => false]);
+        $this->assertNotNull($url, 'No unblocked URL available for testing');
+
+        $urlId = $url->getId(); // Store ID for later
+
+        // Update the URL directly through the entity manager
+        $url->setIsBlocked(true);
+        $url->setBlockTime(new \DateTimeImmutable('-1 day'));  // Past date
+        $this->entityManager->persist($url); // Ensure it's managed
+        $this->entityManager->flush();
+
+        // Request unblock page
+        $this->client->request('GET', '/url/' . $urlId . '/unblock');
+
+        // Should automatically unblock and redirect
+        $this->assertResponseRedirects('/url/list');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-success');
+
+        // Fetch fresh from database instead of refreshing
+        $updatedUrl = $this->urlRepository->find($urlId);
+        $this->assertFalse($updatedUrl->isIsBlocked());
+        $this->assertNull($updatedUrl->getBlockTime());
+    }
+
+    public function testNonExistentShortUrl(): void
+    {
+        $this->client->request('GET', '/url/short/non-existent-url');
+
+        // Should redirect to list with warning flash
+        $this->assertResponseRedirects('/url/list');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-warning');
+    }
+
+    public function testEditBlockedUrlAsUser(): void
+    {
+        $this->loginAsUser();
+
+        // Find a blocked URL
+        $url = $this->urlRepository->findOneBy(['isBlocked' => true]);
+        $this->assertNotNull($url, 'No blocked URL available for testing');
+
+        // Try to edit as regular user
+        $this->client->request('GET', '/url/' . $url->getId() . '/edit');
+
+        // Should get access denied (403) instead of redirect
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testUnauthorizedDelete(): void
+    {
+        $this->loginAsUser();
+
+        // Find a URL belonging to another user
+        $anotherUser = $this->userRepository->findOneByEmail('another@example.com');
+        $url = $this->urlRepository->findOneBy(['users' => $anotherUser]);
+        $this->assertNotNull($url, 'No URLs for another user');
+
+        // Try to delete as unauthorized user
+        $this->client->request('GET', '/url/' . $url->getId() . '/delete');
+
+        // Should get access denied
+        $this->assertResponseStatusCodeSame(403);
     }
 }
