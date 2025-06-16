@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Class UserServiceTest.
- *
- * This class provides unit tests for UserService.
+ * User service test.
  */
 
 namespace App\Tests\Service;
@@ -16,49 +14,26 @@ use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 /**
  * Class UserServiceTest.
+ *
+ * Provides tests for UserService.
  */
 class UserServiceTest extends TestCase
 {
-    /**
-     * User repository.
-     *
-     * @var UserRepository
-     */
     private UserRepository $userRepository;
-
-    /**
-     * Paginator.
-     *
-     * @var PaginatorInterface
-     */
     private PaginatorInterface $paginator;
-
-    /**
-     * Password hasher.
-     *
-     * @var UserPasswordHasherInterface
-     */
     private UserPasswordHasherInterface $passwordHasher;
-
-    /**
-     * Pagination.
-     *
-     * @var PaginationInterface
-     */
     private PaginationInterface $pagination;
-
-    /**
-     * User service.
-     *
-     * @var UserService
-     */
     private UserService $userService;
 
     /**
-     * Set up test environment.
+     * Constructor.
+     *
+     * Sets up the test environment.
      *
      * @return void
      */
@@ -92,11 +67,7 @@ class UserServiceTest extends TestCase
 
         $this->paginator->expects($this->once())
             ->method('paginate')
-            ->with(
-                $queryBuilder,
-                $page,
-                UserRepository::PAGINATOR_ITEMS_PER_PAGE
-            )
+            ->with($queryBuilder, $page, UserRepository::PAGINATOR_ITEMS_PER_PAGE)
             ->willReturn($this->pagination);
 
         $result = $this->userService->getPaginatedList($page);
@@ -169,7 +140,95 @@ class UserServiceTest extends TestCase
     }
 
     /**
-     * Clean up after tests.
+     * Tests saving a new user with an empty password.
+     *
+     * @return void
+     */
+    public function testSaveNewUserWithEmptyPassword(): void
+    {
+        $user = $this->getMockBuilder(User::class)
+            ->onlyMethods(['getId'])
+            ->getMock();
+        $user->method('getId')->willReturn(null);
+        $user->setEmail('nullpass@example.com');
+        $user->setPassword('');
+
+        $this->passwordHasher->expects($this->once())
+            ->method('hashPassword')
+            ->with($user, '')
+            ->willReturn('');
+
+        $this->userRepository->expects($this->once())
+            ->method('save')
+            ->with($user);
+
+        $this->userService->save($user);
+
+        $this->assertEquals('', $user->getPassword());
+        $this->assertEquals(['ROLE_USER'], $user->getRoles());
+    }
+
+    /**
+     * Tests saving a new user with an empty email.
+     *
+     * @return void
+     */
+    public function testSaveNewUserWithEmptyEmail(): void
+    {
+        $user = $this->getMockBuilder(User::class)
+            ->onlyMethods(['getId'])
+            ->getMock();
+        $user->method('getId')->willReturn(null);
+        $user->setEmail('');
+        $user->setPassword('somepassword');
+
+        $this->passwordHasher->expects($this->once())
+            ->method('hashPassword')
+            ->with($user, 'somepassword')
+            ->willReturn('hashed_somepassword');
+
+        $this->userRepository->expects($this->once())
+            ->method('save')
+            ->with($user);
+
+        $this->userService->save($user);
+
+        $this->assertEquals('hashed_somepassword', $user->getPassword());
+        $this->assertEquals(['ROLE_USER'], $user->getRoles());
+    }
+
+    /**
+     * Tests saving a new user with a custom role.
+     *
+     * @return void
+     */
+    public function testSaveNewUserWithCustomRole(): void
+    {
+        $user = $this->getMockBuilder(User::class)
+            ->onlyMethods(['getId'])
+            ->getMock();
+        $user->method('getId')->willReturn(null);
+        $user->setEmail('customrole@example.com');
+        $user->setPassword('customrolepass');
+        $user->setRoles(['ROLE_ADMIN']);
+
+        $this->passwordHasher->expects($this->once())
+            ->method('hashPassword')
+            ->with($user, 'customrolepass')
+            ->willReturn('hashed_customrolepass');
+
+        $this->userRepository->expects($this->once())
+            ->method('save')
+            ->with($user);
+
+        $this->userService->save($user);
+
+        $this->assertEquals('hashed_customrolepass', $user->getPassword());
+        $this->assertEquals(['ROLE_USER'], $user->getRoles());
+    }
+
+    /**
+     * Cleans up after tests.
      *
      * @return void
      */
@@ -182,5 +241,176 @@ class UserServiceTest extends TestCase
             $this->pagination,
             $this->userService
         );
+    }
+
+    /**
+     * Tests upgrading a user's password.
+     *
+     * @return void
+     */
+    public function testUpgradePassword(): void
+    {
+        $userRepository = $this->getMockBuilder(UserRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['save'])
+            ->getMock();
+
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $reflection = new \ReflectionProperty(UserRepository::class, '_em');
+        $reflection->setAccessible(true);
+        $reflection->setValue($userRepository, $entityManager);
+
+        $user = new User();
+        $user->setEmail('test@example.com');
+        $user->setPassword('old-password');
+
+        $userRepository->expects($this->once())
+            ->method('save')
+            ->with($user);
+
+        $userRepository->upgradePassword($user, 'new-hashed-password');
+
+        $this->assertEquals('new-hashed-password', $user->getPassword());
+    }
+
+    /**
+     * Tests upgrading password for unsupported user.
+     *
+     * @return void
+     */
+    public function testUpgradePasswordUnsupportedUser(): void
+    {
+        $userRepository = $this->getMockBuilder(UserRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $unsupportedUser = $this->createMock(PasswordAuthenticatedUserInterface::class);
+
+        $this->expectException(UnsupportedUserException::class);
+
+        $method = new \ReflectionMethod(UserRepository::class, 'upgradePassword');
+        $method->setAccessible(true);
+        $method->invoke($userRepository, $unsupportedUser, 'new-password');
+    }
+
+    /**
+     * Tests getOrCreateQueryBuilder with null parameter.
+     *
+     * @return void
+     */
+    public function testGetOrCreateQueryBuilderWithNullParameter(): void
+    {
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        $repository = $this->getMockBuilder(UserRepository::class)
+            ->setConstructorArgs([$managerRegistry])
+            ->onlyMethods(['createQueryBuilder'])
+            ->getMock();
+
+        $repository->expects($this->once())
+            ->method('createQueryBuilder')
+            ->with('user')
+            ->willReturn($queryBuilder);
+
+        $reflectionMethod = new \ReflectionMethod(UserRepository::class, 'getOrCreateQueryBuilder');
+        $reflectionMethod->setAccessible(true);
+
+        $result = $reflectionMethod->invoke($repository, null);
+
+        $this->assertSame($queryBuilder, $result);
+    }
+
+    /**
+     * Tests getOrCreateQueryBuilder with existing QueryBuilder.
+     *
+     * @return void
+     */
+    public function testGetOrCreateQueryBuilderWithExistingQueryBuilder(): void
+    {
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $existingQueryBuilder = $this->createMock(QueryBuilder::class);
+
+        $repository = new UserRepository($managerRegistry);
+
+        $reflectionMethod = new \ReflectionMethod(UserRepository::class, 'getOrCreateQueryBuilder');
+        $reflectionMethod->setAccessible(true);
+
+        $result = $reflectionMethod->invoke($repository, $existingQueryBuilder);
+
+        $this->assertSame($existingQueryBuilder, $result);
+    }
+
+    /**
+     * Tests saving a user in the repository.
+     *
+     * @return void
+     */
+    public function testRepositorySaveMethod(): void
+    {
+        $user = new User();
+        $user->setEmail('repository-test@example.com');
+
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        $repository = new UserRepository($managerRegistry);
+
+        $reflection = new \ReflectionProperty(UserRepository::class, '_em');
+        $reflection->setAccessible(true);
+        $reflection->setValue($repository, $entityManager);
+
+        $entityManager->expects($this->once())
+            ->method('persist')
+            ->with($user);
+
+        $entityManager->expects($this->once())
+            ->method('flush');
+
+        $repository->save($user);
+    }
+
+    /**
+     * Tests querying all users in the repository.
+     *
+     * @return void
+     */
+    public function testRepositoryQueryAll(): void
+    {
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $repository = $this->getMockBuilder(UserRepository::class)
+            ->setConstructorArgs([$managerRegistry])
+            ->onlyMethods(['createQueryBuilder'])
+            ->getMock();
+
+        $repository->expects($this->once())
+            ->method('createQueryBuilder')
+            ->with('user')
+            ->willReturn($queryBuilder);
+
+        $queryBuilder->expects($this->once())
+            ->method('select')
+            ->with('partial user.{id, email, roles}')
+            ->willReturnSelf();
+
+        $queryBuilder->expects($this->once())
+            ->method('orderBy')
+            ->with('user.id', 'ASC')
+            ->willReturnSelf();
+
+        $result = $repository->queryAll();
+
+        $this->assertSame($queryBuilder, $result);
     }
 }
