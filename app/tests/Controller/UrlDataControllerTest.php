@@ -73,4 +73,6 @@ class UrlDataControllerTest extends TestCase
 
         $this->assertInstanceOf(Response::class, $response);
     }
+
+
 }

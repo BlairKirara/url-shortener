@@ -193,4 +193,196 @@ class UserServiceTest extends TestCase
             $this->userService
         );
     }
+
+    /**
+     * Test repository upgradePassword method
+     */
+    public function testUpgradePassword(): void
+    {
+        // Create a mock UserRepository instance but use real upgradePassword method
+        $userRepository = $this->getMockBuilder(UserRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['save'])
+            ->getMock();
+
+        // Set the entity manager using reflection
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $reflection = new \ReflectionProperty(UserRepository::class, '_em');
+        $reflection->setAccessible(true);
+        $reflection->setValue($userRepository, $entityManager);
+
+        // Create a user with new password
+        $user = new User();
+        $user->setEmail('test@example.com');
+        $user->setPassword('old-password');
+
+        // Expect save to be called once
+        $userRepository->expects($this->once())
+            ->method('save')
+            ->with($this->equalTo($user));
+
+        // Call the upgradePassword method
+        $userRepository->upgradePassword($user, 'new-hashed-password');
+
+        // Verify password was updated
+        $this->assertEquals('new-hashed-password', $user->getPassword());
+    }
+
+    /**
+     * Test upgradePassword with unsupported user exception
+     */
+    public function testUpgradePasswordUnsupportedUser(): void
+    {
+        $userRepository = $this->getMockBuilder(UserRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        // Create a mock of PasswordAuthenticatedUserInterface that is not a User
+        $unsupportedUser = $this->createMock(\Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface::class);
+
+        // Expect exception
+        $this->expectException(\Symfony\Component\Security\Core\Exception\UnsupportedUserException::class);
+
+        // Call method with reflection to bypass the mock
+        $method = new \ReflectionMethod(UserRepository::class, 'upgradePassword');
+        $method->setAccessible(true);
+        $method->invoke($userRepository, $unsupportedUser, 'new-password');
+    }
+
+    /**
+     * Test getOrCreateQueryBuilder method with null parameter
+     */
+    public function testGetOrCreateQueryBuilderWithNullParameter(): void
+    {
+        // Setup
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        // Create repository with mocked methods
+        $repository = $this->getMockBuilder(UserRepository::class)
+            ->setConstructorArgs([$managerRegistry])
+            ->onlyMethods(['createQueryBuilder'])
+            ->getMock();
+
+        // Expect createQueryBuilder to be called with 'user'
+        $repository->expects($this->once())
+            ->method('createQueryBuilder')
+            ->with('user')
+            ->willReturn($queryBuilder);
+
+        // Use reflection to access private method
+        $reflectionMethod = new \ReflectionMethod(UserRepository::class, 'getOrCreateQueryBuilder');
+        $reflectionMethod->setAccessible(true);
+
+        // Call the private method with null
+        $result = $reflectionMethod->invoke($repository, null);
+
+        // Verify result is the expected query builder
+        $this->assertSame($queryBuilder, $result);
+    }
+
+    /**
+     * Test getOrCreateQueryBuilder method with existing query builder
+     */
+    public function testGetOrCreateQueryBuilderWithExistingQueryBuilder(): void
+    {
+        // Setup
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $existingQueryBuilder = $this->createMock(QueryBuilder::class);
+
+        // Create repository
+        $repository = new UserRepository($managerRegistry);
+
+        // Use reflection to access private method
+        $reflectionMethod = new \ReflectionMethod(UserRepository::class, 'getOrCreateQueryBuilder');
+        $reflectionMethod->setAccessible(true);
+
+        // Call the private method with existing query builder
+        $result = $reflectionMethod->invoke($repository, $existingQueryBuilder);
+
+        // Verify the same query builder is returned
+        $this->assertSame($existingQueryBuilder, $result);
+    }
+
+    /**
+     * Test save method directly
+     */
+    public function testRepositorySaveMethod(): void
+    {
+        // Create a user
+        $user = new User();
+        $user->setEmail('repository-test@example.com');
+
+        // Create mocks
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        // Create repository
+        $repository = new UserRepository($managerRegistry);
+
+        // Set entity manager using reflection
+        $reflection = new \ReflectionProperty(UserRepository::class, '_em');
+        $reflection->setAccessible(true);
+        $reflection->setValue($repository, $entityManager);
+
+        // Expect persist and flush to be called
+        $entityManager->expects($this->once())
+            ->method('persist')
+            ->with($this->equalTo($user));
+
+        $entityManager->expects($this->once())
+            ->method('flush');
+
+        // Call save method
+        $repository->save($user);
+    }
+
+    /**
+     * Test queryAll method implementation details
+     */
+    public function testRepositoryQueryAll(): void
+    {
+        // Create mocks
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        // Create repository with mocked createQueryBuilder
+        $repository = $this->getMockBuilder(UserRepository::class)
+            ->setConstructorArgs([$managerRegistry])
+            ->onlyMethods(['createQueryBuilder'])
+            ->getMock();
+
+        // Setup expectations for query building
+        $repository->expects($this->once())
+            ->method('createQueryBuilder')
+            ->with('user')
+            ->willReturn($queryBuilder);
+
+        // Expect select to be called with the correct partial selection
+        $queryBuilder->expects($this->once())
+            ->method('select')
+            ->with('partial user.{id, email, roles}')
+            ->willReturnSelf();
+
+        // Expect orderBy to be called with the correct parameters
+        $queryBuilder->expects($this->once())
+            ->method('orderBy')
+            ->with('user.id', 'ASC')
+            ->willReturnSelf();
+
+        // Execute the queryAll method
+        $result = $repository->queryAll();
+
+        // Verify the query builder is returned
+        $this->assertSame($queryBuilder, $result);
+    }
 }

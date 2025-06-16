@@ -181,4 +181,6 @@ class UserControllerTest extends TestCase
         $response = $this->controller->editEmail($request, $user);
         $this->assertInstanceOf(Response::class, $response);
     }
+
+
 }

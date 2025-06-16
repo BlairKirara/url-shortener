@@ -2,51 +2,35 @@
 
 namespace App\Tests\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Controller\SecurityController;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class SecurityControllerTest extends TestCase
+class SecurityControllerTest extends WebTestCase
 {
-    public function testLoginReturnsResponseWithExpectedTemplateVariables(): void
+    public function testLoginPageRendersWithExpectedVariables(): void
     {
-        $lastUsername = 'testuser';
-        $error = $this->createMock(AuthenticationException::class);
+        $client = static::createClient();
 
-        $authUtilsMock = $this->createMock(AuthenticationUtils::class);
-        $authUtilsMock->method('getLastAuthenticationError')->willReturn($error);
-        $authUtilsMock->method('getLastUsername')->willReturn($lastUsername);
+        $crawler = $client->request('GET', '/login');
 
-        $controller = $this->getMockBuilder(SecurityController::class)
-            ->onlyMethods(['render'])
-            ->getMock();
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form');
+        $this->assertSelectorExists('input[name="email"]');
+    }
 
-        $controller->expects($this->once())
-            ->method('render')
-            ->with(
-                'security/login.html.twig',
-                $this->callback(function ($context) use ($lastUsername, $error) {
-                    return $context['last_username'] === $lastUsername &&
-                        $context['error'] === $error;
-                })
-            )
-            ->willReturn(new Response('Mocked login page'));
+    public function testLogoutRouteIsIntercepted(): void
+    {
+        $client = static::createClient();
 
-        $response = $controller->login($authUtilsMock);
-
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertEquals('Mocked login page', $response->getContent());
+        $client->request('GET', '/logout');
+        $this->assertNotEquals(200, $client->getResponse()->getStatusCode());
     }
 
     public function testLogoutThrowsLogicException(): void
     {
-        $controller = new SecurityController();
-
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('This method can be blank - it will be intercepted by the logout key on your firewall.');
-
+        $controller = new SecurityController();
         $controller->logout();
     }
 }

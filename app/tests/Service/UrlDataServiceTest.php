@@ -129,4 +129,75 @@ class UrlDataServiceTest extends TestCase
             $this->urlDataService
         );
     }
+
+    /**
+     * Test the getOrCreateQueryBuilder private method using mocks
+     */
+    public function testGetOrCreateQueryBuilder(): void
+    {
+        // Create mocks
+        $queryBuilder = $this->createMock(\Doctrine\ORM\QueryBuilder::class);
+        $registry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+
+        // Create partial mock of repository to test the real getOrCreateQueryBuilder method
+        $repository = $this->getMockBuilder(UrlDataRepository::class)
+            ->setConstructorArgs([$registry])
+            ->onlyMethods(['createQueryBuilder'])
+            ->getMock();
+
+        // Configure the createQueryBuilder method to return our mock query builder
+        $repository->expects($this->once())
+            ->method('createQueryBuilder')
+            ->with('urlData')
+            ->willReturn($queryBuilder);
+
+        // Use reflection to access the private method
+        $reflectionMethod = new \ReflectionMethod(UrlDataRepository::class, 'getOrCreateQueryBuilder');
+        $reflectionMethod->setAccessible(true);
+
+        // Test with null (should call createQueryBuilder)
+        $result1 = $reflectionMethod->invoke($repository, null);
+        $this->assertSame($queryBuilder, $result1);
+
+        // Test with existing query builder (should return the same one)
+        $existingQueryBuilder = $this->createMock(\Doctrine\ORM\QueryBuilder::class);
+        $result2 = $reflectionMethod->invoke($repository, $existingQueryBuilder);
+        $this->assertSame($existingQueryBuilder, $result2);
+    }
+
+    /**
+     * Test countVisits with mock repository results
+     */
+    public function testCountVisitsWithMockRepositoryResults(): void
+    {
+        // Create sample data that the repository would return
+        $repositoryData = [
+            ['visits' => 10, 'shortName' => 'abc', 'longName' => 'https://example.com'],
+            ['visits' => 5, 'shortName' => 'xyz', 'longName' => 'https://test.com']
+        ];
+
+        // Configure mocks
+        $this->urlDataRepository
+            ->expects($this->once())
+            ->method('countVisits')
+            ->willReturn($repositoryData);
+
+        $this->paginator
+            ->expects($this->once())
+            ->method('paginate')
+            ->with(
+                $repositoryData,
+                2,
+                UrlDataRepository::PAGINATOR_ITEMS_PER_PAGE
+            )
+            ->willReturn($this->pagination);
+
+        // Execute service method
+        $result = $this->urlDataService->countVisits(2);
+
+        // Assert result
+        $this->assertSame($this->pagination, $result);
+    }
+
 }

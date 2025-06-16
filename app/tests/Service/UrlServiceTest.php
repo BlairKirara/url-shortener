@@ -326,4 +326,5 @@ class UrlServiceTest extends TestCase
             $this->urlService
         );
     }
+
 }

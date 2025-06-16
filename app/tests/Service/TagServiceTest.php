@@ -166,4 +166,219 @@ class TagServiceTest extends TestCase
             $this->tagService
         );
     }
+
+    /**
+     * Test repository queryAll method
+     */
+    public function testQueryAllMethodInRepository(): void
+    {
+        // Create a real repository instance with a mocked ManagerRegistry
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        // Configure the mocks for proper chain calling
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        // Create a partial mock of the repository
+        $repository = $this->getMockBuilder(TagRepository::class)
+            ->setConstructorArgs([$managerRegistry])
+            ->onlyMethods(['createQueryBuilder'])
+            ->getMock();
+
+        // Set up the query builder expectations
+        $repository->expects($this->once())
+            ->method('createQueryBuilder')
+            ->with('tag')
+            ->willReturn($queryBuilder);
+
+        $queryBuilder->expects($this->once())
+            ->method('select')
+            ->with('partial tag.{id, name}')
+            ->willReturnSelf();
+
+        $queryBuilder->expects($this->once())
+            ->method('orderBy')
+            ->with('tag.id', 'ASC')
+            ->willReturnSelf();
+
+        // Execute the repository method
+        $result = $repository->queryAll();
+
+        // Assert result is the query builder
+        $this->assertSame($queryBuilder, $result);
+    }
+
+    /**
+     * Test the behavior of getOrCreateQueryBuilder indirectly through queryAll
+     * when createQueryBuilder returns a new query builder
+     */
+    public function testGetOrCreateQueryBuilderMethod(): void
+    {
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $queryBuilder = $this->createMock(QueryBuilder::class);
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        // Create repository with real implementation but mock createQueryBuilder
+        $repository = $this->getMockBuilder(TagRepository::class)
+            ->setConstructorArgs([$managerRegistry])
+            ->onlyMethods(['createQueryBuilder'])
+            ->getMock();
+
+        // Set up expectations for createQueryBuilder
+        $repository->expects($this->once())
+            ->method('createQueryBuilder')
+            ->with('tag')
+            ->willReturn($queryBuilder);
+
+        $queryBuilder->expects($this->once())
+            ->method('select')
+            ->willReturnSelf();
+
+        $queryBuilder->expects($this->once())
+            ->method('orderBy')
+            ->willReturnSelf();
+
+        // Call queryAll which uses getOrCreateQueryBuilder internally
+        $result = $repository->queryAll();
+
+        // Assert result is the query builder
+        $this->assertSame($queryBuilder, $result);
+    }
+
+    /**
+     * Test the behavior of getOrCreateQueryBuilder method with an existing query builder
+     */
+    public function testGetOrCreateQueryBuilderWithExistingBuilder(): void
+    {
+        // Setup
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $existingQueryBuilder = $this->createMock(QueryBuilder::class);
+
+        // Create repository
+        $repository = new TagRepository($managerRegistry);
+
+        // Use reflection to access the private method
+        $reflectionMethod = new \ReflectionMethod(TagRepository::class, 'getOrCreateQueryBuilder');
+        $reflectionMethod->setAccessible(true);
+
+        // Call the private method with an existing query builder
+        $result = $reflectionMethod->invoke($repository, $existingQueryBuilder);
+
+        // Should return the same instance that was passed
+        $this->assertSame($existingQueryBuilder, $result);
+    }
+
+    /**
+     * Test the behavior of getOrCreateQueryBuilder method when creating a new query builder
+     */
+    public function testGetOrCreateQueryBuilderCreatesNewBuilder(): void
+    {
+        // Setup
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $newQueryBuilder = $this->createMock(QueryBuilder::class);
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        // Create repository with partial mock
+        $repository = $this->getMockBuilder(TagRepository::class)
+            ->setConstructorArgs([$managerRegistry])
+            ->onlyMethods(['createQueryBuilder'])
+            ->getMock();
+
+        // Setup expectation for createQueryBuilder
+        $repository->expects($this->once())
+            ->method('createQueryBuilder')
+            ->with('tag')
+            ->willReturn($newQueryBuilder);
+
+        // Use reflection to access the private method
+        $reflectionMethod = new \ReflectionMethod(TagRepository::class, 'getOrCreateQueryBuilder');
+        $reflectionMethod->setAccessible(true);
+
+        // Call the private method with null (should create a new query builder)
+        $result = $reflectionMethod->invoke($repository, null);
+
+        // Should return the mocked query builder
+        $this->assertSame($newQueryBuilder, $result);
+    }
+
+    /**
+     * Test repository save method
+     */
+    public function testSaveMethodInRepository(): void
+    {
+        $tag = new Tag();
+        $tag->setName('Repository Test Tag');
+
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        // Create repository with mocked dependencies
+        $repository = new TagRepository($managerRegistry);
+
+        // Set the entity manager through reflection
+        $reflection = new \ReflectionProperty(TagRepository::class, '_em');
+        $reflection->setAccessible(true);
+        $reflection->setValue($repository, $entityManager);
+
+        // Expect persist and flush to be called
+        $entityManager->expects($this->once())
+            ->method('persist')
+            ->with($this->equalTo($tag));
+
+        $entityManager->expects($this->once())
+            ->method('flush');
+
+        // Call the save method
+        $repository->save($tag);
+    }
+
+    /**
+     * Test repository delete method
+     */
+    public function testDeleteMethodInRepository(): void
+    {
+        $tag = new Tag();
+        $tag->setName('Repository Delete Test Tag');
+
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        // Create repository with mocked dependencies
+        $repository = new TagRepository($managerRegistry);
+
+        // Set the entity manager through reflection
+        $reflection = new \ReflectionProperty(TagRepository::class, '_em');
+        $reflection->setAccessible(true);
+        $reflection->setValue($repository, $entityManager);
+
+        // Expect remove and flush to be called
+        $entityManager->expects($this->once())
+            ->method('remove')
+            ->with($this->equalTo($tag));
+
+        $entityManager->expects($this->once())
+            ->method('flush');
+
+        // Call the delete method
+        $repository->delete($tag);
+    }
 }

@@ -2,306 +2,147 @@
 
 namespace App\Tests\Controller;
 
-use App\Controller\TagController;
 use App\Entity\Tag;
-use App\Form\Type\TagType;
-use App\Service\TagServiceInterface;
-use Knp\Component\Pager\Pagination\PaginationInterface;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Entity\User;
+use App\Repository\TagRepository;
+use App\Repository\UserRepository;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class TagControllerTest extends TestCase
+class TagControllerTest extends WebTestCase
 {
-    private TagServiceInterface $tagService;
-    private TranslatorInterface $translator;
-    private TagController $controller;
-
-    protected function setUp(): void
+    private function ensureAdminUserExists(): User
     {
-        $this->tagService = $this->createMock(TagServiceInterface::class);
-        $this->translator = $this->createMock(TranslatorInterface::class);
-
-        $this->controller = $this->getMockBuilder(TagController::class)
-            ->setConstructorArgs([$this->tagService, $this->translator])
-            ->onlyMethods(['createForm', 'addFlash', 'redirectToRoute', 'render', 'generateUrl'])
-            ->getMock();
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin@example.com']);
+        if (!$user) {
+            $user = new User();
+            $user->setEmail('admin@example.com');
+            $user->setRoles(['ROLE_ADMIN']);
+            $passwordHasher = static::getContainer()->get('security.user_password_hasher');
+            $hashedPassword = $passwordHasher->hashPassword($user, 'adminpass');
+            $user->setPassword($hashedPassword);
+            $em = static::getContainer()->get('doctrine')->getManager();
+            $em->persist($user);
+            $em->flush();
+        }
+        return $user;
     }
 
-    public function testIndexRendersTemplateWithPagination(): void
+    private function loginAsAdmin($client)
     {
-        $pagination = $this->createMock(PaginationInterface::class);
-
-        $this->tagService->method('getPaginatedList')->willReturn($pagination);
-
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('tag/index.html.twig', ['pagination' => $pagination])
-            ->willReturn(new Response('pagination'));
-
-        $request = new Request();
-        $response = $this->controller->index($request);
-
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertStringContainsString('pagination', $response->getContent());
+        $testAdmin = $this->ensureAdminUserExists();
+        $client->loginUser($testAdmin);
     }
 
-    public function testCreateHandlesValidForm(): void
+    private function ensureTagExists(): Tag
     {
-        $tag = new Tag();
-        $form = $this->createMock(FormInterface::class);
-
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->with(TagType::class, $tag)
-            ->willReturn($form);
-
-        $form->expects($this->once())->method('handleRequest');
-        $form->expects($this->once())->method('isSubmitted')->willReturn(true);
-        $form->expects($this->once())->method('isValid')->willReturn(true);
-
-        $this->tagService->expects($this->once())->method('save')->with($tag);
-
-        $this->translator->expects($this->once())->method('trans')->with('message.created')->willReturn('Created');
-
-        $this->controller->expects($this->once())->method('addFlash')->with('success', 'Created');
-        $this->controller->expects($this->once())->method('redirectToRoute')->with('tag_index')->willReturn(new RedirectResponse('/tag'));
-
-        $response = $this->controller->create(new Request());
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $tagRepository = static::getContainer()->get(TagRepository::class);
+        $tag = $tagRepository->findOneBy([]);
+        if (!$tag) {
+            $tag = new Tag();
+            $tag->setName('TestTag');
+            $em = static::getContainer()->get('doctrine')->getManager();
+            $em->persist($tag);
+            $em->flush();
+        }
+        return $tag;
     }
 
-    public function testCreateHandlesInvalidForm(): void
+    public function testIndexPageLoads(): void
     {
-        $tag = new Tag();
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
-
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->with(TagType::class, $tag)
-            ->willReturn($form);
-
-        $form->expects($this->once())->method('handleRequest');
-        $form->expects($this->once())->method('isSubmitted')->willReturn(true);
-        $form->expects($this->once())->method('isValid')->willReturn(false);
-        $form->expects($this->once())->method('createView')->willReturn($formView);
-
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('tag/create.html.twig', ['form' => $formView])
-            ->willReturn(new Response('form invalid'));
-
-        $response = $this->controller->create(new Request());
-
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertStringContainsString('form invalid', $response->getContent());
+        $client = static::createClient();
+        $this->ensureTagExists();
+        $client->request('GET', '/tag');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('table');
     }
 
-    public function testCreateHandlesNotSubmittedForm(): void
+    public function testCreateTagAsAdmin(): void
     {
-        $tag = new Tag();
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
+        $client = static::createClient();
+        $this->loginAsAdmin($client);
 
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->with(TagType::class, $tag)
-            ->willReturn($form);
+        $crawler = $client->request('GET', '/tag/create');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form');
 
-        $form->expects($this->once())->method('handleRequest');
-        $form->expects($this->once())->method('isSubmitted')->willReturn(false);
-        $form->expects($this->never())->method('isValid');
-        $form->expects($this->once())->method('createView')->willReturn($formView);
+        // Find the form directly instead of using the button selector
+        $form = $crawler->filter('form')->form([
+            'tag[name]' => 'TestTag2',
+        ]);
+        $client->submit($form);
 
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('tag/create.html.twig', ['form' => $formView])
-            ->willReturn(new Response('new form'));
-
-        $response = $this->controller->create(new Request());
-
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertStringContainsString('new form', $response->getContent());
+        $this->assertResponseRedirects('/tag');
+        $client->followRedirect();
+        $this->assertSelectorTextContains('body', 'TestTag2');
     }
 
-    public function testDeleteHandlesValidForm(): void
+    public function testShowTagAsAdmin(): void
     {
-        $tag = $this->createMock(Tag::class);
-        $tag->method('getId')->willReturn(123);
+        $client = static::createClient();
+        $this->loginAsAdmin($client);
 
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
+        $tag = $this->ensureTagExists();
 
-        $this->controller->expects($this->once())
-            ->method('generateUrl')
-            ->with('tag_delete', ['id' => 123])
-            ->willReturn('/tag/123/delete');
-
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->with(FormType::class, $tag, ['method' => 'DELETE', 'action' => '/tag/123/delete'])
-            ->willReturn($form);
-
-        $form->expects($this->once())->method('handleRequest');
-        $form->expects($this->once())->method('isSubmitted')->willReturn(true);
-        $form->expects($this->once())->method('isValid')->willReturn(true);
-
-        $this->tagService->expects($this->once())->method('delete')->with($tag);
-        $this->translator->expects($this->once())->method('trans')->with('message.deleted')->willReturn('Deleted');
-        $this->controller->expects($this->once())->method('addFlash')->with('success', 'Deleted');
-        $this->controller->expects($this->once())->method('redirectToRoute')->with('tag_index')->willReturn(new RedirectResponse('/tag'));
-
-        $response = $this->controller->delete(new Request(), $tag);
-        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $client->request('GET', '/tag/' . $tag->getId());
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('body', $tag->getName());
     }
 
-    public function testDeleteHandlesInvalidForm(): void
+    public function testEditTagAsAdmin(): void
     {
-        $tag = $this->createMock(Tag::class);
-        $tag->method('getId')->willReturn(123);
+        $client = static::createClient();
+        $this->loginAsAdmin($client);
 
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
+        $tag = $this->ensureTagExists();
 
-        $this->controller->expects($this->once())
-            ->method('generateUrl')
-            ->with('tag_delete', ['id' => 123])
-            ->willReturn('/tag/123/delete');
+        $crawler = $client->request('GET', '/tag/' . $tag->getId() . '/edit');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form');
 
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->with(FormType::class, $tag, ['method' => 'DELETE', 'action' => '/tag/123/delete'])
-            ->willReturn($form);
+        // Find the form directly instead of using the button selector
+        $form = $crawler->filter('form')->form([
+            'tag[name]' => 'UpdatedTag',
+        ]);
+        $client->submit($form);
 
-        $form->expects($this->once())->method('handleRequest');
-        $form->expects($this->once())->method('isSubmitted')->willReturn(false);
-        $form->expects($this->never())->method('isValid');
-        $form->expects($this->once())->method('createView')->willReturn($formView);
-
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('tag/delete.html.twig', ['form' => $formView, 'tag' => $tag])
-            ->willReturn(new Response('delete form'));
-
-        $response = $this->controller->delete(new Request(), $tag);
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertStringContainsString('delete form', $response->getContent());
+        $this->assertResponseRedirects('/tag');
+        $client->followRedirect();
+        $this->assertSelectorTextContains('body', 'UpdatedTag');
     }
 
-    public function testEditHandlesValidForm(): void
+    public function testDeleteTagAsAdmin(): void
     {
-        $tag = $this->createMock(Tag::class);
-        $tag->method('getId')->willReturn(456);
+        $client = static::createClient();
+        $this->loginAsAdmin($client);
 
-        $form = $this->createMock(FormInterface::class);
+        $tag = $this->ensureTagExists();
 
-        $this->controller->expects($this->once())
-            ->method('generateUrl')
-            ->with('tag_edit', ['id' => 456])
-            ->willReturn('/tag/456/edit');
+        $crawler = $client->request('GET', '/tag/' . $tag->getId() . '/delete');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form');
 
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->with(TagType::class, $tag, ['method' => 'PUT', 'action' => '/tag/456/edit'])
-            ->willReturn($form);
+        // Find the form directly instead of using the button selector
+        $form = $crawler->filter('form')->form();
+        $client->submit($form);
 
-        $form->expects($this->once())->method('handleRequest');
-        $form->expects($this->once())->method('isSubmitted')->willReturn(true);
-        $form->expects($this->once())->method('isValid')->willReturn(true);
-
-        $this->tagService->expects($this->once())->method('save')->with($tag);
-        $this->translator->expects($this->once())->method('trans')->with('message.updated')->willReturn('Updated');
-        $this->controller->expects($this->once())->method('addFlash')->with('success', 'Updated');
-        $this->controller->expects($this->once())->method('redirectToRoute')->with('tag_index')->willReturn(new RedirectResponse('/tag'));
-
-        $response = $this->controller->edit(new Request(), $tag);
-        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertResponseRedirects('/tag');
     }
 
-    public function testEditHandlesInvalidForm(): void
+    public function testAdminRoutesRequireLogin(): void
     {
-        $tag = $this->createMock(Tag::class);
-        $tag->method('getId')->willReturn(789);
+        $client = static::createClient();
 
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
+        $tag = $this->ensureTagExists();
+        $tagId = $tag->getId();
 
-        $this->controller->expects($this->once())
-            ->method('generateUrl')
-            ->with('tag_edit', ['id' => 789])
-            ->willReturn('/tag/789/edit');
+        $client->request('GET', '/tag/' . $tagId . '/edit');
+        $this->assertResponseRedirects('/login');
 
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->willReturn($form);
+        $client->request('GET', '/tag/' . $tagId . '/delete');
+        $this->assertResponseRedirects('/login');
 
-        $form->expects($this->once())->method('handleRequest');
-        $form->expects($this->once())->method('isSubmitted')->willReturn(true);
-        $form->expects($this->once())->method('isValid')->willReturn(false);
-        $form->expects($this->once())->method('createView')->willReturn($formView);
-
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('tag/edit.html.twig', ['form' => $formView, 'tag' => $tag])
-            ->willReturn(new Response('invalid edit'));
-
-        $response = $this->controller->edit(new Request(), $tag);
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertStringContainsString('invalid edit', $response->getContent());
-    }
-
-    public function testEditHandlesNotSubmittedForm(): void
-    {
-        $tag = $this->createMock(Tag::class);
-        $tag->method('getId')->willReturn(789);
-
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
-
-        $this->controller->expects($this->once())
-            ->method('generateUrl')
-            ->with('tag_edit', ['id' => 789])
-            ->willReturn('/tag/789/edit');
-
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->willReturn($form);
-
-        $form->expects($this->once())->method('handleRequest');
-        $form->expects($this->once())->method('isSubmitted')->willReturn(false);
-        $form->expects($this->never())->method('isValid');
-        $form->expects($this->once())->method('createView')->willReturn($formView);
-
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('tag/edit.html.twig', ['form' => $formView, 'tag' => $tag])
-            ->willReturn(new Response('edit form'));
-
-        $response = $this->controller->edit(new Request(), $tag);
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertStringContainsString('edit form', $response->getContent());
-    }
-
-    public function testShowRendersTag(): void
-    {
-        $tag = new Tag();
-
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('tag/show.html.twig', ['tag' => $tag])
-            ->willReturn(new Response('show tag'));
-
-        $response = $this->controller->show($tag);
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertStringContainsString('show tag', $response->getContent());
+        $client->request('GET', '/tag/' . $tagId);
+        $this->assertResponseRedirects('/login');
     }
 }

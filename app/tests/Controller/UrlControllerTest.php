@@ -461,4 +461,5 @@ class UrlControllerTest extends WebTestCase
         // Should get access denied
         $this->assertResponseStatusCodeSame(403);
     }
+
 }
