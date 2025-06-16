@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class UserPasswordTypeTest.
+ *
+ * This class provides unit tests for UserPasswordType.
+ */
+
 namespace App\Tests\Form\Type;
 
 use App\Entity\User;
@@ -10,15 +16,33 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class UserPasswordTypeTest.
+ */
 class UserPasswordTypeTest extends TestCase
 {
+    /**
+     * User password type.
+     *
+     * @var UserPasswordType
+     */
     private UserPasswordType $userPasswordType;
 
+    /**
+     * Set up test environment.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->userPasswordType = new UserPasswordType();
     }
 
+    /**
+     * Tests the configureOptions method.
+     *
+     * @return void
+     */
     public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
@@ -29,6 +53,11 @@ class UserPasswordTypeTest extends TestCase
         $this->userPasswordType->configureOptions($resolver);
     }
 
+    /**
+     * Tests the buildForm method.
+     *
+     * @return void
+     */
     public function testBuildForm(): void
     {
         $builder = $this->createMock(FormBuilderInterface::class);

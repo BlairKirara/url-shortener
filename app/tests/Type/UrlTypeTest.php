@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class UrlTypeTest.
+ *
+ * This class provides unit tests for UrlType.
+ */
+
 namespace App\Tests\Form\Type;
 
 use App\Entity\Url;
@@ -19,14 +25,53 @@ use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Class UrlTypeTest.
+ *
+ * Unit tests for the UrlType form class.
+ */
 class UrlTypeTest extends TestCase
 {
+    /**
+     * Tags data transformer.
+     *
+     * @var TagsDataTransformer
+     */
     private TagsDataTransformer $tagsDataTransformer;
+
+    /**
+     * Security component.
+     *
+     * @var Security
+     */
     private Security $security;
+
+    /**
+     * Guest user service.
+     *
+     * @var GuestUserService
+     */
     private GuestUserService $guestUserService;
+
+    /**
+     * Translator component.
+     *
+     * @var TranslatorInterface
+     */
     private TranslatorInterface $translator;
+
+    /**
+     * UrlType instance.
+     *
+     * @var UrlType
+     */
     private UrlType $urlType;
 
+    /**
+     * Set up test environment.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->tagsDataTransformer = $this->createMock(TagsDataTransformer::class);
@@ -42,6 +87,11 @@ class UrlTypeTest extends TestCase
         );
     }
 
+    /**
+     * Tests the configureOptions method.
+     *
+     * @return void
+     */
     public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
@@ -54,11 +104,21 @@ class UrlTypeTest extends TestCase
         $this->urlType->configureOptions($resolver);
     }
 
+    /**
+     * Tests the getBlockPrefix method.
+     *
+     * @return void
+     */
     public function testGetBlockPrefix(): void
     {
         $this->assertEquals('Url', $this->urlType->getBlockPrefix());
     }
 
+    /**
+     * Tests the buildForm method for an authenticated user.
+     *
+     * @return void
+     */
     public function testBuildFormForAuthenticatedUser(): void
     {
         $user = $this->createMock(UserInterface::class);
@@ -73,7 +133,6 @@ class UrlTypeTest extends TestCase
 
         $builder = $this->createMock(FormBuilderInterface::class);
 
-        // Use exactly twice for the add method with consecutive return values
         $builder->expects($this->exactly(2))
             ->method('add')
             ->willReturnSelf();
@@ -82,13 +141,17 @@ class UrlTypeTest extends TestCase
             ->with('tags')
             ->willReturn($formField);
 
-        // Email field should not be added for authenticated users
         $builder->expects($this->never())
             ->method('addEventListener');
 
         $this->urlType->buildForm($builder, []);
     }
 
+    /**
+     * Tests the buildForm method for a guest user.
+     *
+     * @return void
+     */
     public function testBuildFormForGuestUser(): void
     {
         $this->security->expects($this->once())
@@ -96,10 +159,8 @@ class UrlTypeTest extends TestCase
             ->willReturn(null);
 
         $formField = $this->createMock(FormBuilderInterface::class);
-
         $builder = $this->createMock(FormBuilderInterface::class);
 
-        // We expect add to be called 3 times (longName, tags, email)
         $builder->expects($this->exactly(3))
             ->method('add')
             ->willReturnSelf();
@@ -108,7 +169,6 @@ class UrlTypeTest extends TestCase
             ->with('tags')
             ->willReturn($formField);
 
-        // Test that form event listener is added
         $builder->expects($this->once())
             ->method('addEventListener')
             ->with(FormEvents::SUBMIT, $this->callback(function($callback) {
@@ -118,14 +178,17 @@ class UrlTypeTest extends TestCase
         $this->urlType->buildForm($builder, []);
     }
 
+    /**
+     * Tests the email limit validation for guest users.
+     *
+     * @return void
+     */
     public function testEmailLimitValidation(): void
     {
-        // Create necessary mocks for this specific test
         $form = $this->createMock(FormInterface::class);
         $emailField = $this->createMock(FormInterface::class);
         $event = $this->createMock(FormEvent::class);
 
-        // Setup email field to return test email
         $email = 'test@example.com';
         $emailField->expects($this->once())
             ->method('getData')
@@ -136,12 +199,10 @@ class UrlTypeTest extends TestCase
             ->with('email')
             ->willReturn($emailField);
 
-        // Fix: getForm() is called twice in the event listener
         $event->expects($this->exactly(2))
             ->method('getForm')
             ->willReturn($form);
 
-        // Test when email has reached the limit
         $this->guestUserService->expects($this->once())
             ->method('countEmailUse')
             ->with($email)
@@ -159,7 +220,6 @@ class UrlTypeTest extends TestCase
         $builderMock = $this->createMock(FormBuilderInterface::class);
         $this->security->method('getUser')->willReturn(null);
 
-        // Fix: Keep track of the builder in the callback scope
         $builderMock->method('addEventListener')->willReturnCallback(
             function ($eventName, $listener) use ($event, $builderMock) {
                 if ($eventName === FormEvents::SUBMIT) {
@@ -169,7 +229,6 @@ class UrlTypeTest extends TestCase
             }
         );
 
-        // Execute buildForm to register the event listener
         $this->urlType->buildForm($builderMock, []);
     }
 }

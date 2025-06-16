@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class GuestUserServiceTest.
+ *
+ * Unit tests for GuestUserService.
+ */
+
 namespace App\Tests\Service;
 
 use App\Entity\GuestUser;
@@ -7,11 +13,32 @@ use App\Repository\GuestUserRepository;
 use App\Service\GuestUserService;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class GuestUserServiceTest.
+ *
+ * This class tests the GuestUserService.
+ */
 class GuestUserServiceTest extends TestCase
 {
+    /**
+     * Guest user repository mock.
+     *
+     * @var GuestUserRepository
+     */
     private GuestUserRepository $guestUserRepository;
+
+    /**
+     * Guest user service.
+     *
+     * @var GuestUserService
+     */
     private GuestUserService $guestUserService;
 
+    /**
+     * Set up test environment.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->guestUserRepository = $this->getMockBuilder(GuestUserRepository::class)
@@ -19,23 +46,26 @@ class GuestUserServiceTest extends TestCase
             ->onlyMethods(['save', 'countEmailUse'])
             ->addMethods(['findOneByEmail'])
             ->getMock();
-            
+
         $this->guestUserService = new GuestUserService($this->guestUserRepository);
     }
 
+    /**
+     * Test saving a new guest user.
+     *
+     * @return void
+     */
     public function testSave(): void
     {
         $guestUser = new GuestUser();
         $guestUser->setEmail('test@example.com');
 
-        // Expect findOneByEmail to return null (no existing user)
         $this->guestUserRepository
             ->expects($this->once())
             ->method('findOneByEmail')
             ->with('test@example.com')
             ->willReturn(null);
 
-        // Expect save to be called once
         $this->guestUserRepository
             ->expects($this->once())
             ->method('save')
@@ -44,12 +74,16 @@ class GuestUserServiceTest extends TestCase
         $this->guestUserService->save($guestUser);
     }
 
+    /**
+     * Test saving a guest user with an existing email.
+     *
+     * @return void
+     */
     public function testSaveWithExistingEmail(): void
     {
         $guestUser = new GuestUser();
         $guestUser->setEmail('existing@example.com');
 
-        // Simulate existing user with same email
         $existingUser = new GuestUser();
         $existingUser->setEmail('existing@example.com');
 
@@ -59,7 +93,6 @@ class GuestUserServiceTest extends TestCase
             ->with('existing@example.com')
             ->willReturn($existingUser);
 
-        // Save should not be called when email exists
         $this->guestUserRepository
             ->expects($this->never())
             ->method('save');
@@ -67,6 +100,11 @@ class GuestUserServiceTest extends TestCase
         $this->guestUserService->save($guestUser);
     }
 
+    /**
+     * Test counting email usage.
+     *
+     * @return void
+     */
     public function testCountEmailUse(): void
     {
         $email = 'test@example.com';
@@ -82,6 +120,11 @@ class GuestUserServiceTest extends TestCase
         $this->assertEquals($expectedCount, $result);
     }
 
+    /**
+     * Clean up after tests.
+     *
+     * @return void
+     */
     protected function tearDown(): void
     {
         unset(
@@ -89,7 +132,4 @@ class GuestUserServiceTest extends TestCase
             $this->guestUserService
         );
     }
-
-
-
 }

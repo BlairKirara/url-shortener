@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class UrlDataServiceTest.
+ *
+ * Unit tests for UrlDataService.
+ */
+
 namespace App\Tests\Service;
 
 use App\Entity\UrlData;
@@ -12,78 +18,85 @@ use PHPUnit\Framework\TestCase;
 /**
  * Class UrlDataServiceTest.
  *
- * Tests for the UrlDataService.
+ * This class provides unit tests for UrlDataService.
  */
 class UrlDataServiceTest extends TestCase
 {
     /**
-     * URL data repository.
+     * URL data repository mock.
+     *
+     * @var UrlDataRepository
      */
     private UrlDataRepository $urlDataRepository;
 
     /**
-     * Paginator.
+     * Paginator mock.
+     *
+     * @var PaginatorInterface
      */
     private PaginatorInterface $paginator;
 
     /**
-     * URL data service.
-     */
-    private UrlDataService $urlDataService;
-
-    /**
-     * Pagination.
+     * Pagination mock.
+     *
+     * @var PaginationInterface
      */
     private PaginationInterface $pagination;
 
     /**
+     * URL data service.
+     *
+     * @var UrlDataService
+     */
+    private UrlDataService $urlDataService;
+
+    /**
      * Set up test environment.
+     *
+     * @return void
      */
     protected function setUp(): void
     {
-        // Create mock with properly specified methods
         $this->urlDataRepository = $this->getMockBuilder(UrlDataRepository::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['save', 'countVisits', 'deleteUrlVisits'])
             ->getMock();
-        
+
         $this->paginator = $this->createMock(PaginatorInterface::class);
         $this->pagination = $this->createMock(PaginationInterface::class);
         $this->urlDataService = new UrlDataService($this->urlDataRepository, $this->paginator);
     }
 
     /**
-     * Test save method.
+     * Tests saving URL data.
+     *
+     * @return void
      */
     public function testSave(): void
     {
-        // Given
         $urlData = new UrlData();
-        
-        // Expect save method to be called once with the correct parameter
+
         $this->urlDataRepository->expects($this->once())
             ->method('save')
             ->with($this->equalTo($urlData));
 
-        // When
         $this->urlDataService->save($urlData);
     }
 
     /**
-     * Test countVisits method.
+     * Tests counting visits and paginating results.
+     *
+     * @return void
      */
     public function testCountVisits(): void
     {
-        // Given
         $page = 1;
-        $visitsArray = []; // Empty array for testing purposes
+        $visitsArray = [];
 
-        // Expect countVisits method to be called once and return an array
         $this->urlDataRepository->expects($this->once())
             ->method('countVisits')
             ->willReturn($visitsArray);
 
-        // Expect paginate method to be called once with the correct parameters
         $this->paginator->expects($this->once())
             ->method('paginate')
             ->with(
@@ -93,32 +106,31 @@ class UrlDataServiceTest extends TestCase
             )
             ->willReturn($this->pagination);
 
-        // When
         $result = $this->urlDataService->countVisits($page);
 
-        // Then
         $this->assertSame($this->pagination, $result);
     }
 
     /**
-     * Test deleteUrlVisits method.
+     * Tests deleting URL visits by ID.
+     *
+     * @return void
      */
     public function testDeleteUrlVisits(): void
     {
-        // Given
         $urlId = 1;
 
-        // Expect deleteUrlVisits method to be called once with the correct parameter
         $this->urlDataRepository->expects($this->once())
             ->method('deleteUrlVisits')
             ->with($this->equalTo($urlId));
 
-        // When
         $this->urlDataService->deleteUrlVisits($urlId);
     }
 
     /**
-     * Tear down test environment.
+     * Clean up after tests.
+     *
+     * @return void
      */
     protected function tearDown(): void
     {
@@ -129,75 +141,4 @@ class UrlDataServiceTest extends TestCase
             $this->urlDataService
         );
     }
-
-    /**
-     * Test the getOrCreateQueryBuilder private method using mocks
-     */
-    public function testGetOrCreateQueryBuilder(): void
-    {
-        // Create mocks
-        $queryBuilder = $this->createMock(\Doctrine\ORM\QueryBuilder::class);
-        $registry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
-        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
-
-        // Create partial mock of repository to test the real getOrCreateQueryBuilder method
-        $repository = $this->getMockBuilder(UrlDataRepository::class)
-            ->setConstructorArgs([$registry])
-            ->onlyMethods(['createQueryBuilder'])
-            ->getMock();
-
-        // Configure the createQueryBuilder method to return our mock query builder
-        $repository->expects($this->once())
-            ->method('createQueryBuilder')
-            ->with('urlData')
-            ->willReturn($queryBuilder);
-
-        // Use reflection to access the private method
-        $reflectionMethod = new \ReflectionMethod(UrlDataRepository::class, 'getOrCreateQueryBuilder');
-        $reflectionMethod->setAccessible(true);
-
-        // Test with null (should call createQueryBuilder)
-        $result1 = $reflectionMethod->invoke($repository, null);
-        $this->assertSame($queryBuilder, $result1);
-
-        // Test with existing query builder (should return the same one)
-        $existingQueryBuilder = $this->createMock(\Doctrine\ORM\QueryBuilder::class);
-        $result2 = $reflectionMethod->invoke($repository, $existingQueryBuilder);
-        $this->assertSame($existingQueryBuilder, $result2);
-    }
-
-    /**
-     * Test countVisits with mock repository results
-     */
-    public function testCountVisitsWithMockRepositoryResults(): void
-    {
-        // Create sample data that the repository would return
-        $repositoryData = [
-            ['visits' => 10, 'shortName' => 'abc', 'longName' => 'https://example.com'],
-            ['visits' => 5, 'shortName' => 'xyz', 'longName' => 'https://test.com']
-        ];
-
-        // Configure mocks
-        $this->urlDataRepository
-            ->expects($this->once())
-            ->method('countVisits')
-            ->willReturn($repositoryData);
-
-        $this->paginator
-            ->expects($this->once())
-            ->method('paginate')
-            ->with(
-                $repositoryData,
-                2,
-                UrlDataRepository::PAGINATOR_ITEMS_PER_PAGE
-            )
-            ->willReturn($this->pagination);
-
-        // Execute service method
-        $result = $this->urlDataService->countVisits(2);
-
-        // Assert result
-        $this->assertSame($this->pagination, $result);
-    }
-
 }

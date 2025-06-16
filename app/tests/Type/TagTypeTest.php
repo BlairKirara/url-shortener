@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class TagTypeTest.
+ *
+ * This class provides unit tests for TagType.
+ */
+
 namespace App\Tests\Form\Type;
 
 use App\Entity\Tag;
@@ -10,24 +16,23 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * TagTypeTest class.
+ * Class TagTypeTest.
  *
- * Tests for the TagType form class.
+ * Unit tests for the TagType form class.
  */
 class TagTypeTest extends TestCase
 {
     /**
-     * Test buildForm method.
+     * Tests the buildForm method.
+     *
+     * @return void
      */
     public function testBuildForm(): void
     {
-        // Create a mock for the FormBuilderInterface
         $formBuilder = $this->createMock(FormBuilderInterface::class);
 
-        // Setup the form builder to return itself after add() for method chaining
         $formBuilder->method('add')->willReturn($formBuilder);
 
-        // Define expectations for the add method call
         $formBuilder->expects($this->once())
             ->method('add')
             ->with(
@@ -43,44 +48,37 @@ class TagTypeTest extends TestCase
                 })
             );
 
-        // Create an instance of the TagType class
         $tagType = new TagType();
-
-        // Call the buildForm method
         $tagType->buildForm($formBuilder, []);
     }
 
     /**
-     * Test configureOptions method.
+     * Tests the configureOptions method.
+     *
+     * @return void
      */
     public function testConfigureOptions(): void
     {
-        // Create a mock for the OptionsResolver
         $optionsResolver = $this->createMock(OptionsResolver::class);
 
-        // Expect setDefaults to be called with the correct data_class
         $optionsResolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->callback(function ($defaults) {
                 return isset($defaults['data_class']) && $defaults['data_class'] === Tag::class;
             }));
 
-        // Create an instance of the TagType class
         $tagType = new TagType();
-
-        // Call the configureOptions method
         $tagType->configureOptions($optionsResolver);
     }
 
     /**
-     * Test getBlockPrefix method.
+     * Tests the getBlockPrefix method.
+     *
+     * @return void
      */
     public function testGetBlockPrefix(): void
     {
-        // Create an instance of the TagType class
         $tagType = new TagType();
-
-        // Test that the getBlockPrefix method returns the expected value
         $this->assertEquals('tag', $tagType->getBlockPrefix());
     }
 }
