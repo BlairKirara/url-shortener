@@ -1,16 +1,22 @@
 <?php
 
+/**
+ * Functional tests for HomePageController.
+ */
+
 namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
- * Functional tests for HomePageController.
+ * Class HomePageControllerTest.
  */
 class HomePageControllerTest extends WebTestCase
 {
     /**
-     * Test that the homepage returns a 200 HTTP status code.
+     * Tests that the homepage returns a 200 HTTP status code.
+     *
+     * @return void
      */
     public function testHomepageStatusCodeIs200(): void
     {
@@ -19,5 +25,4 @@ class HomePageControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
-
 }

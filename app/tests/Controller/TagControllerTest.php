@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Functional tests for TagController.
+ */
+
 namespace App\Tests\Controller;
 
 use App\Entity\Tag;
@@ -8,8 +12,16 @@ use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * Class TagControllerTest.
+ */
 class TagControllerTest extends WebTestCase
 {
+    /**
+     * Ensures that an admin user exists.
+     *
+     * @return User The admin user entity
+     */
     private function ensureAdminUserExists(): User
     {
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -28,12 +40,24 @@ class TagControllerTest extends WebTestCase
         return $user;
     }
 
-    private function loginAsAdmin($client)
+    /**
+     * Logs in as admin user.
+     *
+     * @param $client The test client
+     *
+     * @return void
+     */
+    private function loginAsAdmin($client): void
     {
         $testAdmin = $this->ensureAdminUserExists();
         $client->loginUser($testAdmin);
     }
 
+    /**
+     * Ensures that a tag exists.
+     *
+     * @return Tag The tag entity
+     */
     private function ensureTagExists(): Tag
     {
         $tagRepository = static::getContainer()->get(TagRepository::class);
@@ -48,6 +72,11 @@ class TagControllerTest extends WebTestCase
         return $tag;
     }
 
+    /**
+     * Tests that the tag index page loads.
+     *
+     * @return void
+     */
     public function testIndexPageLoads(): void
     {
         $client = static::createClient();
@@ -57,6 +86,11 @@ class TagControllerTest extends WebTestCase
         $this->assertSelectorExists('table');
     }
 
+    /**
+     * Tests creating a tag as admin.
+     *
+     * @return void
+     */
     public function testCreateTagAsAdmin(): void
     {
         $client = static::createClient();
@@ -66,7 +100,6 @@ class TagControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('form');
 
-        // Find the form directly instead of using the button selector
         $form = $crawler->filter('form')->form([
             'tag[name]' => 'TestTag2',
         ]);
@@ -77,6 +110,11 @@ class TagControllerTest extends WebTestCase
         $this->assertSelectorTextContains('body', 'TestTag2');
     }
 
+    /**
+     * Tests showing a tag as admin.
+     *
+     * @return void
+     */
     public function testShowTagAsAdmin(): void
     {
         $client = static::createClient();
@@ -89,6 +127,11 @@ class TagControllerTest extends WebTestCase
         $this->assertSelectorTextContains('body', $tag->getName());
     }
 
+    /**
+     * Tests editing a tag as admin.
+     *
+     * @return void
+     */
     public function testEditTagAsAdmin(): void
     {
         $client = static::createClient();
@@ -100,7 +143,6 @@ class TagControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('form');
 
-        // Find the form directly instead of using the button selector
         $form = $crawler->filter('form')->form([
             'tag[name]' => 'UpdatedTag',
         ]);
@@ -111,6 +153,11 @@ class TagControllerTest extends WebTestCase
         $this->assertSelectorTextContains('body', 'UpdatedTag');
     }
 
+    /**
+     * Tests deleting a tag as admin.
+     *
+     * @return void
+     */
     public function testDeleteTagAsAdmin(): void
     {
         $client = static::createClient();
@@ -122,13 +169,17 @@ class TagControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('form');
 
-        // Find the form directly instead of using the button selector
         $form = $crawler->filter('form')->form();
         $client->submit($form);
 
         $this->assertResponseRedirects('/tag');
     }
 
+    /**
+     * Tests that admin routes require login.
+     *
+     * @return void
+     */
     public function testAdminRoutesRequireLogin(): void
     {
         $client = static::createClient();

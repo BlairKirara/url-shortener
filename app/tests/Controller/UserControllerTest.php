@@ -1,186 +1,208 @@
 <?php
 
+/**
+ * Class UserControllerTest.
+ *
+ * Functional tests for UserController.
+ */
+
 namespace App\Tests\Controller;
 
-use App\Controller\UserController;
 use App\Entity\User;
-use App\Form\Type\UserEmailType;
-use App\Form\Type\UserPasswordType;
-use App\Service\UserServiceInterface;
-use Knp\Component\Pager\Pagination\PaginationInterface;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Repository\UserRepository;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class UserControllerTest extends TestCase
+/**
+ * Class UserControllerTest.
+ */
+class UserControllerTest extends WebTestCase
 {
-    private $userService;
-    private $translator;
-    private $passwordHasher;
-    private $controller;
+    /**
+     * Symfony client.
+     *
+     * @var \Symfony\Bundle\FrameworkBundle\KernelBrowser
+     */
+    private $client;
 
+    /**
+     * User repository.
+     *
+     * @var UserRepository
+     */
+    private $userRepository;
+
+    /**
+     * Password hasher.
+     *
+     * @var \Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface
+     */
+    private $passwordHasher;
+
+    /**
+     * Doctrine entity manager.
+     *
+     * @var \Doctrine\ORM\EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * Set up test environment.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
-        $this->userService = $this->createMock(UserServiceInterface::class);
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
-
-        $this->controller = $this->getMockBuilder(UserController::class)
-            ->setConstructorArgs([$this->userService, $this->translator, $this->passwordHasher])
-            ->onlyMethods(['createForm', 'addFlash', 'redirectToRoute', 'render'])
-            ->getMock();
+        $this->client = static::createClient();
+        $container = static::getContainer();
+        $this->userRepository = $container->get(UserRepository::class);
+        $this->passwordHasher = $container->get('security.user_password_hasher');
+        $this->entityManager = $container->get('doctrine')->getManager();
     }
 
-    public function testIndexReturnsPaginationResponse()
+    /**
+     * Log in as admin user.
+     *
+     * @return User the admin user
+     */
+    private function loginAsAdmin(): User
     {
-        $pagination = $this->createMock(PaginationInterface::class);
-
-        $request = new Request(['page' => 3]);
-
-        $this->userService->expects($this->once())
-            ->method('getPaginatedList')
-            ->with(3)
-            ->willReturn($pagination);
-
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('user/index.html.twig', ['pagination' => $pagination])
-            ->willReturn(new Response());
-
-        $response = $this->controller->index($request);
-        $this->assertInstanceOf(Response::class, $response);
+        $admin = $this->userRepository->findOneBy(['email' => 'admin@example.com']);
+        if (!$admin) {
+            $admin = new User();
+            $admin->setEmail('admin@example.com');
+            $admin->setRoles(['ROLE_ADMIN']);
+            $admin->setPassword($this->passwordHasher->hashPassword($admin, 'adminpass'));
+            $this->entityManager->persist($admin);
+            $this->entityManager->flush();
+        }
+        $this->client->loginUser($admin);
+        return $admin;
     }
 
-    public function testShowRendersUser()
+    /**
+     * Log in as regular user.
+     *
+     * @return User the regular user
+     */
+    private function loginAsUser(): User
     {
-        $user = new User();
-
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('user/show.html.twig', ['user' => $user])
-            ->willReturn(new Response());
-
-        $response = $this->controller->show($user);
-        $this->assertInstanceOf(Response::class, $response);
+        $user = $this->userRepository->findOneBy(['email' => 'user@example.com']);
+        if (!$user) {
+            $user = new User();
+            $user->setEmail('user@example.com');
+            $user->setRoles(['ROLE_USER']);
+            $user->setPassword($this->passwordHasher->hashPassword($user, 'userpass'));
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        }
+        $this->client->loginUser($user);
+        return $user;
     }
 
-    public function testEditPasswordSuccessfully()
+    /**
+     * Test user index page as admin.
+     *
+     * @return void
+     */
+    public function testIndexAsAdmin(): void
     {
-        $user = $this->createMock(User::class);
-        $request = new Request();
-
-        $form = $this->createMock(FormInterface::class);
-
-        $form->expects($this->once())->method('handleRequest')->with($request);
-        $form->expects($this->once())->method('isSubmitted')->willReturn(true);
-        $form->expects($this->once())->method('isValid')->willReturn(true);
-
-        $user->expects($this->once())->method('getPassword')->willReturn('raw-password');
-
-        $this->passwordHasher->expects($this->once())
-            ->method('hashPassword')
-            ->with($user, 'raw-password')
-            ->willReturn('hashed-password');
-
-        $user->expects($this->once())->method('setPassword')->with('hashed-password');
-        $this->userService->expects($this->once())->method('save')->with($user);
-
-        $this->controller->expects($this->once())->method('addFlash')->with('success', $this->anything());
-        $this->controller->expects($this->once())->method('redirectToRoute')->with('app_homepage')->willReturn(new RedirectResponse('/'));
-
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->with(UserPasswordType::class, $user, ['method' => 'PUT'])
-            ->willReturn($form);
-
-        $response = $this->controller->edit($request, $user);
-        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->loginAsAdmin();
+        $this->client->request('GET', '/user');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('table');
     }
 
-
-    public function testEditPasswordFormNotSubmittedOrInvalid()
+    /**
+     * Test user index page as regular user (should be forbidden).
+     *
+     * @return void
+     */
+    public function testIndexAsUserForbidden(): void
     {
-        $user = $this->createMock(User::class);
-        $request = new Request();
-
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
-
-        $form->expects($this->once())->method('handleRequest')->with($request);
-        $form->expects($this->once())->method('isSubmitted')->willReturn(false);
-        $form->expects($this->never())->method('isValid');
-        $form->expects($this->once())->method('createView')->willReturn($formView);
-
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->with(UserPasswordType::class, $user, ['method' => 'PUT'])
-            ->willReturn($form);
-
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('user/edit.html.twig', ['form' => $formView, 'user' => $user])
-            ->willReturn(new Response());
-
-        $response = $this->controller->edit($request, $user);
-        $this->assertInstanceOf(Response::class, $response);
+        $this->loginAsUser();
+        $this->client->request('GET', '/user');
+        $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testEditEmailSuccessfully()
+    /**
+     * Test showing user details.
+     *
+     * @return void
+     */
+    public function testShowUser(): void
     {
-        $user = $this->createMock(User::class);
-        $request = new Request();
-
-        $form = $this->createMock(FormInterface::class);
-
-        $form->expects($this->once())->method('handleRequest')->with($request);
-        $form->expects($this->once())->method('isSubmitted')->willReturn(true);
-        $form->expects($this->once())->method('isValid')->willReturn(true);
-
-        $this->userService->expects($this->once())->method('save')->with($user);
-        $this->controller->expects($this->once())->method('addFlash')->with('success', $this->anything());
-        $this->controller->expects($this->once())->method('redirectToRoute')->with('app_homepage')->willReturn(new RedirectResponse('/'));
-
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->with(UserEmailType::class, $user, ['method' => 'PUT'])
-            ->willReturn($form);
-
-        $response = $this->controller->editEmail($request, $user);
-        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $admin = $this->loginAsAdmin();
+        $this->client->request('GET', '/user/' . $admin->getId());
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('body', $admin->getEmail());
     }
 
-
-    public function testEditEmailFormNotSubmittedOrInvalid()
+    /**
+     * Test rendering the edit password form.
+     *
+     * @return void
+     */
+    public function testEditPasswordFormRenders(): void
     {
-        $user = $this->createMock(User::class);
-        $request = new Request();
-
-        $form = $this->createMock(FormInterface::class);
-        $formView = $this->createMock(FormView::class);
-
-        $form->expects($this->once())->method('handleRequest')->with($request);
-        $form->expects($this->once())->method('isSubmitted')->willReturn(false);
-        $form->expects($this->never())->method('isValid');
-        $form->expects($this->once())->method('createView')->willReturn($formView);
-
-        $this->controller->expects($this->once())
-            ->method('createForm')
-            ->with(UserEmailType::class, $user, ['method' => 'PUT'])
-            ->willReturn($form);
-
-        $this->controller->expects($this->once())
-            ->method('render')
-            ->with('user/edit_email.html.twig', ['form' => $formView, 'user' => $user])
-            ->willReturn(new Response());
-
-        $response = $this->controller->editEmail($request, $user);
-        $this->assertInstanceOf(Response::class, $response);
+        $admin = $this->loginAsAdmin();
+        $this->client->request('GET', '/user/' . $admin->getId() . '/edit/password');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form');
     }
 
+    /**
+     * Test submitting the edit password form.
+     *
+     * @return void
+     */
+    public function testEditPasswordFormSubmit(): void
+    {
+        $admin = $this->loginAsAdmin();
+        $crawler = $this->client->request('GET', '/user/' . $admin->getId() . '/edit/password');
+        $this->assertResponseIsSuccessful();
 
+        $form = $crawler->filter('form')->form([
+            'user_password[password][first]' => 'newpass123',
+            'user_password[password][second]' => 'newpass123',
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-success');
+    }
+
+    /**
+     * Test rendering the edit email form.
+     *
+     * @return void
+     */
+    public function testEditEmailFormRenders(): void
+    {
+        $admin = $this->loginAsAdmin();
+        $this->client->request('GET', '/user/' . $admin->getId() . '/edit/email');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form');
+    }
+
+    /**
+     * Test submitting the edit email form.
+     *
+     * @return void
+     */
+    public function testEditEmailFormSubmit(): void
+    {
+        $admin = $this->loginAsAdmin();
+        $crawler = $this->client->request('GET', '/user/' . $admin->getId() . '/edit/email');
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->filter('form')->form([
+            'user_email[email]' => 'admin2@example.com',
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-success');
+    }
 }
