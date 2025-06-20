@@ -222,6 +222,20 @@ class UrlControllerTest extends WebTestCase
     }
 
     /**
+     * Test the URL list page with tag filter.
+     *
+     * @return void
+     */
+    public function testListWithTagFilter(): void
+    {
+        $tag = $this->tagRepository->findOneBy([]);
+        $this->assertNotNull($tag, 'No tags in database');
+        $this->client->request('GET', '/url/list?filters_tag_id=' . $tag->getId());
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.container');
+    }
+
+    /**
      * Test showing details of a specific URL.
      *
      * @return void
@@ -330,6 +344,30 @@ class UrlControllerTest extends WebTestCase
         $this->assertSelectorExists('.alert-success');
         $deletedUrl = $this->urlRepository->find($urlId);
         $this->assertNull($deletedUrl);
+    }
+
+    /**
+     * Delete a blocked URL as regular user.
+     *
+     * @return void
+     */
+    public function testDeleteBlockedUrl(): void
+    {
+        $this->loginAsUser();
+        $user = $this->userRepository->findOneByEmail('user@example.com');
+        $url = new Url();
+        $url->setLongName('https://blocked-url-test.com');
+        $url->setShortName('blocked-' . uniqid());
+        $url->setIsBlocked(true);
+        $url->setBlockTime(new \DateTimeImmutable('+1 day'));
+        $url->setUsers($user);
+        $this->entityManager->persist($url);
+        $this->entityManager->flush();
+
+        $this->client->request('GET', '/url/' . $url->getId() . '/delete');
+        $this->assertResponseRedirects('/url');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-warning');
     }
 
     /**
@@ -469,17 +507,28 @@ class UrlControllerTest extends WebTestCase
     }
 
     /**
-     * Test editing a blocked URL as regular user (should be denied).
+     * Test editing a blocked URL as its owner (regular user).
      *
      * @return void
      */
     public function testEditBlockedUrlAsUser(): void
     {
         $this->loginAsUser();
-        $url = $this->urlRepository->findOneBy(['isBlocked' => true]);
-        $this->assertNotNull($url, 'No blocked URL available for testing');
+
+        $user = $this->userRepository->findOneByEmail('user@example.com');
+        $url = new Url();
+        $url->setLongName('https://blocked-edit-test.com');
+        $url->setShortName('blocked-edit-' . uniqid());
+        $url->setIsBlocked(true);
+        $url->setBlockTime(new \DateTimeImmutable('+1 day'));
+        $url->setUsers($user);
+        $this->entityManager->persist($url);
+        $this->entityManager->flush();
+
         $this->client->request('GET', '/url/' . $url->getId() . '/edit');
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseRedirects('/url');
+        $this->client->followRedirect();
+        $this->assertSelectorExists('.alert-warning');
     }
 
     /**

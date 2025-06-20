@@ -121,6 +121,39 @@ class GuestUserServiceTest extends TestCase
     }
 
     /**
+     * Test saving a guest user in the repository.
+     *
+     * @return void
+     */
+    public function testRepositorySaveMethod(): void
+    {
+        $guestUser = new \App\Entity\GuestUser();
+        $guestUser->setEmail('repository-test@example.com');
+
+        $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
+        $managerRegistry = $this->createMock(\Doctrine\Persistence\ManagerRegistry::class);
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        $repository = new \App\Repository\GuestUserRepository($managerRegistry);
+
+        $reflection = new \ReflectionProperty(\App\Repository\GuestUserRepository::class, '_em');
+        $reflection->setAccessible(true);
+        $reflection->setValue($repository, $entityManager);
+
+        $entityManager->expects($this->once())
+            ->method('persist')
+            ->with($guestUser);
+
+        $entityManager->expects($this->once())
+            ->method('flush');
+
+        $repository->save($guestUser);
+    }
+
+    /**
      * Clean up after tests.
      *
      * @return void
