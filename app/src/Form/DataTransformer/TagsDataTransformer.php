@@ -65,7 +65,7 @@ class TagsDataTransformer implements DataTransformerInterface
         foreach ($tagNames as $tagName) {
             if ('' !== trim($tagName)) {
                 $tag = $this->tagService->findOneByName(strtolower($tagName));
-                if (!$tag instanceof \App\Entity\Tag) {
+                if (!$tag instanceof Tag) {
                     $tag = new Tag();
                     $tag->setName($tagName);
 

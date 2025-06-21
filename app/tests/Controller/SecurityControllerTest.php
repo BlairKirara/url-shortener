@@ -8,7 +8,6 @@ namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Controller\SecurityController;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
  * Class SecurityControllerTest.
@@ -17,8 +16,6 @@ class SecurityControllerTest extends WebTestCase
 {
     /**
      * Tests that the login page renders with expected variables.
-     *
-     * @return void
      */
     public function testLoginPageRendersWithExpectedVariables(): void
     {
@@ -32,8 +29,6 @@ class SecurityControllerTest extends WebTestCase
 
     /**
      * Tests that the logout route is intercepted by the firewall.
-     *
-     * @return void
      */
     public function testLogoutRouteIsIntercepted(): void
     {
@@ -44,8 +39,6 @@ class SecurityControllerTest extends WebTestCase
 
     /**
      * Tests that logout throws a LogicException as expected.
-     *
-     * @return void
      */
     public function testLogoutThrowsLogicException(): void
     {

@@ -13,8 +13,6 @@ use App\Form\DataTransformer\TagsDataTransformer;
 use App\Form\Type\UrlType;
 use App\Service\GuestUserService;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -34,43 +32,31 @@ class UrlTypeTest extends TestCase
 {
     /**
      * Tags data transformer.
-     *
-     * @var TagsDataTransformer
      */
     private TagsDataTransformer $tagsDataTransformer;
 
     /**
      * Security component.
-     *
-     * @var Security
      */
     private Security $security;
 
     /**
      * Guest user service.
-     *
-     * @var GuestUserService
      */
     private GuestUserService $guestUserService;
 
     /**
      * Translator component.
-     *
-     * @var TranslatorInterface
      */
     private TranslatorInterface $translator;
 
     /**
      * UrlType instance.
-     *
-     * @var UrlType
      */
     private UrlType $urlType;
 
     /**
      * Set up test environment.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -89,8 +75,6 @@ class UrlTypeTest extends TestCase
 
     /**
      * Tests the configureOptions method.
-     *
-     * @return void
      */
     public function testConfigureOptions(): void
     {
@@ -106,8 +90,6 @@ class UrlTypeTest extends TestCase
 
     /**
      * Tests the getBlockPrefix method.
-     *
-     * @return void
      */
     public function testGetBlockPrefix(): void
     {
@@ -116,8 +98,6 @@ class UrlTypeTest extends TestCase
 
     /**
      * Tests the buildForm method for an authenticated user.
-     *
-     * @return void
      */
     public function testBuildFormForAuthenticatedUser(): void
     {
@@ -149,8 +129,6 @@ class UrlTypeTest extends TestCase
 
     /**
      * Tests the buildForm method for a guest user.
-     *
-     * @return void
      */
     public function testBuildFormForGuestUser(): void
     {
@@ -171,7 +149,7 @@ class UrlTypeTest extends TestCase
 
         $builder->expects($this->once())
             ->method('addEventListener')
-            ->with(FormEvents::SUBMIT, $this->callback(function($callback) {
+            ->with(FormEvents::SUBMIT, $this->callback(function ($callback) {
                 return is_callable($callback);
             }));
 
@@ -180,8 +158,6 @@ class UrlTypeTest extends TestCase
 
     /**
      * Tests the email limit validation for guest users.
-     *
-     * @return void
      */
     public function testEmailLimitValidation(): void
     {
@@ -222,9 +198,10 @@ class UrlTypeTest extends TestCase
 
         $builderMock->method('addEventListener')->willReturnCallback(
             function ($eventName, $listener) use ($event, $builderMock) {
-                if ($eventName === FormEvents::SUBMIT) {
+                if (FormEvents::SUBMIT === $eventName) {
                     $listener($event);
                 }
+
                 return $builderMock;
             }
         );

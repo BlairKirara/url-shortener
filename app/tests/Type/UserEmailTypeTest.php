@@ -22,15 +22,11 @@ class UserEmailTypeTest extends TestCase
 {
     /**
      * User email type.
-     *
-     * @var UserEmailType
      */
     private UserEmailType $userEmailType;
 
     /**
      * Set up test environment.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -39,8 +35,6 @@ class UserEmailTypeTest extends TestCase
 
     /**
      * Tests the configureOptions method.
-     *
-     * @return void
      */
     public function testConfigureOptions(): void
     {
@@ -54,8 +48,6 @@ class UserEmailTypeTest extends TestCase
 
     /**
      * Tests the buildForm method.
-     *
-     * @return void
      */
     public function testBuildForm(): void
     {

@@ -25,36 +25,26 @@ class TagServiceTest extends TestCase
 {
     /**
      * Tag repository mock.
-     *
-     * @var TagRepository
      */
     private TagRepository $tagRepository;
 
     /**
      * Paginator mock.
-     *
-     * @var PaginatorInterface
      */
     private PaginatorInterface $paginator;
 
     /**
      * Pagination mock.
-     *
-     * @var PaginationInterface
      */
     private PaginationInterface $pagination;
 
     /**
      * Tag service.
-     *
-     * @var TagService
      */
     private TagService $tagService;
 
     /**
      * Set up test environment.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -71,8 +61,6 @@ class TagServiceTest extends TestCase
 
     /**
      * Test retrieving a paginated list of tags.
-     *
-     * @return void
      */
     public function testGetPaginatedList(): void
     {
@@ -99,8 +87,6 @@ class TagServiceTest extends TestCase
 
     /**
      * Test saving a tag.
-     *
-     * @return void
      */
     public function testSave(): void
     {
@@ -116,8 +102,6 @@ class TagServiceTest extends TestCase
 
     /**
      * Test deleting a tag.
-     *
-     * @return void
      */
     public function testDelete(): void
     {
@@ -133,8 +117,6 @@ class TagServiceTest extends TestCase
 
     /**
      * Test finding a tag by name.
-     *
-     * @return void
      */
     public function testFindOneByName(): void
     {
@@ -154,8 +136,6 @@ class TagServiceTest extends TestCase
 
     /**
      * Test finding a tag by name returns null if not found.
-     *
-     * @return void
      */
     public function testFindOneByNameReturnsNull(): void
     {
@@ -173,8 +153,6 @@ class TagServiceTest extends TestCase
 
     /**
      * Test finding a tag by ID.
-     *
-     * @return void
      */
     public function testFindOneById(): void
     {
@@ -194,8 +172,6 @@ class TagServiceTest extends TestCase
 
     /**
      * Test finding a tag by ID returns null if not found.
-     *
-     * @return void
      */
     public function testFindOneByIdReturnsNull(): void
     {
@@ -213,8 +189,6 @@ class TagServiceTest extends TestCase
 
     /**
      * Clean up after tests.
-     *
-     * @return void
      */
     protected function tearDown(): void
     {

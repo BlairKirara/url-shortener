@@ -30,57 +30,41 @@ class UrlServiceTest extends TestCase
 {
     /**
      * URL repository.
-     *
-     * @var UrlRepository
      */
     private UrlRepository $urlRepository;
 
     /**
      * Tag service.
-     *
-     * @var TagServiceInterface
      */
     private TagServiceInterface $tagService;
 
     /**
      * Paginator.
-     *
-     * @var PaginatorInterface
      */
     private PaginatorInterface $paginator;
 
     /**
      * Security component.
-     *
-     * @var Security
      */
     private Security $security;
 
     /**
      * Guest user repository.
-     *
-     * @var GuestUserRepository
      */
     private GuestUserRepository $guestUserRepository;
 
     /**
      * URL service.
-     *
-     * @var UrlService
      */
     private UrlService $urlService;
 
     /**
      * Pagination.
-     *
-     * @var PaginationInterface
      */
     private PaginationInterface $pagination;
 
     /**
      * Set up test environment.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -111,8 +95,6 @@ class UrlServiceTest extends TestCase
 
     /**
      * Tests retrieving a paginated list of URLs for a user.
-     *
-     * @return void
      */
     public function testGetPaginatedList(): void
     {
@@ -142,8 +124,6 @@ class UrlServiceTest extends TestCase
 
     /**
      * Tests retrieving a paginated list of URLs for a user with tag filter.
-     *
-     * @return void
      */
     public function testGetPaginatedListWithTagFilter(): void
     {
@@ -179,8 +159,6 @@ class UrlServiceTest extends TestCase
 
     /**
      * Tests retrieving a paginated list of URLs for all users.
-     *
-     * @return void
      */
     public function testGetPaginatedListForAll(): void
     {
@@ -209,8 +187,6 @@ class UrlServiceTest extends TestCase
 
     /**
      * Tests generating a shortened URL.
-     *
-     * @return void
      */
     public function testShortenUrl(): void
     {
@@ -223,8 +199,6 @@ class UrlServiceTest extends TestCase
 
     /**
      * Tests saving a new URL.
-     *
-     * @return void
      */
     public function testSaveNewUrl(): void
     {
@@ -235,9 +209,9 @@ class UrlServiceTest extends TestCase
             ->method('save')
             ->with($this->callback(function ($savedUrl) {
                 return $savedUrl instanceof Url
-                    && $savedUrl->getLongName() === 'https://example.com'
-                    && $savedUrl->getShortName() !== null
-                    && $savedUrl->isIsBlocked() === false;
+                    && 'https://example.com' === $savedUrl->getLongName()
+                    && null !== $savedUrl->getShortName()
+                    && false === $savedUrl->isIsBlocked();
             }));
 
         $this->urlService->save($url);
@@ -248,8 +222,6 @@ class UrlServiceTest extends TestCase
 
     /**
      * Tests saving an existing URL.
-     *
-     * @return void
      */
     public function testSaveExistingUrl(): void
     {
@@ -277,8 +249,6 @@ class UrlServiceTest extends TestCase
 
     /**
      * Tests deleting a URL.
-     *
-     * @return void
      */
     public function testDelete(): void
     {
@@ -295,8 +265,6 @@ class UrlServiceTest extends TestCase
 
     /**
      * Tests finding a URL by its short name.
-     *
-     * @return void
      */
     public function testFindOneByShortName(): void
     {
@@ -317,8 +285,6 @@ class UrlServiceTest extends TestCase
 
     /**
      * Tear down test environment.
-     *
-     * @return void
      */
     protected function tearDown(): void
     {

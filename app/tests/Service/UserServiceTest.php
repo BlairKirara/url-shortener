@@ -34,8 +34,6 @@ class UserServiceTest extends TestCase
      * Constructor.
      *
      * Sets up the test environment.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -53,8 +51,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests retrieving a paginated list of users.
-     *
-     * @return void
      */
     public function testGetPaginatedList(): void
     {
@@ -77,8 +73,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests saving a new user.
-     *
-     * @return void
      */
     public function testSaveNewUser(): void
     {
@@ -109,8 +103,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests saving an existing user.
-     *
-     * @return void
      */
     public function testSaveExistingUser(): void
     {
@@ -141,8 +133,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests saving a new user with an empty password.
-     *
-     * @return void
      */
     public function testSaveNewUserWithEmptyPassword(): void
     {
@@ -170,8 +160,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests saving a new user with an empty email.
-     *
-     * @return void
      */
     public function testSaveNewUserWithEmptyEmail(): void
     {
@@ -199,8 +187,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests saving a new user with a custom role.
-     *
-     * @return void
      */
     public function testSaveNewUserWithCustomRole(): void
     {
@@ -229,8 +215,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Cleans up after tests.
-     *
-     * @return void
      */
     protected function tearDown(): void
     {
@@ -245,8 +229,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests upgrading a user's password.
-     *
-     * @return void
      */
     public function testUpgradePassword(): void
     {
@@ -275,8 +257,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests upgrading password for unsupported user.
-     *
-     * @return void
      */
     public function testUpgradePasswordUnsupportedUser(): void
     {
@@ -295,8 +275,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests getOrCreateQueryBuilder with null parameter.
-     *
-     * @return void
      */
     public function testGetOrCreateQueryBuilderWithNullParameter(): void
     {
@@ -328,8 +306,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests getOrCreateQueryBuilder with existing QueryBuilder.
-     *
-     * @return void
      */
     public function testGetOrCreateQueryBuilderWithExistingQueryBuilder(): void
     {
@@ -348,8 +324,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests saving a user in the repository.
-     *
-     * @return void
      */
     public function testRepositorySaveMethod(): void
     {
@@ -381,8 +355,6 @@ class UserServiceTest extends TestCase
 
     /**
      * Tests querying all users in the repository.
-     *
-     * @return void
      */
     public function testRepositoryQueryAll(): void
     {

@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Url fixtures.
+ */
+
 namespace App\DataFixtures;
 
 use App\Entity\GuestUser;
@@ -15,6 +19,11 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
  */
 class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterface
 {
+    /**
+     * Load URL fixtures into the database.
+     *
+     * This method is called when loading the fixtures and creates multiple URL entities.
+     */
     public function loadData(): void
     {
         if (!$this->manager instanceof \Doctrine\Persistence\ObjectManager || !$this->faker instanceof \Faker\Generator) {
@@ -62,6 +71,14 @@ class UrlFixtures extends AbstractBaseFixtures implements DependentFixtureInterf
         $this->manager->flush();
     }
 
+    /**
+     * Get the dependencies for this fixture.
+     *
+     * This method defines the dependencies of this fixture on other fixtures.
+     * In this case, it depends on TagFixtures, UserFixtures, and GuestUserFixtures.
+     *
+     * @return string[] An array of fixture class names that this fixture depends on
+     */
     public function getDependencies(): array
     {
         return [

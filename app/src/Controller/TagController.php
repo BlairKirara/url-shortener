@@ -32,6 +32,7 @@ class TagController extends AbstractController
     public function __construct(private readonly TagServiceInterface $tagService, private readonly TranslatorInterface $translator)
     {
     }
+
     /**
      * Displays the list of tags.
      *
@@ -48,6 +49,7 @@ class TagController extends AbstractController
 
         return $this->render('tag/index.html.twig', ['pagination' => $pagination]);
     }
+
     /**
      * Creates a new tag.
      *
@@ -78,6 +80,7 @@ class TagController extends AbstractController
             ['form' => $form->createView()]
         );
     }
+
     /**
      * Deletes a tag.
      *
@@ -115,6 +118,7 @@ class TagController extends AbstractController
             ]
         );
     }
+
     /**
      * Shows details of a tag.
      *
@@ -133,6 +137,7 @@ class TagController extends AbstractController
     {
         return $this->render('tag/show.html.twig', ['tag' => $tag]);
     }
+
     /**
      * Edits a tag.
      *

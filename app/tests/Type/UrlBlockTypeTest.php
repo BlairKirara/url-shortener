@@ -24,8 +24,6 @@ class UrlBlockTypeTest extends TestCase
 {
     /**
      * Tests the buildForm method.
-     *
-     * @return void
      */
     public function testBuildForm(): void
     {
@@ -39,9 +37,10 @@ class UrlBlockTypeTest extends TestCase
                 DateTimeType::class,
                 $this->callback(function ($options) {
                     $expectedYears = range(date('Y'), date('Y') + 5);
-                    return isset($options['input']) && $options['input'] === 'datetime_immutable'
-                        && isset($options['label']) && $options['label'] === 'label.block_time'
-                        && isset($options['widget']) && $options['widget'] === 'choice'
+
+                    return isset($options['input']) && 'datetime_immutable' === $options['input']
+                        && isset($options['label']) && 'label.block_time' === $options['label']
+                        && isset($options['widget']) && 'choice' === $options['widget']
                         && isset($options['years']) && $options['years'] === $expectedYears
                         && isset($options['data']) && $options['data'] instanceof \DateTimeImmutable;
                 })
@@ -53,8 +52,6 @@ class UrlBlockTypeTest extends TestCase
 
     /**
      * Tests the configureOptions method.
-     *
-     * @return void
      */
     public function testConfigureOptions(): void
     {
@@ -70,8 +67,6 @@ class UrlBlockTypeTest extends TestCase
 
     /**
      * Tests the getBlockPrefix method.
-     *
-     * @return void
      */
     public function testGetBlockPrefix(): void
     {
@@ -81,8 +76,6 @@ class UrlBlockTypeTest extends TestCase
 
     /**
      * Tests the default DateTimeImmutable value for blockTime.
-     *
-     * @return void
      */
     public function testDefaultDateTimeImmutable(): void
     {
@@ -91,9 +84,10 @@ class UrlBlockTypeTest extends TestCase
 
         $formBuilder->method('add')
             ->willReturnCallback(function ($fieldName, $fieldType, $options) use ($formBuilder, &$capturedData) {
-                if ($fieldName === 'blockTime' && isset($options['data'])) {
+                if ('blockTime' === $fieldName && isset($options['data'])) {
                     $capturedData = $options['data'];
                 }
+
                 return $formBuilder;
             });
 

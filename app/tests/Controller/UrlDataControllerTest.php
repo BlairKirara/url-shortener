@@ -18,8 +18,6 @@ class UrlDataControllerTest extends WebTestCase
 {
     /**
      * Tests that the visits count page loads successfully.
-     *
-     * @return void
      */
     public function testVisitsCountPageLoadsSuccessfully(): void
     {
@@ -32,8 +30,6 @@ class UrlDataControllerTest extends WebTestCase
 
     /**
      * Tests that the visits count page loads with a page parameter.
-     *
-     * @return void
      */
     public function testVisitsCountWithPageParameter(): void
     {

@@ -24,8 +24,6 @@ class RegistrationTypeTest extends TestCase
 {
     /**
      * Tests the buildForm method.
-     *
-     * @return void
      */
     public function testBuildForm(): void
     {
@@ -41,35 +39,35 @@ class RegistrationTypeTest extends TestCase
                     EmailType::class,
                     $this->callback(function ($options) {
                         return isset($options['label'])
-                            && $options['label'] === 'label.email'
+                            && 'label.email' === $options['label']
                             && isset($options['required'])
-                            && $options['required'] === true
+                            && true === $options['required']
                             && isset($options['attr']['max_length'])
-                            && $options['attr']['max_length'] === 191
+                            && 191 === $options['attr']['max_length']
                             && isset($options['constraints'])
                             && is_array($options['constraints'])
-                            && count($options['constraints']) === 1
+                            && 1 === count($options['constraints'])
                             && $options['constraints'][0] instanceof NotBlank;
-                    })
+                    }),
                 ],
                 [
                     'password',
                     RepeatedType::class,
                     $this->callback(function ($options) {
                         return isset($options['type'])
-                            && $options['type'] === PasswordType::class
+                            && PasswordType::class === $options['type']
                             && isset($options['required'])
-                            && $options['required'] === true
+                            && true === $options['required']
                             && isset($options['constraints'])
                             && is_array($options['constraints'])
-                            && count($options['constraints']) === 2
+                            && 2 === count($options['constraints'])
                             && $options['constraints'][0] instanceof Length
                             && $options['constraints'][1] instanceof NotBlank
                             && isset($options['first_options'])
-                            && $options['first_options']['label'] === 'label.password'
+                            && 'label.password' === $options['first_options']['label']
                             && isset($options['second_options'])
-                            && $options['second_options']['label'] === 'label.repeat_password';
-                    })
+                            && 'label.repeat_password' === $options['second_options']['label'];
+                    }),
                 ]
             );
 
@@ -79,8 +77,6 @@ class RegistrationTypeTest extends TestCase
 
     /**
      * Tests the getBlockPrefix method.
-     *
-     * @return void
      */
     public function testGetBlockPrefix(): void
     {
@@ -90,8 +86,6 @@ class RegistrationTypeTest extends TestCase
 
     /**
      * Tests validation constraints on the form fields.
-     *
-     * @return void
      */
     public function testFormConstraints(): void
     {
@@ -104,23 +98,24 @@ class RegistrationTypeTest extends TestCase
 
         $formBuilder->method('add')
             ->willReturnCallback(function ($fieldName, $fieldType, $options) use ($formBuilder, &$capturedEmailConstraints, &$capturedPasswordConstraints) {
-                if ($fieldName === 'email') {
+                if ('email' === $fieldName) {
                     $capturedEmailConstraints = $options['constraints'] ?? [];
-                } elseif ($fieldName === 'password') {
+                } elseif ('password' === $fieldName) {
                     $capturedPasswordConstraints = $options['constraints'] ?? [];
                 }
+
                 return $formBuilder;
             });
 
         $registrationType = new RegistrationType();
         $registrationType->buildForm($formBuilder, []);
 
-        if ($capturedEmailConstraints !== null) {
+        if (null !== $capturedEmailConstraints) {
             $this->assertCount(1, $capturedEmailConstraints);
             $this->assertInstanceOf(NotBlank::class, $capturedEmailConstraints[0]);
         }
 
-        if ($capturedPasswordConstraints !== null) {
+        if (null !== $capturedPasswordConstraints) {
             $this->assertCount(2, $capturedPasswordConstraints);
 
             $lengthConstraint = null;
@@ -135,7 +130,8 @@ class RegistrationTypeTest extends TestCase
             $this->assertEquals(6, $lengthConstraint->min);
             $this->assertEquals(191, $lengthConstraint->max);
 
-            $this->assertContainsOnlyInstancesOf(NotBlank::class,
+            $this->assertContainsOnlyInstancesOf(
+                NotBlank::class,
                 array_filter($capturedPasswordConstraints, function ($constraint) {
                     return $constraint instanceof NotBlank;
                 })

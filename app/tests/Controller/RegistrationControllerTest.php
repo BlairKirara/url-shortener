@@ -15,8 +15,6 @@ class RegistrationControllerTest extends WebTestCase
 {
     /**
      * Test if the registration form renders correctly.
-     *
-     * @return void
      */
     public function testRegisterFormRenders(): void
     {
@@ -32,8 +30,6 @@ class RegistrationControllerTest extends WebTestCase
 
     /**
      * Test registration fails with invalid data.
-     *
-     * @return void
      */
     public function testRegisterFailsWithInvalidData(): void
     {
@@ -53,8 +49,6 @@ class RegistrationControllerTest extends WebTestCase
 
     /**
      * Test registration succeeds with valid data.
-     *
-     * @return void
      */
     public function testRegisterSucceedsWithValidData(): void
     {
@@ -62,7 +56,7 @@ class RegistrationControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/register');
 
         $form = $crawler->filter('form')->form([
-            'user[email]' => 'testuser' . uniqid() . '@example.com',
+            'user[email]' => 'testuser'.uniqid().'@example.com',
             'user[password][first]' => 'password123',
             'user[password][second]' => 'password123',
         ]);

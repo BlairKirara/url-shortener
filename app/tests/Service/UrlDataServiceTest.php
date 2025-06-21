@@ -24,36 +24,26 @@ class UrlDataServiceTest extends TestCase
 {
     /**
      * URL data repository mock.
-     *
-     * @var UrlDataRepository
      */
     private UrlDataRepository $urlDataRepository;
 
     /**
      * Paginator mock.
-     *
-     * @var PaginatorInterface
      */
     private PaginatorInterface $paginator;
 
     /**
      * Pagination mock.
-     *
-     * @var PaginationInterface
      */
     private PaginationInterface $pagination;
 
     /**
      * URL data service.
-     *
-     * @var UrlDataService
      */
     private UrlDataService $urlDataService;
 
     /**
      * Set up test environment.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -69,8 +59,6 @@ class UrlDataServiceTest extends TestCase
 
     /**
      * Tests saving URL data.
-     *
-     * @return void
      */
     public function testSave(): void
     {
@@ -85,8 +73,6 @@ class UrlDataServiceTest extends TestCase
 
     /**
      * Tests counting visits and paginating results.
-     *
-     * @return void
      */
     public function testCountVisits(): void
     {
@@ -113,8 +99,6 @@ class UrlDataServiceTest extends TestCase
 
     /**
      * Tests deleting URL visits by ID.
-     *
-     * @return void
      */
     public function testDeleteUrlVisits(): void
     {
@@ -129,8 +113,6 @@ class UrlDataServiceTest extends TestCase
 
     /**
      * Clean up after tests.
-     *
-     * @return void
      */
     protected function tearDown(): void
     {

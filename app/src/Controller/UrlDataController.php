@@ -28,6 +28,7 @@ class UrlDataController extends AbstractController
     public function __construct(private readonly UrlDataServiceInterface $urlDataService)
     {
     }
+
     /**
      * Displays the visits count for URLs.
      *

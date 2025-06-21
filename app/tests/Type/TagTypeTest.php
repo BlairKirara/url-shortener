@@ -24,8 +24,6 @@ class TagTypeTest extends TestCase
 {
     /**
      * Tests the buildForm method.
-     *
-     * @return void
      */
     public function testBuildForm(): void
     {
@@ -40,11 +38,11 @@ class TagTypeTest extends TestCase
                 TextType::class,
                 $this->callback(function ($options) {
                     return isset($options['label'])
-                        && $options['label'] === 'label.name'
+                        && 'label.name' === $options['label']
                         && isset($options['required'])
-                        && $options['required'] === true
+                        && true === $options['required']
                         && isset($options['attr']['max_length'])
-                        && $options['attr']['max_length'] === 64;
+                        && 64 === $options['attr']['max_length'];
                 })
             );
 
@@ -54,8 +52,6 @@ class TagTypeTest extends TestCase
 
     /**
      * Tests the configureOptions method.
-     *
-     * @return void
      */
     public function testConfigureOptions(): void
     {
@@ -64,7 +60,7 @@ class TagTypeTest extends TestCase
         $optionsResolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->callback(function ($defaults) {
-                return isset($defaults['data_class']) && $defaults['data_class'] === Tag::class;
+                return isset($defaults['data_class']) && Tag::class === $defaults['data_class'];
             }));
 
         $tagType = new TagType();
@@ -73,8 +69,6 @@ class TagTypeTest extends TestCase
 
     /**
      * Tests the getBlockPrefix method.
-     *
-     * @return void
      */
     public function testGetBlockPrefix(): void
     {

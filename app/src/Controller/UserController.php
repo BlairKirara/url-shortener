@@ -34,13 +34,13 @@ class UserController extends AbstractController
     public function __construct(private readonly UserServiceInterface $userService, private readonly TranslatorInterface $translator, private readonly UserPasswordHasherInterface $passwordHasher)
     {
     }
+
     /**
      * User index page.
      *
      * @param Request $request the request object
      *
      * @return Response the response object
-     *
      *
      * @IsGranted("ROLE_ADMIN")
      */
@@ -54,13 +54,13 @@ class UserController extends AbstractController
             ['pagination' => $pagination]
         );
     }
+
     /**
      * Show user details.
      *
      * @param User $user the user entity
      *
      * @return Response the response object
-     *
      *
      * @IsGranted("VIEW", subject="user")
      */
@@ -72,6 +72,7 @@ class UserController extends AbstractController
             ['user' => $user]
         );
     }
+
     /**
      * Edit user password.
      *
@@ -79,7 +80,6 @@ class UserController extends AbstractController
      * @param User    $user    the user entity
      *
      * @return Response the response object
-     *
      *
      * @IsGranted("EDIT_USER", subject="user")
      */
@@ -105,6 +105,7 @@ class UserController extends AbstractController
             ]
         );
     }
+
     /**
      * Edit user email.
      *
@@ -112,7 +113,6 @@ class UserController extends AbstractController
      * @param User    $user    the user entity
      *
      * @return Response the response object
-     *
      *
      * @IsGranted("EDIT_USER", subject="user")
      */

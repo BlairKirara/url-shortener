@@ -42,6 +42,7 @@ class UrlController extends AbstractController
     public function __construct(private readonly UrlServiceInterface $urlService, private readonly UrlDataServiceInterface $urlDataService, private readonly TranslatorInterface $translator, private readonly EntityManagerInterface $entityManager, private readonly GuestUserServiceInterface $guestUserService)
     {
     }
+
     /**
      * Display the URL index page.
      *
@@ -66,6 +67,7 @@ class UrlController extends AbstractController
 
         return $this->render('url/index.html.twig', ['pagination' => $pagination]);
     }
+
     /**
      * Display the list of all URLs.
      *
@@ -88,6 +90,7 @@ class UrlController extends AbstractController
 
         return $this->render('url/list.html.twig', ['pagination' => $pagination]);
     }
+
     /**
      * Display details of a specific URL.
      *
@@ -100,6 +103,7 @@ class UrlController extends AbstractController
     {
         return $this->render('url/show.html.twig', ['url' => $url]);
     }
+
     /**
      * Redirect to the long URL associated with the given short name.
      *
@@ -116,7 +120,7 @@ class UrlController extends AbstractController
     {
         $url = $this->urlService->findOneByShortName($shortName);
 
-        if (!$url instanceof \App\Entity\Url) {
+        if (!$url instanceof Url) {
             $this->addFlash('warning', $this->translator->trans('message.url_does_not_exist'));
         } elseif (!$url->isIsBlocked()) {
             $urlData = new UrlData();
@@ -134,6 +138,7 @@ class UrlController extends AbstractController
 
         return $this->redirectToRoute('list');
     }
+
     /**
      * Create a new URL.
      *
@@ -179,6 +184,7 @@ class UrlController extends AbstractController
             ['form' => $form->createView()]
         );
     }
+
     /**
      * Delete a URL.
      *
@@ -228,6 +234,7 @@ class UrlController extends AbstractController
             ]
         );
     }
+
     /**
      * Edit a URL.
      *
@@ -273,6 +280,7 @@ class UrlController extends AbstractController
             ]
         );
     }
+
     /**
      * Block a URL.
      *
@@ -313,6 +321,7 @@ class UrlController extends AbstractController
             ]
         );
     }
+
     /**
      * Unblock a URL.
      *
@@ -363,6 +372,7 @@ class UrlController extends AbstractController
             ]
         );
     }
+
     /**
      * Get the URL filters from the request.
      *

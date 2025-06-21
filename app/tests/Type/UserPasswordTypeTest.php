@@ -23,15 +23,11 @@ class UserPasswordTypeTest extends TestCase
 {
     /**
      * User password type.
-     *
-     * @var UserPasswordType
      */
     private UserPasswordType $userPasswordType;
 
     /**
      * Set up test environment.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -40,8 +36,6 @@ class UserPasswordTypeTest extends TestCase
 
     /**
      * Tests the configureOptions method.
-     *
-     * @return void
      */
     public function testConfigureOptions(): void
     {
@@ -55,8 +49,6 @@ class UserPasswordTypeTest extends TestCase
 
     /**
      * Tests the buildForm method.
-     *
-     * @return void
      */
     public function testBuildForm(): void
     {

@@ -15,8 +15,6 @@ class HomePageControllerTest extends WebTestCase
 {
     /**
      * Tests that the homepage returns a 200 HTTP status code.
-     *
-     * @return void
      */
     public function testHomepageStatusCodeIs200(): void
     {

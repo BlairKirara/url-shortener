@@ -22,22 +22,16 @@ class GuestUserServiceTest extends TestCase
 {
     /**
      * Guest user repository mock.
-     *
-     * @var GuestUserRepository
      */
     private GuestUserRepository $guestUserRepository;
 
     /**
      * Guest user service.
-     *
-     * @var GuestUserService
      */
     private GuestUserService $guestUserService;
 
     /**
      * Set up test environment.
-     *
-     * @return void
      */
     protected function setUp(): void
     {
@@ -52,8 +46,6 @@ class GuestUserServiceTest extends TestCase
 
     /**
      * Test saving a new guest user.
-     *
-     * @return void
      */
     public function testSave(): void
     {
@@ -76,8 +68,6 @@ class GuestUserServiceTest extends TestCase
 
     /**
      * Test saving a guest user with an existing email.
-     *
-     * @return void
      */
     public function testSaveWithExistingEmail(): void
     {
@@ -102,8 +92,6 @@ class GuestUserServiceTest extends TestCase
 
     /**
      * Test counting email usage.
-     *
-     * @return void
      */
     public function testCountEmailUse(): void
     {
@@ -122,12 +110,10 @@ class GuestUserServiceTest extends TestCase
 
     /**
      * Test saving a guest user in the repository.
-     *
-     * @return void
      */
     public function testRepositorySaveMethod(): void
     {
-        $guestUser = new \App\Entity\GuestUser();
+        $guestUser = new GuestUser();
         $guestUser->setEmail('repository-test@example.com');
 
         $entityManager = $this->createMock(\Doctrine\ORM\EntityManager::class);
@@ -137,9 +123,9 @@ class GuestUserServiceTest extends TestCase
             ->method('getManagerForClass')
             ->willReturn($entityManager);
 
-        $repository = new \App\Repository\GuestUserRepository($managerRegistry);
+        $repository = new GuestUserRepository($managerRegistry);
 
-        $reflection = new \ReflectionProperty(\App\Repository\GuestUserRepository::class, '_em');
+        $reflection = new \ReflectionProperty(GuestUserRepository::class, '_em');
         $reflection->setAccessible(true);
         $reflection->setValue($repository, $entityManager);
 
@@ -155,8 +141,6 @@ class GuestUserServiceTest extends TestCase
 
     /**
      * Clean up after tests.
-     *
-     * @return void
      */
     protected function tearDown(): void
     {
