@@ -24,3 +24,4 @@ class HomePageControllerTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
 }
+
